@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Add transaction{% endblock %}
+{% block content %}
+<h1>Add transaction</h1>
+
+<form method="post" class="panel">
+  <div class="row">
+    <div class="field">
+      <label>Date</label>
+      <input type="date" name="date" value="{{ today }}" required>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select name="type" id="type-select" required onchange="updateCategories()">
+        <option value="income">Income (bar sales, food, events...)</option>
+        <option value="expense">Outgoing (stock, wages, rent...)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Category</label>
+      <select name="category" id="category-select" required></select>
+    </div>
+    <div class="field">
+      <label>VAT rate</label>
+      <select name="vat_rate" required>
+        {% for key, rate in vat_rates.items() %}
+        <option value="{{ key }}">{{ key|capitalize }} ({{ rate }}%)</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Net amount (£, excl. VAT)</label>
+      <input type="number" step="0.01" min="0" name="net_amount" required>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <input type="text" name="description" placeholder="e.g. Cask ale delivery, Sat night till takings">
+    </div>
+  </div>
+
+  <button class="btn" type="submit">Save transaction</button>
+  <a class="btn secondary" href="{{ url_for('transactions') }}">Cancel</a>
+</form>
+
+<script>
+  const incomeCategories = {{ income_categories|tojson }};
+  const expenseCategories = {{ expense_categories|tojson }};
+
+  function updateCategories() {
+    const type = document.getElementById('type-select').value;
+    const select = document.getElementById('category-select');
+    const cats = type === 'income' ? incomeCategories : expenseCategories;
+    select.innerHTML = '';
+    cats.forEach(function (c) {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c.replaceAll('_', ' ');
+      select.appendChild(opt);
+    });
+  }
+  updateCategories();
+</script>
+{% endblock %}

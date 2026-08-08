@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}VAT return{% endblock %}
+{% block content %}
+<h1>VAT return</h1>
+
+<form method="get" class="row" style="margin-bottom:1.25rem">
+  <div class="field">
+    <label>Year</label>
+    <input type="number" name="year" value="{{ year }}">
+  </div>
+  <div class="field">
+    <label>Quarter</label>
+    <select name="quarter">
+      {% for q in [1, 2, 3, 4] %}
+      <option value="{{ q }}" {{ 'selected' if q == quarter }}>Q{{ q }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>&nbsp;</label>
+    <button class="btn secondary" type="submit">View</button>
+  </div>
+</form>
+
+<p class="muted">Period: {{ vat_return.period_start }} to {{ vat_return.period_end }}</p>
+
+<div class="panel">
+  <table class="vat-box-table">
+    <tbody>
+      <tr><td>Box 1 — VAT due on sales and other outputs</td><td>£{{ "%.2f"|format(vat_return.box1_vat_due_sales) }}</td></tr>
+      <tr><td>Box 2 — VAT due on acquisitions from EU member states</td><td>£{{ "%.2f"|format(vat_return.box2_vat_due_acquisitions) }}</td></tr>
+      <tr><td><strong>Box 3 — Total VAT due</strong></td><td><strong>£{{ "%.2f"|format(vat_return.box3_total_vat_due) }}</strong></td></tr>
+      <tr><td>Box 4 — VAT reclaimed on purchases and other inputs</td><td>£{{ "%.2f"|format(vat_return.box4_vat_reclaimed) }}</td></tr>
+      <tr><td>Box 6 — Total value of sales, excluding VAT</td><td>£{{ "%.2f"|format(vat_return.box6_total_sales_ex_vat) }}</td></tr>
+      <tr><td>Box 7 — Total value of purchases, excluding VAT</td><td>£{{ "%.2f"|format(vat_return.box7_total_purchases_ex_vat) }}</td></tr>
+      <tr><td>Box 8 — Total value of EC supplies</td><td>£{{ "%.2f"|format(vat_return.box8_total_ec_supplies) }}</td></tr>
+      <tr><td>Box 9 — Total value of EC acquisitions</td><td>£{{ "%.2f"|format(vat_return.box9_total_ec_acquisitions) }}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="vat-net {{ 'bad' if vat_return.box5_net_vat >= 0 else 'good' }}">
+    Box 5 — Net VAT {{ 'to pay to HMRC' if vat_return.box5_net_vat >= 0 else 'reclaimable from HMRC' }}:
+    £{{ "%.2f"|format(vat_return.box5_net_vat|abs) }}
+  </div>
+</div>
+
+<p class="muted">This is calculated from transactions recorded under Incomings &amp; Outgoings for the selected quarter. It mirrors the standard UK 9-box VAT return layout — check figures against HMRC guidance before filing.</p>
+{% endblock %}
