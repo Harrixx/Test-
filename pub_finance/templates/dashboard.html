@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p class="muted">Current period: {{ period_label }}</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="label">Income (gross)</div>
+    <div class="value good">£{{ "%.2f"|format(total_income) }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Outgoings (gross)</div>
+    <div class="value bad">£{{ "%.2f"|format(total_expense) }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Net position</div>
+    <div class="value {{ 'good' if net_position >= 0 else 'bad' }}">£{{ "%.2f"|format(net_position) }}</div>
+  </div>
+  <div class="card">
+    <div class="label">VAT due this quarter</div>
+    <div class="value {{ 'bad' if vat_return.box5_net_vat >= 0 else 'good' }}">£{{ "%.2f"|format(vat_return.box5_net_vat) }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Unmatched bank lines</div>
+    <div class="value">{{ unmatched_count }}</div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Recent transactions</h2>
+  <table>
+    <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Net</th><th>VAT</th><th>Gross</th></tr></thead>
+    <tbody>
+      {% for t in recent %}
+      <tr>
+        <td>{{ t.date }}</td>
+        <td><span class="tag {{ t.type }}">{{ t.type }}</span></td>
+        <td>{{ t.category.replace('_', ' ') }}</td>
+        <td>{{ t.description }}</td>
+        <td>£{{ "%.2f"|format(t.net_amount) }}</td>
+        <td>£{{ "%.2f"|format(t.vat_amount) }}</td>
+        <td>£{{ "%.2f"|format(t.gross_amount) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="muted">No transactions yet. <a href="{{ url_for('new_transaction') }}">Add one</a>.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

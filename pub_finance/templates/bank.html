@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Bank statements{% endblock %}
+{% block content %}
+<h1>Bank statements</h1>
+
+<div class="panel">
+  <h2>Import a statement (CSV)</h2>
+  <p class="muted">Expected columns: <code>date</code> (YYYY-MM-DD), <code>description</code>, <code>amount</code> (positive = money in, negative = money out). Most banks let you export a CSV in this shape.</p>
+  <form method="post" enctype="multipart/form-data">
+    <div class="field">
+      <input type="file" name="statement_file" accept=".csv" required>
+    </div>
+    <button class="btn" type="submit">Import</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Reconciliation</h2>
+  <p class="muted">Match bank lines against recorded transactions, or let the app try to auto-match by amount and date.</p>
+  <form method="post" action="{{ url_for('auto_match') }}">
+    <button class="btn secondary" type="submit">Auto-match</button>
+  </form>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th><th>Match to transaction</th></tr>
+  </thead>
+  <tbody>
+    {% for line in lines %}
+    <tr>
+      <td>{{ line.date }}</td>
+      <td>{{ line.description }}</td>
+      <td class="{{ 'good' if line.amount >= 0 else 'bad' }}">£{{ "%.2f"|format(line.amount) }}</td>
+      <td><span class="tag {{ 'matched' if line.matched else 'unmatched' }}">{{ 'matched' if line.matched else 'unmatched' }}</span></td>
+      <td>
+        <form class="inline" method="post" action="{{ url_for('match_line', line_id=line.id) }}">
+          <select name="transaction_id" onchange="this.form.submit()">
+            <option value="">-- unmatched --</option>
+            {% for t in unmatched_tx %}
+            <option value="{{ t.id }}" {{ 'selected' if line.transaction_id == t.id }}>
+              {{ t.date }} · {{ t.type }} · £{{ "%.2f"|format(t.gross_amount) }} · {{ t.description }}
+            </option>
+            {% endfor %}
+            {% if line.transaction %}
+            <option value="{{ line.transaction.id }}" selected>
+              {{ line.transaction.date }} · {{ line.transaction.type }} · £{{ "%.2f"|format(line.transaction.gross_amount) }} · {{ line.transaction.description }}
+            </option>
+            {% endif %}
+          </select>
+        </form>
+        <form class="inline" method="post" action="{{ url_for('delete_line', line_id=line.id) }}" onsubmit="return confirm('Delete this bank line?');">
+          <button class="btn danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="muted">No bank statement lines imported yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
