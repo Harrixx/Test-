@@ -40,14 +40,19 @@ _BUILDERS = {
 }
 
 
+def _comment(text: object) -> str:
+    """One-line comment; model text with a line break could otherwise inject OpenSCAD code."""
+    return "// " + " ".join(str(text).split())
+
+
 def generate_scad(geometry: GeometryExtraction) -> str:
     """Render extracted geometry as OpenSCAD source text."""
-    lines = [f"// {geometry.summary}", f"// units: {geometry.units}", ""]
+    lines = [_comment(geometry.summary), _comment(f"units: {geometry.units}"), ""]
     for index, shape in enumerate(geometry.shapes):
         builder = _BUILDERS.get(shape.type)
         if builder is None:
             raise ValueError(f"Unsupported shape type: {shape.type}")
-        lines.append(f"// {shape.label or f'shape {index}'}")
+        lines.append(_comment(shape.label or f"shape {index}"))
         lines.append(builder(shape))
         lines.append("")
     return "\n".join(lines)
