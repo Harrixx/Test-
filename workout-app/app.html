@@ -10,16 +10,17 @@
 :root {
   --bg: #F3F0F5; --surface: #FFFFFF; --ink: #1E1624; --muted: #6E6378; --line: #E2DCE7;
   --accent: #B0306A; --accent-ink: #FFFFFF; --accent-soft: #F7E1EB; --good: #2B7A57; --good-soft: #DDF1E6;
+  --fig: #2A1F31; --fig2: #B3A7BC; --eq: #D6CEDD;
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --body: "Figtree", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
   --r: 14px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #141016; --surface: #1F1923; --ink: #F2ECF4; --muted: #A99EB1; --line: #342B3A;
-  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; color-scheme: dark } }
+  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #141016; --surface: #1F1923; --ink: #F2ECF4; --muted: #A99EB1; --line: #342B3A;
-  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; color-scheme: dark }
+  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; color-scheme: dark }
 
 * { box-sizing: border-box }
 body { background: var(--bg); color: var(--ink); font: 400 16px/1.45 var(--body); -webkit-tap-highlight-color: transparent }
@@ -101,6 +102,27 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
 .finish.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent) }
 .center { text-align: center }
 
+/* Exercise figures + how-to */
+.demo { background: var(--bg); border-radius: 10px; padding: 4px }
+.demo svg { display: block; width: 100%; height: auto; max-height: 180px }
+.demo .floor { stroke: var(--eq); stroke-width: 2 }
+.demo .fg, .demo .fg2 { fill: none; stroke-linecap: round; stroke-linejoin: round }
+.demo .fg { stroke: var(--fig) } .demo .fg2 { stroke: var(--fig2) }
+.demo .hd { fill: var(--fig) }
+.demo .eqf { fill: var(--eq) }
+.demo .eq { stroke: var(--eq); stroke-width: 3; stroke-linecap: round }
+.demo .eq.pad { stroke-width: 8 }
+.demo .wt { fill: var(--accent) }
+.demo .wtl { stroke: var(--accent); stroke-width: 6; stroke-linecap: round }
+.demo .cab { stroke: var(--accent); stroke-width: 1.5; opacity: .8 }
+.how summary { font-weight: 700; color: var(--accent); cursor: pointer; padding: 4px 0; list-style-position: inside }
+.how ol { margin: 8px 0; padding-left: 22px; display: grid; gap: 6px }
+.how p { margin: 8px 0 0; font-size: 15px }
+.how .label { margin-right: 6px }
+.tip { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px }
+.tip b { color: var(--accent); margin-right: 4px }
+.coreh { font-family: var(--body); font-size: 17px; font-weight: 700 }
+
 /* Progress */
 .tablewrap { overflow-x: auto; margin-inline: -16px; padding-inline: 16px }
 table { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 14px }
@@ -150,24 +172,321 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
 <script>
 /* ---- The plan (from the spreadsheet). Edit here to change exercises. ----
-   Each exercise: [name, reps, sets]. */
+   Each exercise: [name, reps, sets, demo]. Each core move: [name × reps, demo].
+   "demo" picks the animation and how-to text from FIG and GUIDE below. */
 const WARMUP = { what: "Bike or StairMaster", time: "15 minutes", note: "Build up the speed each week" };
 const WEEKS = 6;
 const SESSIONS = [
   { id: "s1", name: "Session 1", focus: "Glutes + hamstrings", note: "Heavy weights if possible",
-    ex: [["Barbell hip thrust", "6 to 10", 4], ["Romanian deadlift", "8 to 10", 3], ["Bulgarian split squat", "8 to 12 each leg", 3],
-         ["Seated/lying leg curl (machine)", "10 to 15", 3], ["Cable glute kickback", "12 to 15 each leg", 3], ["Hip abduction (machine)", "10 to 15", 3]],
-    core: ["Reverse crunch × 12–15", "Dead bug × 10 each side", "Plank × 30–45 sec"] },
+    ex: [["Barbell hip thrust", "6 to 10", 4, "hipthrust"], ["Romanian deadlift", "8 to 10", 3, "rdl"], ["Bulgarian split squat", "8 to 12 each leg", 3, "bss"],
+         ["Seated/lying leg curl (machine)", "10 to 15", 3, "legcurl"], ["Cable glute kickback", "12 to 15 each leg", 3, "kickback"], ["Hip abduction (machine)", "10 to 15", 3, "abduction"]],
+    core: [["Reverse crunch × 12–15", "revcrunch"], ["Dead bug × 10 each side", "deadbug"], ["Plank × 30–45 sec", "plank"]] },
   { id: "s2", name: "Session 2", focus: "Quads & glutes",
-    ex: [["Back squat", "6 to 10", 4], ["Leg press", "8 to 12", 3], ["Walking lunges, dumbbell in each hand", "10 each leg", 3],
-         ["Leg extension (machine)", "10 to 15", 3], ["Hip thrust or glute bridge", "10 to 12", 3], ["Hip abduction (machine)", "15 to 20", 3]],
-    core: ["Hanging/knee raises × 10–15", "Bicycle crunch × 12 each side", "Side plank × 30 sec each side"] },
+    ex: [["Back squat", "6 to 10", 4, "squat"], ["Leg press", "8 to 12", 3, "legpress"], ["Walking lunges, dumbbell in each hand", "10 each leg", 3, "walklunge"],
+         ["Leg extension (machine)", "10 to 15", 3, "legext"], ["Hip thrust or glute bridge", "10 to 12", 3, "hipthrust"], ["Hip abduction (machine)", "15 to 20", 3, "abduction"]],
+    core: [["Hanging/knee raises × 10–15", "kneeraise"], ["Bicycle crunch × 12 each side", "bicycle"], ["Side plank × 30 sec each side", "sideplank"]] },
   { id: "s3", name: "Session 3", focus: "Glutes, hamstrings & legs",
-    ex: [["Hip thrust", "8 to 12", 4], ["Romanian deadlift", "8 to 12", 3], ["Reverse lunges, dumbbell in each hand", "10 each leg", 3],
-         ["Leg press", "10 to 12", 3], ["Leg curl (machine)", "10 to 15", 3], ["Cable kickback", "12 to 15 each leg", 3], ["Hip abduction (machine)", "15 to 25", 2]],
-    core: ["Cable crunch × 12–15", "Reverse crunch × 12–15", "Plank shoulder taps × 10 each side"] }
+    ex: [["Hip thrust", "8 to 12", 4, "hipthrust"], ["Romanian deadlift", "8 to 12", 3, "rdl"], ["Reverse lunges, dumbbell in each hand", "10 each leg", 3, "revlunge"],
+         ["Leg press", "10 to 12", 3, "legpress"], ["Leg curl (machine)", "10 to 15", 3, "legcurl"], ["Cable kickback", "12 to 15 each leg", 3, "kickback"], ["Hip abduction (machine)", "15 to 25", 2, "abduction"]],
+    core: [["Cable crunch × 12–15", "cablecrunch"], ["Reverse crunch × 12–15", "revcrunch"], ["Plank shoulder taps × 10 each side", "shouldertaps"]] }
 ];
+
+/* ---- How to do each exercise ---- */
+const GUIDE = {
+  hipthrust: { works: "Glutes, hamstrings", steps: [
+    "Sit on the floor with your upper back against the long edge of a bench. Roll the bar over your hips (use a bar pad).",
+    "Feet flat and about hip-width apart, far enough out that your shins are upright at the top.",
+    "Drive through your heels and push your hips up until your body is flat from shoulders to knees.",
+    "Squeeze your glutes for a second at the top, then lower with control."],
+    tip: "Keep your chin tucked and ribs down. Don't arch your lower back to get higher. Glute bridge: the same move lying flat on the floor, no bench." },
+  rdl: { works: "Hamstrings, glutes, lower back", steps: [
+    "Stand tall holding the bar at your thighs, hands just outside your legs, feet hip-width apart.",
+    "Soften your knees slightly and keep them at that bend the whole time.",
+    "Push your hips back and let the bar slide down your thighs with a flat back, until you feel a strong stretch in your hamstrings (usually just below the knee).",
+    "Drive your hips forward to stand back up, squeezing your glutes at the top."],
+    tip: "Keep the bar touching your legs all the way down. It's a hip hinge, not a squat." },
+  bss: { works: "Glutes, quads", steps: [
+    "Stand a big stride in front of a bench and rest the top of your back foot on it.",
+    "Keep most of your weight on your front foot.",
+    "Lower straight down until your front thigh is about level with the floor.",
+    "Push through your front heel to come back up. Do all your reps, then swap legs."],
+    tip: "Leaning your chest forward a little works the glutes more. Hold dumbbells once bodyweight gets easy." },
+  legcurl: { works: "Hamstrings", steps: [
+    "Set the machine so your knees line up with its pivot point and the pad sits just above your heels.",
+    "Hold the handles and keep your hips pressed into the seat (or the bench, on the lying version).",
+    "Curl your heels towards your bum as far as you can.",
+    "Let the weight back slowly, taking 2 to 3 seconds."],
+    tip: "Don't let the weight drop. The slow way back is where a lot of the work happens." },
+  kickback: { works: "Glutes", steps: [
+    "Clip an ankle strap to the low cable and put it on one ankle.",
+    "Face the machine, hold it for balance and lean forward slightly from your hips.",
+    "Keeping your leg almost straight, kick it back and up by squeezing your glute.",
+    "Pause at the top, then return slowly. Do all your reps, then swap legs."],
+    tip: "Stop before your lower back arches. The movement comes from your hip, not your back." },
+  abduction: { works: "Outer glutes (glute medius)", steps: [
+    "Sit with your back against the pad and the pads on the outside of your knees.",
+    "Push your knees out as wide as you can.",
+    "Hold for a second, then let them come back together slowly."],
+    tip: "Leaning forward slightly from your hips puts more of the work on your glutes." },
+  squat: { works: "Quads, glutes", steps: [
+    "Set the bar at shoulder height in the rack. Step under it so it rests across your upper back, not your neck.",
+    "Stand with feet shoulder-width apart, toes turned out a little.",
+    "Take a breath, brace your stomach, then sit down and back until your thighs are at least level with the floor.",
+    "Drive up through your whole foot to stand."],
+    tip: "Knees go the same way as your toes. Keep your chest up and heels down. Set the safety bars in case you need to drop the bar." },
+  legpress: { works: "Quads, glutes", steps: [
+    "Sit back in the seat and put your feet hip-width apart in the middle of the platform.",
+    "Push the platform up a little and release the safety handles.",
+    "Lower it until your knees are bent to about 90°, keeping your lower back on the pad.",
+    "Press back up without locking your knees straight."],
+    tip: "Feet higher on the platform works your glutes more; lower works your quads more." },
+  walklunge: { works: "Quads, glutes", steps: [
+    "Stand tall with a dumbbell in each hand at your sides.",
+    "Take a long step forward and lower until your back knee almost touches the floor.",
+    "Push through your front heel and bring your back foot through into the next step.",
+    "Keep walking, alternating legs, until you've done 10 on each side."],
+    tip: "Keep your chest up and your front knee in line with your toes." },
+  revlunge: { works: "Glutes, quads", steps: [
+    "Stand tall with a dumbbell in each hand at your sides.",
+    "Take a big step backwards and lower until your back knee almost touches the floor.",
+    "Push through your front heel to bring your back foot in and stand up.",
+    "Alternate legs until you've done 10 on each side."],
+    tip: "Stepping backwards is easier on the knees than walking lunges. Keep most of your weight on the front foot." },
+  legext: { works: "Quads", steps: [
+    "Sit with your back against the pad and the roller on the front of your lower shins.",
+    "Line your knees up with the machine's pivot point.",
+    "Straighten your legs all the way and squeeze your thighs.",
+    "Lower slowly."],
+    tip: "Hold the handles to keep your bum on the seat." },
+  revcrunch: { works: "Lower abs", steps: [
+    "Lie on your back with your arms by your sides and knees bent at 90° above your hips.",
+    "Tighten your stomach and curl your hips off the floor, bringing your knees towards your chest.",
+    "Lower your hips back down slowly."],
+    tip: "Use your abs to lift, not a swing of your legs." },
+  deadbug: { works: "Deep core", steps: [
+    "Lie on your back with your arms pointing at the ceiling and knees bent at 90° above your hips.",
+    "Press your lower back into the floor.",
+    "Slowly lower one arm behind your head and the opposite leg towards the floor, without touching it.",
+    "Bring them back and swap sides."],
+    tip: "If your lower back lifts off the floor, don't lower as far." },
+  plank: { works: "Whole core", steps: [
+    "Forearms on the floor, elbows under your shoulders.",
+    "Step your feet back so your body is a straight line from head to heels.",
+    "Squeeze your glutes and stomach and hold. Keep breathing."],
+    tip: "Don't let your hips sag or stick up in the air." },
+  kneeraise: { works: "Lower abs", steps: [
+    "Hang from a pull-up bar, or rest your forearms on the pads of a knee-raise station with your back against the pad.",
+    "Raise your knees up to at least hip height.",
+    "Lower slowly, without swinging."],
+    tip: "The station with arm pads is easier than hanging. Start there." },
+  bicycle: { works: "Abs, obliques", steps: [
+    "Lie on your back with your hands lightly behind your head and your shoulders just off the floor.",
+    "Bring one knee in while you straighten the other leg.",
+    "Twist so your opposite elbow moves towards the bent knee.",
+    "Switch sides in a slow pedalling motion."],
+    tip: "Don't pull on your neck. Twist from your ribs." },
+  sideplank: { works: "Obliques, outer glutes", steps: [
+    "Lie on your side with your elbow under your shoulder and your legs stacked.",
+    "Lift your hips so your body is a straight line from head to feet.",
+    "Hold for 30 seconds, then switch sides."],
+    tip: "Bend your bottom knee to make it easier." },
+  cablecrunch: { works: "Abs", steps: [
+    "Clip a rope to the high pulley. Kneel facing the machine and hold the rope beside your head.",
+    "Keep your hips still and crunch down, bringing your elbows towards your thighs.",
+    "Come back up slowly."],
+    tip: "Round your back as you crunch. Don't just bend at the hips." },
+  shouldertaps: { works: "Core, shoulders", steps: [
+    "Start in a high plank: hands under your shoulders, body straight, feet a bit wider than your hips.",
+    "Lift one hand and tap the opposite shoulder.",
+    "Put it back down and swap. Keep your hips as still as you can."],
+    tip: "Wider feet make it easier to stop your hips rocking." }
+};
 const CORE_ROUNDS = 3;
+
+/* ---- Exercise figures ----
+   Side-view figure facing right, drawn in a 240×150 box with the floor at y=140.
+   A pose gives the hip position and torso angle, then each leg/arm either as angles
+   (degrees, 0 = right, 90 = up), an ankle/wrist target (solved with 2-bone IK), or
+   arm angles relative to the torso. "a" is the start position, "b" the working position.
+   leg/arm = near side (dark), leg2/arm2 = far side (light), defaulting to the near side. */
+const FIG = {
+  hipthrust: { stat: '<rect x="12" y="97" width="58" height="43" rx="4" class="eqf"/>',
+    a: { hip: [104, 120], torso: 150, leg: { ankle: [146, 136] }, arm: { w: [33, 13], bend: 1 } },
+    b: { hip: [112, 98], torso: 180, leg: { ankle: [146, 136] }, arm: { w: [38, -6], bend: 1 } },
+    props: [{ k: "plate", at: "hip", d: [0, -12] }] },
+  rdl: {
+    a: { hip: [116, 76], torso: 91, leg: { ankle: [120, 136] }, arm: { w: [4, 42] } },
+    b: { hip: [94, 80], torso: 22, leg: { ankle: [120, 136] }, arm: { w: [-2, 42] } },
+    props: [{ k: "plate", at: "wrist", d: [0, 0] }] },
+  bss: { stat: '<rect x="20" y="104" width="50" height="36" rx="4" class="eqf"/>',
+    a: { hip: [108, 80], torso: 88, leg: { ankle: [132, 136] }, leg2: { ankle: [64, 101], foot: 192 }, arm: { arm: 268, fore: 268 } },
+    b: { hip: [100, 104], torso: 78, leg: { ankle: [132, 136] }, leg2: { ankle: [64, 101], foot: 192 }, arm: { arm: 266, fore: 270 } },
+    props: [{ k: "db", at: "wrist" }] },
+  legcurl: { stat: '<rect x="46" y="104" width="58" height="8" rx="3" class="eqf"/><rect x="42" y="52" width="9" height="58" rx="3" class="eqf"/><line x1="76" y1="112" x2="76" y2="140" class="eq"/><rect x="82" y="88" width="30" height="6" rx="3" class="eqf"/>',
+    a: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -15, foot: 70 }, arm: { w: [29, 24] } },
+    b: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -112, foot: -25 }, arm: { w: [29, 24] } },
+    props: [{ k: "pad", at: "ankle", side: -1 }] },
+  legext: { stat: '<rect x="46" y="104" width="58" height="8" rx="3" class="eqf"/><rect x="42" y="52" width="9" height="58" rx="3" class="eqf"/><line x1="76" y1="112" x2="76" y2="140" class="eq"/>',
+    a: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -95, foot: -10 }, arm: { w: [17, 37] } },
+    b: { hip: [66, 100], torso: 98, leg: { thigh: 2, shin: 0, foot: 80 }, arm: { w: [17, 37] } },
+    props: [{ k: "pad", at: "ankle", side: 1 }] },
+  kickback: { stat: '<rect x="178" y="16" width="12" height="124" rx="2" class="eqf"/>',
+    a: { hip: [118, 82], torso: 50, leg: { ankle: [121, 134], foot: -10 }, leg2: { ankle: [126, 136] }, arm: { wa: [177, 66] } },
+    b: { hip: [118, 82], torso: 50, leg: { thigh: 214, shin: 208, foot: 285 }, leg2: { ankle: [126, 136] }, arm: { wa: [177, 66] } },
+    props: [{ k: "cable", from: [178, 134], at: "ankle" }] },
+  squat: {
+    a: { hip: [114, 76], torso: 92, leg: { ankle: [118, 136] }, arm: { rel: [160, -23] } },
+    b: { hip: [90, 106], torso: 50, leg: { ankle: [118, 136] }, arm: { rel: [160, -23] } },
+    props: [{ k: "plate", at: "neck", back: [-5, 10], r: 9 }] },
+  legpress: { stat: '<line x1="80" y1="128" x2="30" y2="94" class="eq pad"/><rect x="40" y="126" width="54" height="14" rx="3" class="eqf"/>',
+    a: { hip: [72, 118], torso: 146, leg: { ankle: [116, 82], foot: 60 }, arm: { wa: [84, 122] } },
+    b: { hip: [72, 118], torso: 146, leg: { ankle: [98, 98], foot: 60 }, arm: { wa: [84, 122] } },
+    props: [{ k: "plat", at: "ankle", along: 45 }] },
+  walklunge: {
+    a: { hip: [110, 80], torso: 90, leg: { ankle: [132, 136] }, leg2: { ankle: [88, 134], foot: -30 }, arm: { arm: 268, fore: 268 } },
+    b: { hip: [106, 104], torso: 88, leg: { ankle: [134, 136] }, leg2: { ankle: [80, 128], foot: -55 }, arm: { arm: 268, fore: 268 } },
+    props: [{ k: "db", at: "wrist" }] },
+  revcrunch: {
+    a: { hip: [112, 132], torso: 180, leg: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: -3, fore: -2 } },
+    b: { hip: [106, 124], torso: 194, leg: { thigh: 128, shin: 25, foot: 30 }, arm: { arm: -3, fore: -2 } } },
+  deadbug: {
+    a: { hip: [114, 132], torso: 180, leg: { thigh: 90, shin: 0, foot: 10 }, leg2: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: 90, fore: 90 }, arm2: { arm: 90, fore: 90 } },
+    b: { hip: [114, 132], torso: 180, leg: { thigh: 8, shin: 6, foot: 60 }, leg2: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: 170, fore: 172 }, arm2: { arm: 90, fore: 90 } } },
+  plank: {
+    a: { hip: [86, 121], torso: 10, leg: { thigh: 190, shin: 190, foot: 262 }, arm: { arm: 270, fore: 0 } },
+    b: { hip: [86, 121], torso: 10, leg: { thigh: 190, shin: 190, foot: 262 }, arm: { arm: 270, fore: 0 } } },
+  sideplank: {
+    a: { hip: [84, 131], torso: 20, leg: { ankle: [26, 135] }, arm: { wa: [148, 136] } },
+    b: { hip: [86, 117], torso: 12, leg: { ankle: [26, 135] }, arm: { wa: [148, 136] } } },
+  kneeraise: { stat: '<rect x="94" y="24" width="8" height="70" rx="3" class="eqf"/><rect x="98" y="54" width="44" height="6" rx="3" class="eqf"/><line x1="98" y1="94" x2="98" y2="140" class="eq"/><line x1="140" y1="60" x2="140" y2="140" class="eq"/>',
+    a: { hip: [108, 68], torso: 90, leg: { thigh: 272, shin: 270, foot: -15 }, arm: { arm: 270, fore: 0 } },
+    b: { hip: [108, 68], torso: 90, leg: { thigh: 5, shin: 272, foot: -10 }, arm: { arm: 270, fore: 0 } } },
+  bicycle: {
+    a: { hip: [120, 132], torso: 160, leg: { thigh: 115, shin: -10, foot: 20 }, leg2: { thigh: 10, shin: 6, foot: 60 }, arm: { rel: [55, 170] } },
+    b: { hip: [120, 132], torso: 160, leg: { thigh: 10, shin: 6, foot: 60 }, leg2: { thigh: 115, shin: -10, foot: 20 }, arm: { rel: [55, 170] } } },
+  cablecrunch: { stat: '<rect x="184" y="16" width="12" height="124" rx="2" class="eqf"/>',
+    a: { hip: [100, 105], torso: 80, leg: { thigh: 270, shin: 180, foot: 180 }, arm: { rel: [-40, 118] } },
+    b: { hip: [97, 105], torso: 22, leg: { thigh: 275, shin: 180, foot: 180 }, arm: { rel: [-40, 118] } },
+    props: [{ k: "cable", from: [184, 22], at: "wrist" }] },
+  shouldertaps: {
+    a: { hip: [88.3, 109], torso: 20, leg: { thigh: 200, shin: 200, foot: 250 }, arm: { arm: 270, fore: 270 }, arm2: { arm: 270, fore: 270 } },
+    b: { hip: [88.3, 109], torso: 20, leg: { thigh: 200, shin: 200, foot: 250 }, arm: { arm: 245, fore: 65 }, arm2: { arm: 270, fore: 270 } } },
+  // Hip abduction is only visible from the front, so it's drawn as points.
+  abduction: { front: true, stat: '<rect x="97" y="18" width="46" height="80" rx="6" class="eqf"/><rect x="88" y="96" width="64" height="8" rx="3" class="eqf"/>',
+    a: { head: [120, 28], nk: [120, 42], pv: [120, 86], s1: [106, 48], s2: [134, 48], e1: [101, 70], e2: [139, 70], w1: [96, 94], w2: [144, 94],
+         h1: [112, 94], h2: [128, 94], k1: [109, 110], k2: [131, 110], a1: [108, 134], a2: [132, 134] },
+    b: { head: [120, 28], nk: [120, 42], pv: [120, 86], s1: [106, 48], s2: [134, 48], e1: [101, 70], e2: [139, 70], w1: [96, 94], w2: [144, 94],
+         h1: [112, 94], h2: [128, 94], k1: [86, 106], k2: [154, 106], a1: [98, 134], a2: [142, 134] },
+    shapes: [["l", ["h1", "k1", "a1"], 7], ["l", ["h2", "k2", "a2"], 7], ["l", ["h1", "h2"], 10], ["l", ["nk", "pv"], 20],
+             ["l", ["s1", "e1", "w1"], 5.5], ["l", ["s2", "e2", "w2"], 5.5], ["c", "head", 8], ["pad", "k1", -8], ["pad", "k2", 8]] }
+};
+FIG.revlunge = FIG.walklunge;
+
+const LEN = { t: 38, th: 31, sh: 30, ft: 10, ua: 22, fa: 21, hd: 10 };
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+const go = (p, a, l) => [p[0] + l * Math.cos(rad(a)), p[1] - l * Math.sin(rad(a))];
+const dirTo = (a, b) => deg(Math.atan2(a[1] - b[1], b[0] - a[0]));
+function ik(a, b, l1, l2, bend) {
+  let d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  d = Math.max(Math.abs(l1 - l2) + .01, Math.min(l1 + l2 - .01, d));
+  const a1 = dirTo(a, b) + bend * deg(Math.acos((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)));
+  return [a1, dirTo(go(a, a1, l1), b)];
+}
+function poseVec(o) {
+  const hip = o.hip, neck = go(hip, o.torso, LEN.t);
+  const leg = g => g.ankle ? ik(hip, g.ankle, LEN.th, LEN.sh, g.bend ?? 1) : [g.thigh, g.shin];
+  const arm = g => g.rel ? [o.torso + g.rel[0], o.torso + g.rel[1]]
+    : g.wa || g.w ? ik(neck, g.wa || [neck[0] + g.w[0], neck[1] + g.w[1]], LEN.ua, LEN.fa, g.bend ?? -1) : [g.arm, g.fore];
+  const l2 = o.leg2 || o.leg, a2 = o.arm2 || o.arm;
+  return [hip[0], hip[1], o.torso, ...leg(o.leg), o.leg.foot ?? 0, ...leg(l2), l2.foot ?? 0, ...arm(o.arm), ...arm(a2)];
+}
+const mixAng = (a, b, u) => a + ((((b - a) % 360) + 540) % 360 - 180) * u;
+function joints(v) {
+  const hip = [v[0], v[1]], neck = go(hip, v[2], LEN.t), j = { hip, neck, head: go(neck, v[2], LEN.hd) };
+  j.knee = go(hip, v[3], LEN.th); j.ankle = go(j.knee, v[4], LEN.sh); j.toe = go(j.ankle, v[5], LEN.ft);
+  j.knee2 = go(hip, v[6], LEN.th); j.ankle2 = go(j.knee2, v[7], LEN.sh); j.toe2 = go(j.ankle2, v[8], LEN.ft);
+  j.elbow = go(neck, v[9], LEN.ua); j.wrist = go(j.elbow, v[10], LEN.fa);
+  j.elbow2 = go(neck, v[11], LEN.ua); j.wrist2 = go(j.elbow2, v[12], LEN.fa);
+  return j;
+}
+const NS = "http://www.w3.org/2000/svg";
+function mk(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+const pts = arr => arr.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+let LIVE = [];
+
+function mountDemo(box) {
+  const f = FIG[box.dataset.demo]; if (!f) return;
+  const svg = mk("svg", { viewBox: "0 0 240 150", "aria-hidden": "true" }, box);
+  svg.innerHTML = '<line x1="0" y1="140" x2="240" y2="140" class="floor"/>' + (f.stat || "");
+  let update;
+  if (f.front) {
+    const els = f.shapes.map(s => s[0] === "l" ? mk("polyline", { class: "fg", "stroke-width": s[2] }, svg)
+      : s[0] === "c" ? mk("circle", { class: "hd", r: s[2] }, svg) : mk("circle", { class: "eqf", r: 6 }, svg));
+    update = u => {
+      const P = {}; for (const k in f.a) P[k] = [f.a[k][0] + (f.b[k][0] - f.a[k][0]) * u, f.a[k][1] + (f.b[k][1] - f.a[k][1]) * u];
+      f.shapes.forEach((s, i) => {
+        if (s[0] === "l") els[i].setAttribute("points", pts(s[1].map(n => P[n])));
+        else { els[i].setAttribute("cx", P[s[1]][0] + (s[0] === "pad" ? s[2] : 0)); els[i].setAttribute("cy", P[s[1]][1]); }
+      });
+    };
+  } else {
+    f.A = f.A || poseVec(f.a); f.B = f.B || poseVec(f.b);
+    const leg2 = mk("polyline", { class: "fg2", "stroke-width": 6.5 }, svg), arm2 = mk("polyline", { class: "fg2", "stroke-width": 5.5 }, svg);
+    const torso = mk("polyline", { class: "fg", "stroke-width": 10 }, svg), head = mk("circle", { class: "hd", r: 8 }, svg);
+    const leg = mk("polyline", { class: "fg", "stroke-width": 6.5 }, svg), arm = mk("polyline", { class: "fg", "stroke-width": 5.5 }, svg);
+    const props = (f.props || []).map(p => ({ p, e: p.k === "plate" ? mk("circle", { class: "wt", r: p.r || 11 }, svg)
+      : p.k === "pad" ? mk("circle", { class: "eqf", r: 5 }, svg)
+      : mk("line", { class: p.k === "cable" ? "cab" : p.k === "db" ? "wtl" : "eq pad" }, svg) }));
+    update = u => {
+      const v = f.A.map((a, i) => i < 2 ? a + (f.B[i] - a) * u : mixAng(a, f.B[i], u)), j = joints(v);
+      leg2.setAttribute("points", pts([j.hip, j.knee2, j.ankle2, j.toe2]));
+      arm2.setAttribute("points", pts([j.neck, j.elbow2, j.wrist2]));
+      torso.setAttribute("points", pts([j.hip, j.neck]));
+      head.setAttribute("cx", j.head[0]); head.setAttribute("cy", j.head[1]);
+      leg.setAttribute("points", pts([j.hip, j.knee, j.ankle, j.toe]));
+      arm.setAttribute("points", pts([j.neck, j.elbow, j.wrist]));
+      for (const { p, e } of props) {
+        const at = j[p.at], d = p.d || [0, 0];
+        if (p.k === "plate") {
+          // "back" places it relative to the torso: [along the spine, towards the back].
+          const c = p.back ? go(go(at, v[2], p.back[0]), v[2] + 90, p.back[1]) : [at[0] + d[0], at[1] + d[1]];
+          e.setAttribute("cx", c[0]); e.setAttribute("cy", c[1]);
+        }
+        else if (p.k === "pad") { const c = go(at, v[4] + 90 * p.side, 7); e.setAttribute("cx", c[0]); e.setAttribute("cy", c[1]); }
+        else {
+          let a, b;
+          if (p.k === "cable") { a = p.from; b = at; }
+          else if (p.k === "db") { a = [at[0] - 7, at[1] + 2]; b = [at[0] + 7, at[1] + 2]; }
+          else { const c = go(at, p.along, 7); a = go(c, p.along + 90, 16); b = go(c, p.along - 90, 16); }
+          e.setAttribute("x1", a[0]); e.setAttribute("y1", a[1]); e.setAttribute("x2", b[0]); e.setAttribute("y2", b[1]);
+        }
+      }
+    };
+  }
+  LIVE.push({ node: svg, update });
+  update(motionPhase(performance.now()));
+}
+const RM = matchMedia("(prefers-reduced-motion: reduce)");
+function motionPhase(t) {
+  if (RM.matches) return 1;
+  const p = (t % 3200) / 3200, e = x => (1 - Math.cos(Math.PI * x)) / 2;
+  return p < .15 ? 0 : p < .5 ? e((p - .15) / .35) : p < .65 ? 1 : e(1 - (p - .65) / .35);
+}
+(function loop(t) {
+  LIVE = LIVE.filter(x => x.node.isConnected);
+  const u = motionPhase(t); for (const x of LIVE) x.update(u);
+  requestAnimationFrame(loop);
+})(0);
+
+const OPEN = new Set();
+function howTo(key, name, id) {
+  const g = GUIDE[key]; if (!g) return "";
+  return `<div class="demo" data-demo="${key}" role="img" aria-label="Animation of ${esc(name)}"></div>
+    <details class="how" data-how="${id}"${OPEN.has(id) ? " open" : ""}><summary>How to do it</summary>
+      <p class="works"><span class="label">Works</span> ${esc(g.works)}</p>
+      <ol>${g.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+      <p class="tip"><b>Tip</b> ${esc(g.tip)}</p></details>`;
+}
 
 /* ---- Storage ---- */
 const KEY = "liftlog.v1";
@@ -255,6 +574,7 @@ function renderSession(sid) {
       <div class="exhead"><div><h3>${esc(e[0])}</h3>
         <div class="last">${lt ? `Week ${lt.week} best: <b class="num">${fmtKg(lt.kg)} kg${lt.reps ? " × " + esc(lt.reps) : ""}</b>` : w === 1 ? "First week: find a weight you can do with good form" : "No weight logged before"}</div></div>
         <div class="target num">${e[2]} <span>×</span> ${esc(e[1])}</div></div>
+      ${howTo(e[3], e[0], "ex-" + e[3])}
       <div class="sets">${sets.map((x, j) => `
         <div class="set${x.done ? " isdone" : ""}" data-set="${j}">
           <span class="n">Set ${j + 1}</span>
@@ -265,13 +585,14 @@ function renderSession(sid) {
     </article>`;
   });
   html += `</section><section class="block"><span class="label">Core finisher · ${CORE_ROUNDS} rounds</span>
-    <div class="card muted" style="font-size:15px">${s.core.map(esc).join("<br>")}</div>
+    ${s.core.map(c => `<article class="card ex"><h3 class="coreh">${esc(c[0])}</h3>${howTo(c[1], c[0], "core-" + c[1])}</article>`).join("")}
     ${l.core.map((d, r) => `<button type="button" class="check" data-core="${r}" aria-pressed="${d}"><span class="box">${TICK}</span><span class="t"><b>Round ${r + 1}</b></span></button>`).join("")}
   </section><section class="block">
     ${l.done ? `<p class="center muted">Finished ${fmtDate(l.done)}</p><button type="button" class="finish ghost" data-undo>Mark as not finished</button>`
              : `<button type="button" class="finish" data-finish>Finish ${s.name.toLowerCase()}</button>`}
   </section>`;
   $("#view").innerHTML = html;
+  document.querySelectorAll("[data-demo]").forEach(mountDemo);
 }
 
 /* ---- Progress ---- */
@@ -319,6 +640,7 @@ function rerenderKeepScroll() { const y = scrollY; route(); scrollTo(0, y); }
 addEventListener("hashchange", () => { resetArmed = false; route(); scrollTo(0, 0); });
 
 /* ---- Events ---- */
+document.addEventListener("toggle", ev => { const d = ev.target; if (d.dataset && d.dataset.how) d.open ? OPEN.add(d.dataset.how) : OPEN.delete(d.dataset.how); }, true);
 document.addEventListener("input", ev => {
   const inp = ev.target.closest("input[data-f]"); if (!inp) return;
   const sid = location.hash.slice(1), i = +inp.closest("[data-ex]").dataset.ex, j = +inp.closest("[data-set]").dataset.set;
