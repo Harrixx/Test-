@@ -1,0 +1,8 @@
+#!/bin/sh
+# Wraps app.html in a full HTML document so it can be hosted anywhere (GitHub Pages, Vercel, Netlify).
+cd "$(dirname "$0")"
+{ printf '<!doctype html>\n<html lang="en-GB">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+  sed -n '1,/<\/style>/p' app.html
+  printf '</head>\n<body>\n'
+  sed '1,/<\/style>/d' app.html
+  printf '</body>\n</html>\n'; } > index.html
