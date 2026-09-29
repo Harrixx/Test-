@@ -6,72 +6,98 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one phone-width column; sticky week picker on top, rest timer docked at the bottom. */
+/* Layout: one phone-width column; sticky header (brand, tabs, week picker), rest timer docked at the bottom, sheets slide up. */
 :root {
   --bg: #F3F0F5; --surface: #FFFFFF; --ink: #1E1624; --muted: #6E6378; --line: #E2DCE7;
   --accent: #B0306A; --accent-ink: #FFFFFF; --accent-soft: #F7E1EB; --good: #2B7A57; --good-soft: #DDF1E6;
-  --fig: #2A1F31; --fig2: #B3A7BC; --eq: #D6CEDD;
+  --fig: #2A1F31; --fig2: #B3A7BC; --eq: #D6CEDD; --scrim: rgba(30, 22, 36, .45);
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --body: "Figtree", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
   --r: 14px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #141016; --surface: #1F1923; --ink: #F2ECF4; --muted: #A99EB1; --line: #342B3A;
-  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; color-scheme: dark } }
+  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328;
+  --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; --scrim: rgba(0, 0, 0, .6); color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #141016; --surface: #1F1923; --ink: #F2ECF4; --muted: #A99EB1; --line: #342B3A;
-  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328; --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; color-scheme: dark }
+  --accent: #F0679F; --accent-ink: #1A0D14; --accent-soft: #3A1F2D; --good: #6CCB9C; --good-soft: #193328;
+  --fig: #EDE4F0; --fig2: #6F6478; --eq: #3D3344; --scrim: rgba(0, 0, 0, .6); color-scheme: dark }
 
 * { box-sizing: border-box }
+[hidden] { display: none !important }
 body { background: var(--bg); color: var(--ink); font: 400 16px/1.45 var(--body); -webkit-tap-highlight-color: transparent }
 .app { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: 0 140px }
-button, input, textarea { font: inherit; color: inherit }
+button, input, textarea, select { font: inherit; color: inherit }
 button { cursor: pointer }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.1 }
 .num { font-variant-numeric: tabular-nums }
 .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
 .muted { color: var(--muted) }
+.link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 700; text-decoration: none; cursor: pointer; text-align: left }
 
 /* Header */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 14px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line) }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line) }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px }
 .brand { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em }
 .brand b { color: var(--accent) }
-.nav { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px }
-.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 999px }
+.me { display: flex; align-items: center; gap: 10px; min-width: 0 }
+.sync { font-size: 12px; color: var(--muted); white-space: nowrap }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink); font-weight: 700; text-decoration: none; flex: none }
+.avatar[aria-current="page"] { background: var(--ink); color: var(--bg) }
+.nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px }
+.nav a { text-align: center; text-decoration: none; color: var(--muted); font-weight: 600; font-size: 14px; padding: 7px 4px; border-radius: 999px }
 .nav a[aria-current="page"] { background: var(--ink); color: var(--bg) }
-.weeks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px }
-.weeks button { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 0; font-weight: 600; font-size: 14px; display: grid; line-height: 1.15 }
+.weeks { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none }
+.weeks button { flex: 1 0 50px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 0; font-weight: 600; font-size: 14px; display: grid; line-height: 1.15 }
 .weeks button small { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700 }
 .weeks button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
 .weeks button[aria-pressed="true"] small { color: var(--accent-ink); opacity: .8 }
 .weeks button.full:not([aria-pressed="true"]) { border-color: var(--good); color: var(--good) }
 
-/* Home */
+/* Shared blocks */
 .stack { display: grid; gap: 14px; padding-top: 18px }
 .hello h1 { font-size: 30px; font-weight: 800 }
 .hello p { margin: 6px 0 0 }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px }
-.sess { display: grid; gap: 10px; text-decoration: none; color: inherit }
-.sess h2 { font-size: 22px; font-weight: 800 }
-.sess .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px }
-.sess ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px }
-.sess li { font-size: 13px; padding: 3px 9px; border-radius: 999px; background: var(--bg); color: var(--muted) }
-.sess.next { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) }
+.card h2 { font-size: 21px; font-weight: 800 }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+.btn.danger { color: var(--accent); border-color: var(--accent) }
+.btn.wide { width: 100% }
+.tools { display: flex; flex-wrap: wrap; gap: 8px }
+.finish { width: 100%; border: 0; border-radius: var(--r); padding: 16px; font-weight: 700; font-size: 17px; background: var(--accent); color: var(--accent-ink); text-align: center; text-decoration: none; display: block }
+.finish.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent) }
+.center { text-align: center }
 .pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--bg); color: var(--muted); white-space: nowrap }
 .pill.go { background: var(--accent); color: var(--accent-ink) }
 .pill.done { background: var(--good-soft); color: var(--good) }
 .pill.part { background: var(--accent-soft); color: var(--accent) }
+.note { display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; justify-self: start }
+.tip { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; margin: 0 }
+.tip b { color: var(--accent); margin-right: 4px }
+.welcome { display: grid; gap: 8px; border-color: var(--accent) }
+.welcome .row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start }
+.x { background: none; border: 0; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 4px }
+
+/* Train */
+.sess { display: grid; gap: 10px; text-decoration: none; color: inherit }
+.sess h2 { font-size: 22px }
+.sess .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px }
+.sess ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px }
+.sess li { font-size: 13px; padding: 3px 9px; border-radius: 999px; background: var(--bg); color: var(--muted) }
+.sess.next { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) }
 .meter { height: 6px; border-radius: 99px; background: var(--bg); overflow: hidden }
 .meter i { display: block; height: 100%; background: var(--accent); border-radius: 99px }
 .meter.done i { background: var(--good) }
+.tcard { display: grid; gap: 8px }
+.tcard .meta { display: flex; flex-wrap: wrap; gap: 6px }
 
 /* Session */
 .shead { display: grid; gap: 6px; padding-top: 18px }
 .shead a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px }
 .shead h1 { font-size: 32px; font-weight: 800 }
-.note { display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; justify-self: start }
 .block { display: grid; gap: 10px; padding-top: 22px }
 .check { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px }
 .check .box { flex: none; width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--line); display: grid; place-items: center }
@@ -84,7 +110,7 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
 .ex { display: grid; gap: 12px }
 .ex.complete { border-color: var(--good) }
 .exhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px }
-.exhead h3 { font-family: var(--body); font-size: 18px; font-weight: 700; line-height: 1.25 }
+.exhead h3, .coreh { font-family: var(--body); font-size: 18px; font-weight: 700; line-height: 1.25 }
 .target { font-weight: 700; white-space: nowrap; font-size: 15px }
 .target span { color: var(--muted); font-weight: 500 }
 .last { font-size: 13px; color: var(--muted); margin-top: 2px }
@@ -98,13 +124,10 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
 .tick { height: 46px; border-radius: 10px; border: 2px solid var(--line); background: transparent; display: grid; place-items: center; color: var(--muted) }
 .tick[aria-pressed="true"] { background: var(--good); border-color: var(--good); color: var(--bg) }
 .set.isdone input { border-color: transparent; background: var(--good-soft) }
-.finish { width: 100%; border: 0; border-radius: var(--r); padding: 16px; font-weight: 700; font-size: 17px; background: var(--accent); color: var(--accent-ink) }
-.finish.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent) }
-.center { text-align: center }
 
 /* Exercise figures + how-to */
-.demo { background: var(--bg); border-radius: 10px; padding: 4px }
-.demo svg { display: block; width: 100%; height: auto; max-height: 180px }
+.demo { background: var(--bg); border-radius: 10px; padding: 4px; display: block }
+.demo svg { display: block; width: 100%; height: auto; max-height: 170px }
 .demo .floor { stroke: var(--eq); stroke-width: 2 }
 .demo .fg, .demo .fg2 { fill: none; stroke-linecap: round; stroke-linejoin: round }
 .demo .fg { stroke: var(--fig) } .demo .fg2 { stroke: var(--fig2) }
@@ -115,32 +138,92 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-he
 .demo .wt { fill: var(--accent) }
 .demo .wtl { stroke: var(--accent); stroke-width: 6; stroke-linecap: round }
 .demo .cab { stroke: var(--accent); stroke-width: 1.5; opacity: .8 }
+.demo .band { stroke-width: 3 }
 .how summary { font-weight: 700; color: var(--accent); cursor: pointer; padding: 4px 0; list-style-position: inside }
-.how ol { margin: 8px 0; padding-left: 22px; display: grid; gap: 6px }
+.how ol, .guide ol, .guide ul { margin: 8px 0; padding-left: 22px; display: grid; gap: 6px }
 .how p { margin: 8px 0 0; font-size: 15px }
 .how .label { margin-right: 6px }
-.tip { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px }
-.tip b { color: var(--accent); margin-right: 4px }
-.coreh { font-family: var(--body); font-size: 17px; font-weight: 700 }
+
+/* Plans + editor */
+.plan.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) }
+.plan { display: grid; gap: 10px }
+.plan .row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline }
+.fl { display: grid; gap: 6px; font-weight: 600; font-size: 14px; min-width: 0 }
+.fl .hint { font-weight: 400; color: var(--muted); font-size: 13px }
+.in { width: 100%; min-width: 0; height: 46px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 0 12px; font-size: 16px }
+select.in { padding-right: 8px }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px }
+.ed-sess { display: grid; gap: 12px }
+.erow { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: start; padding-block: 10px; border-top: 1px solid var(--line) }
+.erow .thumb { padding: 2px; border-radius: 8px }
+.erow .body { display: grid; gap: 8px; min-width: 0 }
+.erow .name { font-weight: 700; line-height: 1.25 }
+.erow .nrow { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px }
+.erow .ctrl { display: grid; grid-template-columns: 1fr 72px; gap: 8px }
+.erow .ctrl.core { grid-template-columns: 1fr }
+.mini button:disabled { opacity: .35 }
+.mini { display: flex; gap: 4px }
+.mini button { width: 36px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; color: var(--muted) }
+.small-in { height: 40px; font-size: 15px }
+
+/* Library */
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px }
+.chip { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 14px; color: var(--muted) }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px }
+.lcard { display: grid; gap: 6px; align-content: start; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 8px; min-width: 0 }
+.lcard b { font-size: 15px; line-height: 1.2 }
+.lcard small { color: var(--muted); font-size: 12px; line-height: 1.3 }
+.empty { padding: 20px; text-align: center; color: var(--muted) }
+
+/* Learn */
+.gcard { display: grid; gap: 4px; text-decoration: none; color: inherit }
+.gcard h2 { font-size: 20px }
+.guide { display: grid; gap: 18px; padding-top: 18px }
+.guide h1 { font-size: 30px; font-weight: 800 }
+.guide h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px }
+.guide p { margin: 0 0 8px; max-width: 65ch }
+.calc { display: grid; gap: 12px }
+.results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.tile { background: var(--bg); border-radius: 12px; padding: 12px }
+.tile b { display: block; font-family: var(--display); font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums }
+.tile.hl { background: var(--accent-soft) }
+.tile.hl b { color: var(--accent) }
+.tile small { color: var(--muted); font-size: 13px }
 
 /* Progress */
 .tablewrap { overflow-x: auto; margin-inline: -16px; padding-inline: 16px }
-table { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 14px }
+table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 14px }
 th, td { padding: 9px 6px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums }
 th:first-child, td:first-child { text-align: left; padding-left: 0; max-width: 150px }
 thead th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
 th.cur { color: var(--accent) }
 td.up { color: var(--good); font-weight: 700 }
 td.empty { color: var(--line) }
-.tools { display: flex; flex-wrap: wrap; gap: 8px }
-.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 14px }
-.btn.danger { color: var(--accent); border-color: var(--accent) }
-textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace }
-.msg { font-size: 14px; font-weight: 600; color: var(--good); min-height: 1.2em }
+textarea { width: 100%; min-height: 110px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px; font-size: 12px; font-family: ui-monospace, Menlo, monospace }
+.msg { font-size: 14px; font-weight: 600; min-height: 1.2em; margin: 0 }
+.msg.ok { color: var(--good) } .msg.err { color: var(--accent) }
+
+/* Sign-in */
+.auth { min-height: 100%; display: grid; place-items: center; padding-inline: 16px; padding-block: 32px }
+.auth-in { width: 100%; max-width: 400px; display: grid; gap: 18px }
+.auth .brand { font-size: 40px }
+.auth .card { display: grid; gap: 14px }
+.auth h2 { font-size: 24px }
+.auth form { display: grid; gap: 12px }
+.auth .swap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px }
+
+/* Sheet + toast */
+.sheet { position: fixed; inset: 0; z-index: 20; background: var(--scrim); display: flex; align-items: flex-end; justify-content: center }
+.sheet-in { width: 100%; max-width: 560px; max-height: 92%; overflow-y: auto; background: var(--bg); border-radius: 18px 18px 0 0; padding: 14px 16px calc(24px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 14px; align-content: start }
+.sheet-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; position: sticky; top: -14px; background: var(--bg); padding-block: 4px }
+.sheet-top h2 { font-size: 22px }
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-weight: 600; font-size: 14px; max-width: calc(100% - 32px) }
 
 /* Rest timer */
 .timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--ink); color: var(--bg); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) }
-.timer .in { max-width: 528px; margin: 0 auto; display: flex; align-items: center; gap: 12px }
+.timer .in2 { max-width: 528px; margin: 0 auto; display: flex; align-items: center; gap: 12px }
 .timer .clock { font-family: var(--display); font-weight: 800; font-size: 34px; font-variant-numeric: tabular-nums; min-width: 92px }
 .timer .clock.over { color: var(--accent) }
 .timer .lbl { flex: 1; min-width: 0; font-size: 13px; line-height: 1.25; opacity: .8 }
@@ -149,20 +232,33 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 @media (prefers-reduced-motion: no-preference) { .meter i, .timer .prog { transition: width .3s linear } }
 </style>
 
-<div class="app">
+<section class="auth" id="auth" hidden>
+  <div class="auth-in">
+    <div><div class="brand">Lift<b>Log</b></div><p class="muted" style="margin:6px 0 0">Workout plans, animated how-tos and your progress in one place. Made for beginners.</p></div>
+    <div class="card" id="authBody"></div>
+  </div>
+</section>
+
+<div class="app" id="app" hidden>
   <header class="top">
     <div class="bar">
       <div class="brand">Lift<b>Log</b></div>
-      <nav class="nav"><a href="#home" id="navHome">Workouts</a><a href="#progress" id="navProg">Progress</a></nav>
+      <div class="me"><span class="sync" id="sync" role="status"></span><a class="avatar" id="avatar" href="#account" aria-label="Your account">?</a></div>
     </div>
+    <nav class="nav" aria-label="Main">
+      <a href="#home" data-nav="home">Train</a><a href="#plans" data-nav="plans">Plans</a><a href="#learn" data-nav="learn">Learn</a><a href="#progress" data-nav="progress">Progress</a>
+    </nav>
     <div class="weeks" id="weeks" role="group" aria-label="Choose week"></div>
   </header>
   <main id="view"></main>
 </div>
 
+<div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheetIn" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div></div>
+<div class="toast" id="toast" hidden></div>
+
 <div class="timer" id="timer" hidden>
   <div class="prog" id="tProg"></div>
-  <div class="in">
+  <div class="in2">
     <div class="clock" id="tClock">1:30</div>
     <div class="lbl" id="tLbl">Rest</div>
     <button type="button" id="tAdd">+15s</button>
@@ -170,530 +266,680 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="exercises.js"></script>
+<script src="guides.js"></script>
 <script>
-/* ---- The plan (from the spreadsheet). Edit here to change exercises. ----
-   Each exercise: [name, reps, sets, demo]. Each core move: [name × reps, demo].
-   "demo" picks the animation and how-to text from FIG and GUIDE below. */
-const WARMUP = { what: "Bike or StairMaster", time: "15 minutes", note: "Build up the speed each week" };
-const WEEKS = 6;
-const SESSIONS = [
-  { id: "s1", name: "Session 1", focus: "Glutes + hamstrings", note: "Heavy weights if possible",
-    ex: [["Barbell hip thrust", "6 to 10", 4, "hipthrust"], ["Romanian deadlift", "8 to 10", 3, "rdl"], ["Bulgarian split squat", "8 to 12 each leg", 3, "bss"],
-         ["Seated/lying leg curl (machine)", "10 to 15", 3, "legcurl"], ["Cable glute kickback", "12 to 15 each leg", 3, "kickback"], ["Hip abduction (machine)", "10 to 15", 3, "abduction"]],
-    core: [["Reverse crunch × 12–15", "revcrunch"], ["Dead bug × 10 each side", "deadbug"], ["Plank × 30–45 sec", "plank"]] },
-  { id: "s2", name: "Session 2", focus: "Quads & glutes",
-    ex: [["Back squat", "6 to 10", 4, "squat"], ["Leg press", "8 to 12", 3, "legpress"], ["Walking lunges, dumbbell in each hand", "10 each leg", 3, "walklunge"],
-         ["Leg extension (machine)", "10 to 15", 3, "legext"], ["Hip thrust or glute bridge", "10 to 12", 3, "hipthrust"], ["Hip abduction (machine)", "15 to 20", 3, "abduction"]],
-    core: [["Hanging/knee raises × 10–15", "kneeraise"], ["Bicycle crunch × 12 each side", "bicycle"], ["Side plank × 30 sec each side", "sideplank"]] },
-  { id: "s3", name: "Session 3", focus: "Glutes, hamstrings & legs",
-    ex: [["Hip thrust", "8 to 12", 4, "hipthrust"], ["Romanian deadlift", "8 to 12", 3, "rdl"], ["Reverse lunges, dumbbell in each hand", "10 each leg", 3, "revlunge"],
-         ["Leg press", "10 to 12", 3, "legpress"], ["Leg curl (machine)", "10 to 15", 3, "legcurl"], ["Cable kickback", "12 to 15 each leg", 3, "kickback"], ["Hip abduction (machine)", "15 to 25", 2, "abduction"]],
-    core: [["Cable crunch × 12–15", "cablecrunch"], ["Reverse crunch × 12–15", "revcrunch"], ["Plank shoulder taps × 10 each side", "shouldertaps"]] }
-];
-
-/* ---- How to do each exercise ---- */
-const GUIDE = {
-  hipthrust: { works: "Glutes, hamstrings", steps: [
-    "Sit on the floor with your upper back against the long edge of a bench. Roll the bar over your hips (use a bar pad).",
-    "Feet flat and about hip-width apart, far enough out that your shins are upright at the top.",
-    "Drive through your heels and push your hips up until your body is flat from shoulders to knees.",
-    "Squeeze your glutes for a second at the top, then lower with control."],
-    tip: "Keep your chin tucked and ribs down. Don't arch your lower back to get higher. Glute bridge: the same move lying flat on the floor, no bench." },
-  rdl: { works: "Hamstrings, glutes, lower back", steps: [
-    "Stand tall holding the bar at your thighs, hands just outside your legs, feet hip-width apart.",
-    "Soften your knees slightly and keep them at that bend the whole time.",
-    "Push your hips back and let the bar slide down your thighs with a flat back, until you feel a strong stretch in your hamstrings (usually just below the knee).",
-    "Drive your hips forward to stand back up, squeezing your glutes at the top."],
-    tip: "Keep the bar touching your legs all the way down. It's a hip hinge, not a squat." },
-  bss: { works: "Glutes, quads", steps: [
-    "Stand a big stride in front of a bench and rest the top of your back foot on it.",
-    "Keep most of your weight on your front foot.",
-    "Lower straight down until your front thigh is about level with the floor.",
-    "Push through your front heel to come back up. Do all your reps, then swap legs."],
-    tip: "Leaning your chest forward a little works the glutes more. Hold dumbbells once bodyweight gets easy." },
-  legcurl: { works: "Hamstrings", steps: [
-    "Set the machine so your knees line up with its pivot point and the pad sits just above your heels.",
-    "Hold the handles and keep your hips pressed into the seat (or the bench, on the lying version).",
-    "Curl your heels towards your bum as far as you can.",
-    "Let the weight back slowly, taking 2 to 3 seconds."],
-    tip: "Don't let the weight drop. The slow way back is where a lot of the work happens." },
-  kickback: { works: "Glutes", steps: [
-    "Clip an ankle strap to the low cable and put it on one ankle.",
-    "Face the machine, hold it for balance and lean forward slightly from your hips.",
-    "Keeping your leg almost straight, kick it back and up by squeezing your glute.",
-    "Pause at the top, then return slowly. Do all your reps, then swap legs."],
-    tip: "Stop before your lower back arches. The movement comes from your hip, not your back." },
-  abduction: { works: "Outer glutes (glute medius)", steps: [
-    "Sit with your back against the pad and the pads on the outside of your knees.",
-    "Push your knees out as wide as you can.",
-    "Hold for a second, then let them come back together slowly."],
-    tip: "Leaning forward slightly from your hips puts more of the work on your glutes." },
-  squat: { works: "Quads, glutes", steps: [
-    "Set the bar at shoulder height in the rack. Step under it so it rests across your upper back, not your neck.",
-    "Stand with feet shoulder-width apart, toes turned out a little.",
-    "Take a breath, brace your stomach, then sit down and back until your thighs are at least level with the floor.",
-    "Drive up through your whole foot to stand."],
-    tip: "Knees go the same way as your toes. Keep your chest up and heels down. Set the safety bars in case you need to drop the bar." },
-  legpress: { works: "Quads, glutes", steps: [
-    "Sit back in the seat and put your feet hip-width apart in the middle of the platform.",
-    "Push the platform up a little and release the safety handles.",
-    "Lower it until your knees are bent to about 90°, keeping your lower back on the pad.",
-    "Press back up without locking your knees straight."],
-    tip: "Feet higher on the platform works your glutes more; lower works your quads more." },
-  walklunge: { works: "Quads, glutes", steps: [
-    "Stand tall with a dumbbell in each hand at your sides.",
-    "Take a long step forward and lower until your back knee almost touches the floor.",
-    "Push through your front heel and bring your back foot through into the next step.",
-    "Keep walking, alternating legs, until you've done 10 on each side."],
-    tip: "Keep your chest up and your front knee in line with your toes." },
-  revlunge: { works: "Glutes, quads", steps: [
-    "Stand tall with a dumbbell in each hand at your sides.",
-    "Take a big step backwards and lower until your back knee almost touches the floor.",
-    "Push through your front heel to bring your back foot in and stand up.",
-    "Alternate legs until you've done 10 on each side."],
-    tip: "Stepping backwards is easier on the knees than walking lunges. Keep most of your weight on the front foot." },
-  legext: { works: "Quads", steps: [
-    "Sit with your back against the pad and the roller on the front of your lower shins.",
-    "Line your knees up with the machine's pivot point.",
-    "Straighten your legs all the way and squeeze your thighs.",
-    "Lower slowly."],
-    tip: "Hold the handles to keep your bum on the seat." },
-  revcrunch: { works: "Lower abs", steps: [
-    "Lie on your back with your arms by your sides and knees bent at 90° above your hips.",
-    "Tighten your stomach and curl your hips off the floor, bringing your knees towards your chest.",
-    "Lower your hips back down slowly."],
-    tip: "Use your abs to lift, not a swing of your legs." },
-  deadbug: { works: "Deep core", steps: [
-    "Lie on your back with your arms pointing at the ceiling and knees bent at 90° above your hips.",
-    "Press your lower back into the floor.",
-    "Slowly lower one arm behind your head and the opposite leg towards the floor, without touching it.",
-    "Bring them back and swap sides."],
-    tip: "If your lower back lifts off the floor, don't lower as far." },
-  plank: { works: "Whole core", steps: [
-    "Forearms on the floor, elbows under your shoulders.",
-    "Step your feet back so your body is a straight line from head to heels.",
-    "Squeeze your glutes and stomach and hold. Keep breathing."],
-    tip: "Don't let your hips sag or stick up in the air." },
-  kneeraise: { works: "Lower abs", steps: [
-    "Hang from a pull-up bar, or rest your forearms on the pads of a knee-raise station with your back against the pad.",
-    "Raise your knees up to at least hip height.",
-    "Lower slowly, without swinging."],
-    tip: "The station with arm pads is easier than hanging. Start there." },
-  bicycle: { works: "Abs, obliques", steps: [
-    "Lie on your back with your hands lightly behind your head and your shoulders just off the floor.",
-    "Bring one knee in while you straighten the other leg.",
-    "Twist so your opposite elbow moves towards the bent knee.",
-    "Switch sides in a slow pedalling motion."],
-    tip: "Don't pull on your neck. Twist from your ribs." },
-  sideplank: { works: "Obliques, outer glutes", steps: [
-    "Lie on your side with your elbow under your shoulder and your legs stacked.",
-    "Lift your hips so your body is a straight line from head to feet.",
-    "Hold for 30 seconds, then switch sides."],
-    tip: "Bend your bottom knee to make it easier." },
-  cablecrunch: { works: "Abs", steps: [
-    "Clip a rope to the high pulley. Kneel facing the machine and hold the rope beside your head.",
-    "Keep your hips still and crunch down, bringing your elbows towards your thighs.",
-    "Come back up slowly."],
-    tip: "Round your back as you crunch. Don't just bend at the hips." },
-  shouldertaps: { works: "Core, shoulders", steps: [
-    "Start in a high plank: hands under your shoulders, body straight, feet a bit wider than your hips.",
-    "Lift one hand and tap the opposite shoulder.",
-    "Put it back down and swap. Keep your hips as still as you can."],
-    tip: "Wider feet make it easier to stop your hips rocking." }
-};
-const CORE_ROUNDS = 3;
-
-/* ---- Exercise figures ----
-   Side-view figure facing right, drawn in a 240×150 box with the floor at y=140.
-   A pose gives the hip position and torso angle, then each leg/arm either as angles
-   (degrees, 0 = right, 90 = up), an ankle/wrist target (solved with 2-bone IK), or
-   arm angles relative to the torso. "a" is the start position, "b" the working position.
-   leg/arm = near side (dark), leg2/arm2 = far side (light), defaulting to the near side. */
-const FIG = {
-  hipthrust: { stat: '<rect x="12" y="97" width="58" height="43" rx="4" class="eqf"/>',
-    a: { hip: [104, 120], torso: 150, leg: { ankle: [146, 136] }, arm: { w: [33, 13], bend: 1 } },
-    b: { hip: [112, 98], torso: 180, leg: { ankle: [146, 136] }, arm: { w: [38, -6], bend: 1 } },
-    props: [{ k: "plate", at: "hip", d: [0, -12] }] },
-  rdl: {
-    a: { hip: [116, 76], torso: 91, leg: { ankle: [120, 136] }, arm: { w: [4, 42] } },
-    b: { hip: [94, 80], torso: 22, leg: { ankle: [120, 136] }, arm: { w: [-2, 42] } },
-    props: [{ k: "plate", at: "wrist", d: [0, 0] }] },
-  bss: { stat: '<rect x="20" y="104" width="50" height="36" rx="4" class="eqf"/>',
-    a: { hip: [108, 80], torso: 88, leg: { ankle: [132, 136] }, leg2: { ankle: [64, 101], foot: 192 }, arm: { arm: 268, fore: 268 } },
-    b: { hip: [100, 104], torso: 78, leg: { ankle: [132, 136] }, leg2: { ankle: [64, 101], foot: 192 }, arm: { arm: 266, fore: 270 } },
-    props: [{ k: "db", at: "wrist" }] },
-  legcurl: { stat: '<rect x="46" y="104" width="58" height="8" rx="3" class="eqf"/><rect x="42" y="52" width="9" height="58" rx="3" class="eqf"/><line x1="76" y1="112" x2="76" y2="140" class="eq"/><rect x="82" y="88" width="30" height="6" rx="3" class="eqf"/>',
-    a: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -15, foot: 70 }, arm: { w: [29, 24] } },
-    b: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -112, foot: -25 }, arm: { w: [29, 24] } },
-    props: [{ k: "pad", at: "ankle", side: -1 }] },
-  legext: { stat: '<rect x="46" y="104" width="58" height="8" rx="3" class="eqf"/><rect x="42" y="52" width="9" height="58" rx="3" class="eqf"/><line x1="76" y1="112" x2="76" y2="140" class="eq"/>',
-    a: { hip: [66, 100], torso: 98, leg: { thigh: 0, shin: -95, foot: -10 }, arm: { w: [17, 37] } },
-    b: { hip: [66, 100], torso: 98, leg: { thigh: 2, shin: 0, foot: 80 }, arm: { w: [17, 37] } },
-    props: [{ k: "pad", at: "ankle", side: 1 }] },
-  kickback: { stat: '<rect x="178" y="16" width="12" height="124" rx="2" class="eqf"/>',
-    a: { hip: [118, 82], torso: 50, leg: { ankle: [121, 134], foot: -10 }, leg2: { ankle: [126, 136] }, arm: { wa: [177, 66] } },
-    b: { hip: [118, 82], torso: 50, leg: { thigh: 214, shin: 208, foot: 285 }, leg2: { ankle: [126, 136] }, arm: { wa: [177, 66] } },
-    props: [{ k: "cable", from: [178, 134], at: "ankle" }] },
-  squat: {
-    a: { hip: [114, 76], torso: 92, leg: { ankle: [118, 136] }, arm: { rel: [160, -23] } },
-    b: { hip: [90, 106], torso: 50, leg: { ankle: [118, 136] }, arm: { rel: [160, -23] } },
-    props: [{ k: "plate", at: "neck", back: [-5, 10], r: 9 }] },
-  legpress: { stat: '<line x1="80" y1="128" x2="30" y2="94" class="eq pad"/><rect x="40" y="126" width="54" height="14" rx="3" class="eqf"/>',
-    a: { hip: [72, 118], torso: 146, leg: { ankle: [116, 82], foot: 60 }, arm: { wa: [84, 122] } },
-    b: { hip: [72, 118], torso: 146, leg: { ankle: [98, 98], foot: 60 }, arm: { wa: [84, 122] } },
-    props: [{ k: "plat", at: "ankle", along: 45 }] },
-  walklunge: {
-    a: { hip: [110, 80], torso: 90, leg: { ankle: [132, 136] }, leg2: { ankle: [88, 134], foot: -30 }, arm: { arm: 268, fore: 268 } },
-    b: { hip: [106, 104], torso: 88, leg: { ankle: [134, 136] }, leg2: { ankle: [80, 128], foot: -55 }, arm: { arm: 268, fore: 268 } },
-    props: [{ k: "db", at: "wrist" }] },
-  revcrunch: {
-    a: { hip: [112, 132], torso: 180, leg: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: -3, fore: -2 } },
-    b: { hip: [106, 124], torso: 194, leg: { thigh: 128, shin: 25, foot: 30 }, arm: { arm: -3, fore: -2 } } },
-  deadbug: {
-    a: { hip: [114, 132], torso: 180, leg: { thigh: 90, shin: 0, foot: 10 }, leg2: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: 90, fore: 90 }, arm2: { arm: 90, fore: 90 } },
-    b: { hip: [114, 132], torso: 180, leg: { thigh: 8, shin: 6, foot: 60 }, leg2: { thigh: 90, shin: 0, foot: 10 }, arm: { arm: 170, fore: 172 }, arm2: { arm: 90, fore: 90 } } },
-  plank: {
-    a: { hip: [86, 121], torso: 10, leg: { thigh: 190, shin: 190, foot: 262 }, arm: { arm: 270, fore: 0 } },
-    b: { hip: [86, 121], torso: 10, leg: { thigh: 190, shin: 190, foot: 262 }, arm: { arm: 270, fore: 0 } } },
-  sideplank: {
-    a: { hip: [84, 131], torso: 20, leg: { ankle: [26, 135] }, arm: { wa: [148, 136] } },
-    b: { hip: [86, 117], torso: 12, leg: { ankle: [26, 135] }, arm: { wa: [148, 136] } } },
-  kneeraise: { stat: '<rect x="94" y="24" width="8" height="70" rx="3" class="eqf"/><rect x="98" y="54" width="44" height="6" rx="3" class="eqf"/><line x1="98" y1="94" x2="98" y2="140" class="eq"/><line x1="140" y1="60" x2="140" y2="140" class="eq"/>',
-    a: { hip: [108, 68], torso: 90, leg: { thigh: 272, shin: 270, foot: -15 }, arm: { arm: 270, fore: 0 } },
-    b: { hip: [108, 68], torso: 90, leg: { thigh: 5, shin: 272, foot: -10 }, arm: { arm: 270, fore: 0 } } },
-  bicycle: {
-    a: { hip: [120, 132], torso: 160, leg: { thigh: 115, shin: -10, foot: 20 }, leg2: { thigh: 10, shin: 6, foot: 60 }, arm: { rel: [55, 170] } },
-    b: { hip: [120, 132], torso: 160, leg: { thigh: 10, shin: 6, foot: 60 }, leg2: { thigh: 115, shin: -10, foot: 20 }, arm: { rel: [55, 170] } } },
-  cablecrunch: { stat: '<rect x="184" y="16" width="12" height="124" rx="2" class="eqf"/>',
-    a: { hip: [100, 105], torso: 80, leg: { thigh: 270, shin: 180, foot: 180 }, arm: { rel: [-40, 118] } },
-    b: { hip: [97, 105], torso: 22, leg: { thigh: 275, shin: 180, foot: 180 }, arm: { rel: [-40, 118] } },
-    props: [{ k: "cable", from: [184, 22], at: "wrist" }] },
-  shouldertaps: {
-    a: { hip: [88.3, 109], torso: 20, leg: { thigh: 200, shin: 200, foot: 250 }, arm: { arm: 270, fore: 270 }, arm2: { arm: 270, fore: 270 } },
-    b: { hip: [88.3, 109], torso: 20, leg: { thigh: 200, shin: 200, foot: 250 }, arm: { arm: 245, fore: 65 }, arm2: { arm: 270, fore: 270 } } },
-  // Hip abduction is only visible from the front, so it's drawn as points.
-  abduction: { front: true, stat: '<rect x="97" y="18" width="46" height="80" rx="6" class="eqf"/><rect x="88" y="96" width="64" height="8" rx="3" class="eqf"/>',
-    a: { head: [120, 28], nk: [120, 42], pv: [120, 86], s1: [106, 48], s2: [134, 48], e1: [101, 70], e2: [139, 70], w1: [96, 94], w2: [144, 94],
-         h1: [112, 94], h2: [128, 94], k1: [109, 110], k2: [131, 110], a1: [108, 134], a2: [132, 134] },
-    b: { head: [120, 28], nk: [120, 42], pv: [120, 86], s1: [106, 48], s2: [134, 48], e1: [101, 70], e2: [139, 70], w1: [96, 94], w2: [144, 94],
-         h1: [112, 94], h2: [128, 94], k1: [86, 106], k2: [154, 106], a1: [98, 134], a2: [142, 134] },
-    shapes: [["l", ["h1", "k1", "a1"], 7], ["l", ["h2", "k2", "a2"], 7], ["l", ["h1", "h2"], 10], ["l", ["nk", "pv"], 20],
-             ["l", ["s1", "e1", "w1"], 5.5], ["l", ["s2", "e2", "w2"], 5.5], ["c", "head", 8], ["pad", "k1", -8], ["pad", "k2", 8]] }
-};
-FIG.revlunge = FIG.walklunge;
-
-const LEN = { t: 38, th: 31, sh: 30, ft: 10, ua: 22, fa: 21, hd: 10 };
-const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
-const go = (p, a, l) => [p[0] + l * Math.cos(rad(a)), p[1] - l * Math.sin(rad(a))];
-const dirTo = (a, b) => deg(Math.atan2(a[1] - b[1], b[0] - a[0]));
-function ik(a, b, l1, l2, bend) {
-  let d = Math.hypot(b[0] - a[0], b[1] - a[1]);
-  d = Math.max(Math.abs(l1 - l2) + .01, Math.min(l1 + l2 - .01, d));
-  const a1 = dirTo(a, b) + bend * deg(Math.acos((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d)));
-  return [a1, dirTo(go(a, a1, l1), b)];
-}
-function poseVec(o) {
-  const hip = o.hip, neck = go(hip, o.torso, LEN.t);
-  const leg = g => g.ankle ? ik(hip, g.ankle, LEN.th, LEN.sh, g.bend ?? 1) : [g.thigh, g.shin];
-  const arm = g => g.rel ? [o.torso + g.rel[0], o.torso + g.rel[1]]
-    : g.wa || g.w ? ik(neck, g.wa || [neck[0] + g.w[0], neck[1] + g.w[1]], LEN.ua, LEN.fa, g.bend ?? -1) : [g.arm, g.fore];
-  const l2 = o.leg2 || o.leg, a2 = o.arm2 || o.arm;
-  return [hip[0], hip[1], o.torso, ...leg(o.leg), o.leg.foot ?? 0, ...leg(l2), l2.foot ?? 0, ...arm(o.arm), ...arm(a2)];
-}
-const mixAng = (a, b, u) => a + ((((b - a) % 360) + 540) % 360 - 180) * u;
-function joints(v) {
-  const hip = [v[0], v[1]], neck = go(hip, v[2], LEN.t), j = { hip, neck, head: go(neck, v[2], LEN.hd) };
-  j.knee = go(hip, v[3], LEN.th); j.ankle = go(j.knee, v[4], LEN.sh); j.toe = go(j.ankle, v[5], LEN.ft);
-  j.knee2 = go(hip, v[6], LEN.th); j.ankle2 = go(j.knee2, v[7], LEN.sh); j.toe2 = go(j.ankle2, v[8], LEN.ft);
-  j.elbow = go(neck, v[9], LEN.ua); j.wrist = go(j.elbow, v[10], LEN.fa);
-  j.elbow2 = go(neck, v[11], LEN.ua); j.wrist2 = go(j.elbow2, v[12], LEN.fa);
-  return j;
-}
-const NS = "http://www.w3.org/2000/svg";
-function mk(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
-const pts = arr => arr.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
-let LIVE = [];
-
-function mountDemo(box) {
-  const f = FIG[box.dataset.demo]; if (!f) return;
-  const svg = mk("svg", { viewBox: "0 0 240 150", "aria-hidden": "true" }, box);
-  svg.innerHTML = '<line x1="0" y1="140" x2="240" y2="140" class="floor"/>' + (f.stat || "");
-  let update;
-  if (f.front) {
-    const els = f.shapes.map(s => s[0] === "l" ? mk("polyline", { class: "fg", "stroke-width": s[2] }, svg)
-      : s[0] === "c" ? mk("circle", { class: "hd", r: s[2] }, svg) : mk("circle", { class: "eqf", r: 6 }, svg));
-    update = u => {
-      const P = {}; for (const k in f.a) P[k] = [f.a[k][0] + (f.b[k][0] - f.a[k][0]) * u, f.a[k][1] + (f.b[k][1] - f.a[k][1]) * u];
-      f.shapes.forEach((s, i) => {
-        if (s[0] === "l") els[i].setAttribute("points", pts(s[1].map(n => P[n])));
-        else { els[i].setAttribute("cx", P[s[1]][0] + (s[0] === "pad" ? s[2] : 0)); els[i].setAttribute("cy", P[s[1]][1]); }
-      });
-    };
-  } else {
-    f.A = f.A || poseVec(f.a); f.B = f.B || poseVec(f.b);
-    const leg2 = mk("polyline", { class: "fg2", "stroke-width": 6.5 }, svg), arm2 = mk("polyline", { class: "fg2", "stroke-width": 5.5 }, svg);
-    const torso = mk("polyline", { class: "fg", "stroke-width": 10 }, svg), head = mk("circle", { class: "hd", r: 8 }, svg);
-    const leg = mk("polyline", { class: "fg", "stroke-width": 6.5 }, svg), arm = mk("polyline", { class: "fg", "stroke-width": 5.5 }, svg);
-    const props = (f.props || []).map(p => ({ p, e: p.k === "plate" ? mk("circle", { class: "wt", r: p.r || 11 }, svg)
-      : p.k === "pad" ? mk("circle", { class: "eqf", r: 5 }, svg)
-      : mk("line", { class: p.k === "cable" ? "cab" : p.k === "db" ? "wtl" : "eq pad" }, svg) }));
-    update = u => {
-      const v = f.A.map((a, i) => i < 2 ? a + (f.B[i] - a) * u : mixAng(a, f.B[i], u)), j = joints(v);
-      leg2.setAttribute("points", pts([j.hip, j.knee2, j.ankle2, j.toe2]));
-      arm2.setAttribute("points", pts([j.neck, j.elbow2, j.wrist2]));
-      torso.setAttribute("points", pts([j.hip, j.neck]));
-      head.setAttribute("cx", j.head[0]); head.setAttribute("cy", j.head[1]);
-      leg.setAttribute("points", pts([j.hip, j.knee, j.ankle, j.toe]));
-      arm.setAttribute("points", pts([j.neck, j.elbow, j.wrist]));
-      for (const { p, e } of props) {
-        const at = j[p.at], d = p.d || [0, 0];
-        if (p.k === "plate") {
-          // "back" places it relative to the torso: [along the spine, towards the back].
-          const c = p.back ? go(go(at, v[2], p.back[0]), v[2] + 90, p.back[1]) : [at[0] + d[0], at[1] + d[1]];
-          e.setAttribute("cx", c[0]); e.setAttribute("cy", c[1]);
-        }
-        else if (p.k === "pad") { const c = go(at, v[4] + 90 * p.side, 7); e.setAttribute("cx", c[0]); e.setAttribute("cy", c[1]); }
-        else {
-          let a, b;
-          if (p.k === "cable") { a = p.from; b = at; }
-          else if (p.k === "db") { a = [at[0] - 7, at[1] + 2]; b = [at[0] + 7, at[1] + 2]; }
-          else { const c = go(at, p.along, 7); a = go(c, p.along + 90, 16); b = go(c, p.along - 90, 16); }
-          e.setAttribute("x1", a[0]); e.setAttribute("y1", a[1]); e.setAttribute("x2", b[0]); e.setAttribute("y2", b[1]);
-        }
-      }
-    };
-  }
-  LIVE.push({ node: svg, update });
-  update(motionPhase(performance.now()));
-}
-const RM = matchMedia("(prefers-reduced-motion: reduce)");
-function motionPhase(t) {
-  if (RM.matches) return 1;
-  const p = (t % 3200) / 3200, e = x => (1 - Math.cos(Math.PI * x)) / 2;
-  return p < .15 ? 0 : p < .5 ? e((p - .15) / .35) : p < .65 ? 1 : e(1 - (p - .65) / .35);
-}
-(function loop(t) {
-  LIVE = LIVE.filter(x => x.node.isConnected);
-  const u = motionPhase(t); for (const x of LIVE) x.update(u);
-  requestAnimationFrame(loop);
-})(0);
-
-const OPEN = new Set();
-function howTo(key, name, id) {
-  const g = GUIDE[key]; if (!g) return "";
-  return `<div class="demo" data-demo="${key}" role="img" aria-label="Animation of ${esc(name)}"></div>
-    <details class="how" data-how="${id}"${OPEN.has(id) ? " open" : ""}><summary>How to do it</summary>
-      <p class="works"><span class="label">Works</span> ${esc(g.works)}</p>
-      <ol>${g.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>
-      <p class="tip"><b>Tip</b> ${esc(g.tip)}</p></details>`;
-}
-
-/* ---- Storage ---- */
-const KEY = "liftlog.v1";
-let S = { week: 1, rest: 90, logs: {} };
-try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
-function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+/* ================= Setup ================= */
+const CFG = window.LIFTLOG_CONFIG || {};
+const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);   // no config = everything stays on this device
+let sb = null;
+try { if (CLOUD && window.supabase) sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey); } catch (e) {}
+const HERE = location.origin + location.pathname;
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const sess = id => SESSIONS.find(s => s.id === id);
+const uid = () => Math.random().toString(36).slice(2, 8);
+const clone = o => JSON.parse(JSON.stringify(o));
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const TICK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const UP = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 9l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const DOWN = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const DEL = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const PERSON = '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="6" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M2.8 16c.8-3.2 3.3-5 6.2-5s5.4 1.8 6.2 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
-function getLog(sid, w, create) {
-  const k = sid + "|" + w;
-  if (!S.logs[k] && create) {
-    const s = sess(sid);
-    S.logs[k] = { warm: false, core: Array(CORE_ROUNDS).fill(false), done: null,
-      sets: s.ex.map(e => Array.from({ length: e[2] }, () => ({ kg: "", reps: "", done: false }))) };
-  }
-  return S.logs[k];
+/* ================= Plans + state ================= */
+// Plan: { id, name, weeks, warmup:{what,time,note}, sessions:[{ id, name, focus, note, rounds, ex:[{id,k,name,reps,sets}], core:[{id,k,name,reps}] }] }
+function planFromTemplate(t, fixedIds) {
+  return {
+    id: fixedIds ? t.id : uid(), name: t.name, weeks: 6, warmup: clone(t.warmup),
+    sessions: t.sessions.map((s, i) => {
+      const sid = fixedIds ? "s" + (i + 1) : uid();
+      return { id: sid, name: s.name, focus: s.focus || "", note: s.note || "", rounds: 3,
+        ex: s.ex.map((e, j) => ({ id: fixedIds ? sid + "e" + j : uid(), k: e[0], name: e[3] || "", reps: e[1], sets: e[2] })),
+        core: (s.core || []).map((c, j) => ({ id: fixedIds ? sid + "c" + j : uid(), k: c[0], name: c[2] || "", reps: c[1] })) };
+    })
+  };
 }
-function counts(sid, w) {
-  const s = sess(sid), l = getLog(sid, w);
-  const total = s.ex.reduce((a, e) => a + e[2], 0);
-  const done = l ? l.sets.flat().filter(x => x.done).length : 0;
+function blankState() { return { v: 2, savedAt: 0, rest: 90, active: null, plans: [], weekBy: {}, logs: {}, hideWelcome: false, calc: {} }; }
+function normalize(d) {
+  const S = Object.assign(blankState(), d || {});
+  if (!S.plans.find(p => p.id === S.active)) S.active = S.plans[0] ? S.plans[0].id : null;
+  return S;
+}
+// Version 1 kept one fixed plan with logs keyed "s1|week" and sets as arrays.
+function migrateV1(old) {
+  const S = blankState(), plan = planFromTemplate(TEMPLATES[0], true);
+  S.plans = [plan]; S.active = plan.id; S.weekBy[plan.id] = old.week || 1; S.rest = old.rest || 90;
+  for (const k in old.logs || {}) {
+    const [sid, w] = k.split("|"), s = plan.sessions.find(x => x.id === sid), o = old.logs[k]; if (!s) continue;
+    const sets = {}; s.ex.forEach((e, i) => { if (o.sets && o.sets[i]) sets[e.id] = o.sets[i]; });
+    S.logs[plan.id + "|" + sid + "|" + w] = { warm: !!o.warm, core: o.core || [], done: o.done || null, sets };
+  }
+  S.savedAt = Date.now();
+  return S;
+}
+
+let S = blankState(), KEY = null, USER = null;
+function loadLocal(id) {
+  KEY = "liftlog.v2." + id;
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!d && id === "local") { try { const old = JSON.parse(localStorage.getItem("liftlog.v1")); if (old) d = migrateV1(old); } catch (e) {} }
+  S = normalize(d);
+}
+function writeLocal() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function save() { S.savedAt = Date.now(); writeLocal(); if (sb && USER) queuePush(); }
+
+const plan = () => S.plans.find(p => p.id === S.active) || null;
+const planById = id => S.plans.find(p => p.id === id);
+const sessOf = (p, sid) => p && p.sessions.find(s => s.id === sid);
+const weekOf = p => clamp(S.weekBy[p.id] || 1, 1, p.weeks);
+const exName = e => e.name || (LIB[e.k] ? LIB[e.k].name : e.k);
+
+function getLog(p, s, w, create) {
+  const k = p.id + "|" + s.id + "|" + w;
+  let l = S.logs[k];
+  if (!l) { if (!create) return null; l = S.logs[k] = { warm: false, core: [], done: null, sets: {} }; }
+  for (const e of s.ex) { const a = l.sets[e.id] || (l.sets[e.id] = []); while (a.length < e.sets) a.push({ kg: "", reps: "", done: false }); }
+  while (l.core.length < s.rounds) l.core.push(false);
+  return l;
+}
+function counts(p, s, w) {
+  const l = getLog(p, s, w), total = s.ex.reduce((a, e) => a + e.sets, 0);
+  const done = l ? s.ex.reduce((a, e) => a + l.sets[e.id].slice(0, e.sets).filter(x => x.done).length, 0) : 0;
   return { total, done, finished: !!(l && l.done), date: l && l.done };
 }
 const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; };
-function topSet(sid, w, i) {
-  const l = getLog(sid, w); if (!l || !l.sets[i]) return null;
+function topSet(p, s, w, e) {
+  const l = getLog(p, s, w); if (!l) return null;
   let best = null;
-  for (const x of l.sets[i]) { const kg = num(x.kg); if (kg !== null && (!best || kg > best.kg)) best = { kg, reps: x.reps }; }
+  for (const x of l.sets[e.id].slice(0, e.sets)) { const kg = num(x.kg); if (kg !== null && (!best || kg > best.kg)) best = { kg, reps: x.reps }; }
   return best;
 }
-function lastTime(sid, w, i) {
-  for (let p = w - 1; p >= 1; p--) { const t = topSet(sid, p, i); if (t) return { ...t, week: p }; }
-  return null;
-}
+function lastTime(p, s, w, e) { for (let q = w - 1; q >= 1; q--) { const t = topSet(p, s, q, e); if (t) return { ...t, week: q }; } return null; }
 const fmtKg = n => (Math.round(n * 100) / 100).toString();
 const fmtDate = iso => new Date(iso).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 
-/* ---- Week picker ---- */
-function renderWeeks() {
-  $("#weeks").innerHTML = Array.from({ length: WEEKS }, (_, i) => {
-    const w = i + 1, full = SESSIONS.every(s => counts(s.id, w).finished);
-    return `<button type="button" data-week="${w}" aria-pressed="${w === S.week}" class="${full ? "full" : ""}"><small>Week</small><span class="num">${full && w !== S.week ? "✓" : w}</span></button>`;
+/* ================= Cloud sync (Supabase) ================= */
+let pushTimer = null, pushing = false, dirty = false;
+function setSync(t) { $("#sync").textContent = t; }
+function queuePush() { dirty = true; setSync("Saving…"); clearTimeout(pushTimer); pushTimer = setTimeout(push, 800); }
+async function push() {
+  if (!USER || pushing) return;
+  pushing = true; dirty = false;
+  let error;
+  try { ({ error } = await sb.from("lift_logs").upsert({ user_id: USER.id, state: clone(S), updated_at: new Date().toISOString() })); } catch (e) { error = e; }
+  pushing = false;
+  if (error) { dirty = true; setSync("Offline · will retry"); clearTimeout(pushTimer); pushTimer = setTimeout(push, 15000); return; }
+  if (dirty) queuePush(); else setSync("Saved");
+}
+async function pull() {
+  let data, error;
+  try { ({ data, error } = await sb.from("lift_logs").select("state").eq("user_id", USER.id).maybeSingle()); } catch (e) { error = e; }
+  if (error) { setSync("Offline"); return; }
+  const remote = data && data.state;
+  if (remote && (remote.savedAt || 0) > (S.savedAt || 0)) { S = normalize(remote); writeLocal(); rerender(); setSync("Saved"); }
+  else if (S.savedAt && (!remote || (remote.savedAt || 0) < S.savedAt)) push();
+  else setSync("Saved");
+}
+addEventListener("online", () => { if (USER && dirty) push(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && USER && !dirty && !pushing) pull(); });
+
+/* ================= Sign-in ================= */
+let recovering = false;
+const AUTH_ERRORS = [
+  [/invalid login credentials/i, "That email and password don't match. Check them, or reset your password."],
+  [/email not confirmed/i, "Please confirm your email first. Check your inbox for the link we sent."],
+  [/already registered|already exists/i, "There's already an account with that email. Log in instead."],
+  [/password should be at least|weak password/i, "Your password needs at least 8 characters."],
+  [/rate limit|too many/i, "Too many attempts. Wait a minute and try again."],
+  [/fetch|network/i, "Can't reach the server. Check your internet connection and try again."]];
+const friendly = e => { const m = (e && e.message) || String(e); const hit = AUTH_ERRORS.find(([re]) => re.test(m)); return hit ? hit[1] : m; };
+
+function showAuth(mode, msg, ok) {
+  $("#app").hidden = true; $("#auth").hidden = false; stopRest(); closeSheet();
+  const email = esc(($("#aEmail") || {}).value || "");
+  const f = (id, label, type, extra = "") => `<label class="fl" for="${id}">${label}<input class="in" id="${id}" type="${type}" ${extra}></label>`;
+  const note = msg ? `<p class="msg ${ok ? "ok" : "err"}" role="alert">${esc(msg)}</p>` : "";
+  const body = {
+    loading: `<p class="muted center" style="margin:0">Loading…</p>`,
+    broken: `<h2>Can't load sign-in</h2><p class="muted" style="margin:0">Check your internet connection, then reload the page.</p><button class="btn primary" type="button" onclick="location.reload()">Reload</button>`,
+    login: `<h2>Log in</h2><form data-auth="login" novalidate>${f("aEmail", "Email", "email", `autocomplete="email" value="${email}" required`)}${f("aPass", "Password", "password", 'autocomplete="current-password" required')}${note}<button class="btn primary wide" type="submit">Log in</button></form>
+      <div class="swap"><button class="link" type="button" data-amode="signup">New here? Create an account</button><button class="link" type="button" data-amode="forgot">Forgot password?</button></div>`,
+    signup: `<h2>Create your account</h2><form data-auth="signup" novalidate>${f("aName", "Your first name", "text", 'autocomplete="given-name" required')}${f("aEmail", "Email", "email", `autocomplete="email" value="${email}" required`)}${f("aPass", 'Password <span class="hint">At least 8 characters</span>', "password", 'autocomplete="new-password" minlength="8" required')}${note}<button class="btn primary wide" type="submit">Create account</button></form>
+      <div class="swap"><button class="link" type="button" data-amode="login">Already have an account? Log in</button></div>`,
+    forgot: `<h2>Reset your password</h2><p class="muted" style="margin:0">Enter your email and we'll send you a link to choose a new password.</p><form data-auth="forgot" novalidate>${f("aEmail", "Email", "email", `autocomplete="email" value="${email}" required`)}${note}<button class="btn primary wide" type="submit">Send reset link</button></form>
+      <div class="swap"><button class="link" type="button" data-amode="login">Back to log in</button></div>`,
+    reset: `<h2>Choose a new password</h2><form data-auth="reset" novalidate>${f("aPass", 'New password <span class="hint">At least 8 characters</span>', "password", 'autocomplete="new-password" minlength="8" required')}${note}<button class="btn primary wide" type="submit">Save password</button></form>`,
+    check: `<h2>Check your email</h2><p style="margin:0">We've sent a link to <b>${email}</b>. Tap it to confirm your account, then come back and log in.</p><p class="muted" style="margin:0;font-size:14px">Can't see it? Check your spam or junk folder.</p><button class="btn wide" type="button" data-amode="login">Back to log in</button>`
+  }[mode];
+  $("#authBody").innerHTML = body;
+  const first = $("#authBody input:not([value]), #authBody input[value='']"); if (first && mode !== "loading") first.focus();
+}
+async function authSubmit(form) {
+  const kind = form.dataset.auth, btn = form.querySelector("button[type=submit]");
+  const email = ($("#aEmail") || {}).value?.trim(), pass = ($("#aPass") || {}).value || "", name = ($("#aName") || {}).value?.trim();
+  if (kind !== "reset" && !/^\S+@\S+\.\S+$/.test(email || "")) return showAuth(kind, "Enter a valid email address.");
+  if (kind === "signup" && !name) return showAuth(kind, "Enter your first name.");
+  if ((kind === "signup" || kind === "reset") && pass.length < 8) return showAuth(kind, "Your password needs at least 8 characters.");
+  if (kind === "login" && !pass) return showAuth(kind, "Enter your password.");
+  btn.disabled = true; btn.textContent = "Please wait…";
+  try {
+    if (kind === "login") { const { error } = await sb.auth.signInWithPassword({ email, password: pass }); if (error) throw error; }
+    if (kind === "signup") {
+      const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { name }, emailRedirectTo: HERE } });
+      if (error) throw error;
+      if (!data.session) showAuth("check");
+    }
+    if (kind === "forgot") {
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: HERE }); if (error) throw error;
+      showAuth("login", "If there's an account with that email, a reset link is on its way.", true);
+    }
+    if (kind === "reset") {
+      const { error } = await sb.auth.updateUser({ password: pass }); if (error) throw error;
+      recovering = false;
+      const { data } = await sb.auth.getSession(); await onAuth("SIGNED_IN", data.session);
+      toast("Password changed");
+    }
+  } catch (e) { showAuth(kind, friendly(e)); }
+}
+async function onAuth(ev, session) {
+  if (ev === "PASSWORD_RECOVERY") { recovering = true; showAuth("reset"); return; }
+  if (recovering) return;
+  if (!session) { if (USER || $("#authBody").textContent.includes("Loading")) { USER = null; showAuth("login"); } return; }
+  if (USER && USER.id === session.user.id) return;
+  USER = session.user;
+  loadLocal(USER.id); setSync(""); showApp(); pull();
+}
+async function signOut() {
+  if (dirty) { clearTimeout(pushTimer); await push(); }
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  const was = USER; USER = null; S = blankState();
+  if (was) await sb.auth.signOut();
+  location.hash = "home"; showAuth("login", "You're logged out.", true);
+}
+const displayName = () => USER ? ((USER.user_metadata && USER.user_metadata.name) || USER.email.split("@")[0]) : "";
+
+/* ================= Views ================= */
+function showApp() { $("#auth").hidden = true; $("#app").hidden = false; route(); }
+const OPEN = new Set();       // which How to do it panels are open
+const LIBF = { g: "All", q: "" }, PICKF = { g: "All", q: "" };   // library and picker filters
+
+function renderWeeks(p, show) {
+  const el = $("#weeks"); el.hidden = !show || !p; if (el.hidden) return;
+  const cur = weekOf(p);
+  el.innerHTML = Array.from({ length: p.weeks }, (_, i) => {
+    const w = i + 1, full = p.sessions.length && p.sessions.every(s => counts(p, s, w).finished);
+    return `<button type="button" data-week="${w}" aria-pressed="${w === cur}" class="${full ? "full" : ""}"><small>Week</small><span class="num">${full && w !== cur ? "✓" : w}</span></button>`;
   }).join("");
+  const on = el.querySelector('[aria-pressed="true"]'); if (on) on.scrollIntoView({ block: "nearest", inline: "center" });
 }
 
-/* ---- Home ---- */
+function templateCards(action) {
+  return TEMPLATES.map(t => `<article class="card tcard"><span class="label">${esc(t.level)}</span><h2>${esc(t.name)}</h2>
+    <div class="meta"><span class="pill">${t.days} day${t.days > 1 ? "s" : ""} a week</span><span class="pill">${t.sessions.reduce((a, s) => a + s.ex.length, 0)} exercises</span></div>
+    <p class="muted" style="margin:0">${esc(t.blurb)}</p>
+    <button class="btn primary" type="button" data-${action}="${t.id}">Start this plan</button></article>`).join("");
+}
+
+function welcomeCard() {
+  if (S.hideWelcome) return "";
+  return `<section class="card welcome"><div class="row"><span class="label">New to the gym?</span><button class="x" type="button" data-hidewelcome aria-label="Hide this tip">×</button></div>
+    <h2>Read Start here first</h2><p class="muted" style="margin:0">A 3-minute guide to your first weeks, how heavy to lift, and staying safe.</p>
+    <div class="tools"><a class="btn primary" href="#guide-start">Start here</a><a class="btn" href="#guide-nutrition">Nutrition guide</a></div></section>`;
+}
+
 function renderHome() {
-  const w = S.week;
-  const next = SESSIONS.find(s => !counts(s.id, w).finished);
-  const doneCount = SESSIONS.filter(s => counts(s.id, w).finished).length;
-  let html = `<section class="hello"><h1>Week ${w}</h1><p class="muted">${
-    doneCount === SESSIONS.length ? (w < WEEKS ? "All three sessions done. Nice work. Move on to week " + (w + 1) + " when you're ready." : "That's the full six weeks done. Check your Progress tab.")
-    : `${doneCount} of ${SESSIONS.length} sessions done. Warm up for ${WARMUP.time} first, then log each set as you go.`}</p></section>`;
-  if (doneCount === SESSIONS.length && w < WEEKS) html += `<button class="finish" type="button" data-week="${w + 1}">Start week ${w + 1}</button>`;
-  for (const s of SESSIONS) {
-    const c = counts(s.id, w);
+  const p = plan();
+  if (!p) {
+    $("#view").innerHTML = `<div class="stack"><section class="hello"><h1>${USER ? "Welcome, " + esc(displayName()) : "Welcome"}</h1>
+      <p class="muted">Pick a plan to get started. You can change it, or build your own, any time.</p></section>
+      ${welcomeCard()}${templateCards("usetemplate")}<a class="finish ghost" href="#plans" data-newblank>Build my own plan</a></div>`;
+    return;
+  }
+  const w = weekOf(p), next = p.sessions.find(s => !counts(p, s, w).finished);
+  const doneCount = p.sessions.filter(s => counts(p, s, w).finished).length, all = doneCount === p.sessions.length && p.sessions.length;
+  let html = `<section class="hello"><span class="label">${esc(p.name)} · <a class="link" href="#plans">Change</a></span><h1>Week ${w} of ${p.weeks}</h1><p class="muted">${
+    !p.sessions.length ? "This plan has no sessions yet. Add some in Plans."
+    : all ? (w < p.weeks ? "Every session done this week. Nice work. Move on when you're ready." : "You've finished the whole plan. Check your Progress tab.")
+    : `${doneCount} of ${p.sessions.length} sessions done. Warm up first, then log each set as you go.`}</p></section>`;
+  html += welcomeCard();
+  if (all && w < p.weeks) html += `<button class="finish" type="button" data-week="${w + 1}">Start week ${w + 1}</button>`;
+  for (const s of p.sessions) {
+    const c = counts(p, s, w);
     const pill = c.finished ? `<span class="pill done">Done · ${fmtDate(c.date)}</span>`
       : c.done ? `<span class="pill part num">${c.done}/${c.total} sets</span>`
       : s === next ? `<span class="pill go">Up next</span>` : `<span class="pill">Not started</span>`;
-    html += `<a class="card sess${s === next ? " next" : ""}" href="#${s.id}">
-      <div class="row"><span class="label">${s.name}</span>${pill}</div>
-      <h2>${esc(s.focus)}</h2>
-      <ul>${s.ex.map(e => `<li>${esc(e[0].replace(/ \(machine\)|, dumbbell in each hand/i, ""))}</li>`).join("")}</ul>
-      <div class="meter${c.finished ? " done" : ""}"><i style="width:${c.finished ? 100 : Math.round(c.done / c.total * 100)}%"></i></div>
-    </a>`;
+    html += `<a class="card sess${s === next ? " next" : ""}" href="#sess-${s.id}">
+      <div class="row"><span class="label">${esc(s.name)}</span>${pill}</div>
+      <h2>${esc(s.focus || s.name)}</h2>
+      <ul>${s.ex.map(e => `<li>${esc(LIB[e.k] ? LIB[e.k].name : exName(e))}</li>`).join("") || "<li>No exercises yet</li>"}</ul>
+      <div class="meter${c.finished ? " done" : ""}"><i style="width:${c.finished ? 100 : c.total ? Math.round(c.done / c.total * 100) : 0}%"></i></div></a>`;
   }
   $("#view").innerHTML = `<div class="stack">${html}</div>`;
 }
 
-/* ---- Session ---- */
+function howTo(k, id) {
+  const g = LIB[k]; if (!g) return "";
+  const easy = g.easier && LIB[g.easier] ? `<p><button class="link" type="button" data-info="${g.easier}">Too hard? Try ${esc(LIB[g.easier].name)} instead</button></p>` : "";
+  return `<div class="demo" data-demo="${k}" role="img" aria-label="Animation of ${esc(g.name)}"></div>
+    <details class="how" data-how="${id}"${OPEN.has(id) ? " open" : ""}><summary>How to do it</summary>
+      <p><span class="label">Works</span> ${esc(g.works)}</p><p><span class="label">You need</span> ${esc(g.eq)}</p>
+      <ol>${g.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+      <p class="tip"><b>Tip</b> ${esc(g.tip)}</p>${easy}</details>`;
+}
+
 function renderSession(sid) {
-  const s = sess(sid), w = S.week, l = getLog(sid, w, true);
-  let html = `<div class="shead"><a href="#home">← All workouts</a><span class="label">${s.name} · Week ${w}</span><h1>${esc(s.focus)}</h1>${s.note ? `<span class="note">${esc(s.note)}</span>` : ""}</div>`;
-  html += `<section class="block"><span class="label">Warm up</span>
+  const p = plan(), s = sessOf(p, sid);
+  if (!s) { location.hash = "home"; return; }
+  const w = weekOf(p), l = getLog(p, s, w, true);
+  let html = `<div class="shead"><a href="#home">← All sessions</a><span class="label">${esc(s.name)} · Week ${w}</span><h1>${esc(s.focus || s.name)}</h1>${s.note ? `<span class="note">${esc(s.note)}</span>` : ""}</div>`;
+  if (p.warmup && p.warmup.what) html += `<section class="block"><span class="label">Warm up</span>
     <button type="button" class="check" data-warm aria-pressed="${l.warm}"><span class="box">${TICK}</span>
-    <span class="t"><b>${WARMUP.what} · ${WARMUP.time}</b><span class="muted">${WARMUP.note}</span></span></button></section>`;
-  html += `<section class="block"><span class="label">Exercises · track your weights</span>`;
-  s.ex.forEach((e, i) => {
-    const lt = lastTime(sid, w, i), sets = l.sets[i], all = sets.every(x => x.done);
-    html += `<article class="card ex${all ? " complete" : ""}" data-ex="${i}">
-      <div class="exhead"><div><h3>${esc(e[0])}</h3>
-        <div class="last">${lt ? `Week ${lt.week} best: <b class="num">${fmtKg(lt.kg)} kg${lt.reps ? " × " + esc(lt.reps) : ""}</b>` : w === 1 ? "First week: find a weight you can do with good form" : "No weight logged before"}</div></div>
-        <div class="target num">${e[2]} <span>×</span> ${esc(e[1])}</div></div>
-      ${howTo(e[3], e[0], "ex-" + e[3])}
+    <span class="t"><b>${esc(p.warmup.what)}${p.warmup.time ? " · " + esc(p.warmup.time) : ""}</b><span class="muted">${esc(p.warmup.note)}</span></span></button></section>`;
+  if (s.ex.length) html += `<section class="block"><span class="label">Exercises · log your weights</span>`;
+  s.ex.forEach(e => {
+    const lt = lastTime(p, s, w, e), sets = l.sets[e.id].slice(0, e.sets), all = sets.every(x => x.done);
+    html += `<article class="card ex${all ? " complete" : ""}" data-eid="${e.id}">
+      <div class="exhead"><div><h3>${esc(exName(e))}</h3>
+        <div class="last">${lt ? `Week ${lt.week} best: <b class="num">${fmtKg(lt.kg)} kg${lt.reps ? " × " + esc(lt.reps) : ""}</b>` : w === 1 ? "Week 1: find a weight you can lift with good form" : "No weight logged before"}</div></div>
+        <div class="target num">${e.sets} <span>×</span> ${esc(e.reps)}</div></div>
+      ${howTo(e.k, "ex-" + e.k)}
       <div class="sets">${sets.map((x, j) => `
         <div class="set${x.done ? " isdone" : ""}" data-set="${j}">
           <span class="n">Set ${j + 1}</span>
-          <label class="field"><input id="kg-${sid}-${w}-${i}-${j}" inputmode="decimal" autocomplete="off" aria-label="Set ${j + 1} weight in kg" data-f="kg" value="${esc(x.kg)}" placeholder="${lt ? fmtKg(lt.kg) : "–"}"><span>kg</span></label>
-          <label class="field"><input id="reps-${sid}-${w}-${i}-${j}" inputmode="numeric" autocomplete="off" aria-label="Set ${j + 1} reps" data-f="reps" value="${esc(x.reps)}" placeholder="–"><span>reps</span></label>
+          <label class="field"><input id="kg-${e.id}-${w}-${j}" inputmode="decimal" autocomplete="off" aria-label="Set ${j + 1} weight in kg" data-f="kg" value="${esc(x.kg)}" placeholder="${lt ? fmtKg(lt.kg) : "–"}"><span>kg</span></label>
+          <label class="field"><input id="reps-${e.id}-${w}-${j}" inputmode="numeric" autocomplete="off" aria-label="Set ${j + 1} reps" data-f="reps" value="${esc(x.reps)}" placeholder="–"><span>reps</span></label>
           <button type="button" class="tick" data-tick aria-pressed="${x.done}" aria-label="Set ${j + 1} done">${TICK}</button>
         </div>`).join("")}</div>
     </article>`;
   });
-  html += `</section><section class="block"><span class="label">Core finisher · ${CORE_ROUNDS} rounds</span>
-    ${s.core.map(c => `<article class="card ex"><h3 class="coreh">${esc(c[0])}</h3>${howTo(c[1], c[0], "core-" + c[1])}</article>`).join("")}
-    ${l.core.map((d, r) => `<button type="button" class="check" data-core="${r}" aria-pressed="${d}"><span class="box">${TICK}</span><span class="t"><b>Round ${r + 1}</b></span></button>`).join("")}
-  </section><section class="block">
-    ${l.done ? `<p class="center muted">Finished ${fmtDate(l.done)}</p><button type="button" class="finish ghost" data-undo>Mark as not finished</button>`
-             : `<button type="button" class="finish" data-finish>Finish ${s.name.toLowerCase()}</button>`}
-  </section>`;
+  if (s.ex.length) html += `</section>`;
+  if (s.core.length) {
+    html += `<section class="block"><span class="label">Core finisher${s.rounds ? " · " + s.rounds + " round" + (s.rounds > 1 ? "s" : "") : ""}</span>
+      ${s.core.map(c => `<article class="card ex"><h3 class="coreh">${esc(exName(c))} × ${esc(c.reps)}</h3>${howTo(c.k, "core-" + c.k)}</article>`).join("")}
+      ${l.core.slice(0, s.rounds).map((d, r) => `<button type="button" class="check" data-core="${r}" aria-pressed="${d}"><span class="box">${TICK}</span><span class="t"><b>Round ${r + 1}</b></span></button>`).join("")}</section>`;
+  }
+  if (!s.ex.length && !s.core.length) html += `<section class="block"><p class="card muted">This session is empty. <a class="link" href="#plan-${p.id}">Add exercises</a></p></section>`;
+  html += `<section class="block">${l.done ? `<p class="center muted" style="margin:0">Finished ${fmtDate(l.done)}</p><button type="button" class="finish ghost" data-undo>Mark as not finished</button>`
+    : `<button type="button" class="finish" data-finish>Finish ${esc(s.name)}</button>`}</section>`;
   $("#view").innerHTML = html;
-  document.querySelectorAll("[data-demo]").forEach(mountDemo);
 }
 
-/* ---- Progress ---- */
-let resetArmed = false;
+/* ---- Plans ---- */
+let armed = null;   // two-tap confirmations: the id of whatever is waiting for a second tap
+function renderPlans() {
+  let html = `<section class="hello"><h1>Your plans</h1><p class="muted">Follow one plan at a time. Build your own or start from a ready-made one.</p></section>`;
+  if (!S.plans.length) html += `<p class="card muted" style="margin:0">No plans yet. Pick one below or build your own.</p>`;
+  for (const p of S.plans) {
+    const active = p.id === S.active, nEx = p.sessions.reduce((a, s) => a + s.ex.length, 0);
+    html += `<article class="card plan${active ? " active" : ""}">
+      <div class="row"><span class="label">${active ? "Following now" : "Plan"}</span><span class="pill">${p.sessions.length} session${p.sessions.length === 1 ? "" : "s"} · ${p.weeks} weeks</span></div>
+      <h2>${esc(p.name)}</h2><p class="muted" style="margin:0">${nEx} exercises: ${esc(p.sessions.map(s => s.focus || s.name).join(", ") || "none yet")}</p>
+      <div class="tools">${active ? `<a class="btn primary" href="#home">Train</a>` : `<button class="btn primary" type="button" data-useplan="${p.id}">Follow this plan</button>`}
+        <a class="btn" href="#plan-${p.id}">Edit</a><button class="btn" type="button" data-copyplan="${p.id}">Copy</button>
+        <button class="btn danger" type="button" data-delplan="${p.id}">${armed === "del-" + p.id ? "Tap again to delete" : "Delete"}</button></div></article>`;
+  }
+  html += `<section class="block" style="padding-top:8px"><h2 style="font-size:22px">Build your own</h2>
+    <p class="muted" style="margin:0">Choose exercises from the library and set your own reps and sets.</p>
+    <button class="finish" type="button" data-newblank>Create a new plan</button></section>
+    <section class="block" style="padding-top:8px"><h2 style="font-size:22px">Ready-made plans</h2>${templateCards("usetemplate")}</section>`;
+  $("#view").innerHTML = `<div class="stack">${html}</div>`;
+}
+
+function renderEditor(pid) {
+  const p = planById(pid); if (!p) { location.hash = "plans"; return; }
+  const row = (e, kind, s, i, n) => `<div class="erow" data-eid="${e.id}" data-kind="${kind}">
+      <button type="button" class="demo thumb" data-demo="${esc(e.k)}" data-info="${esc(e.k)}" aria-label="How to do ${esc(exName(e))}"></button>
+      <div class="body"><div class="nrow"><div class="name">${esc(exName(e))}</div>
+          <div class="mini"><button type="button" data-move="-1" aria-label="Move up" ${i === 0 ? "disabled" : ""}>${UP}</button><button type="button" data-move="1" aria-label="Move down" ${i === n - 1 ? "disabled" : ""}>${DOWN}</button><button type="button" data-remove aria-label="Remove">${DEL}</button></div></div>
+        <div class="ctrl${kind === "core" ? " core" : ""}">
+          <label class="fl"><span class="label">Reps</span><input class="in small-in" id="reps-${e.id}" data-xf="reps" value="${esc(e.reps)}"></label>
+          ${kind === "ex" ? `<label class="fl"><span class="label">Sets</span><input class="in small-in num" id="sets-${e.id}" data-xf="sets" inputmode="numeric" value="${e.sets}"></label>` : ""}
+        </div></div></div>`;
+  let html = `<div class="shead"><a href="#plans">← Your plans</a><span class="label">Edit plan</span><h1>${esc(p.name || "New plan")}</h1><p class="muted" style="margin:0">Changes save as you go.</p></div>
+    <section class="block"><div class="card" style="display:grid;gap:12px">
+      <div class="grid3"><label class="fl" for="pName">Plan name<input class="in" id="pName" data-pf="name" value="${esc(p.name)}"></label>
+      <label class="fl" for="pWeeks">Weeks<input class="in num" id="pWeeks" data-pf="weeks" inputmode="numeric" value="${p.weeks}"></label><span></span></div>
+      <span class="label">Warm-up</span>
+      <div class="grid2"><label class="fl" for="wWhat">What<input class="in" id="wWhat" data-pf="wu.what" value="${esc(p.warmup.what)}" placeholder="e.g. Exercise bike"></label>
+      <label class="fl" for="wTime">How long<input class="in" id="wTime" data-pf="wu.time" value="${esc(p.warmup.time)}" placeholder="e.g. 10 minutes"></label></div>
+      <label class="fl" for="wNote">Note<input class="in" id="wNote" data-pf="wu.note" value="${esc(p.warmup.note)}" placeholder="e.g. Build up the speed"></label>
+    </div></section>`;
+  p.sessions.forEach((s, si) => {
+    html += `<section class="block"><article class="card ed-sess" data-sid="${s.id}">
+      <div class="grid2"><label class="fl" for="sn-${s.id}">Session name<input class="in" id="sn-${s.id}" data-sf="name" value="${esc(s.name)}"></label>
+      <label class="fl" for="sf-${s.id}">Focus<input class="in" id="sf-${s.id}" data-sf="focus" value="${esc(s.focus)}" placeholder="e.g. Glutes"></label></div>
+      <label class="fl" for="so-${s.id}">Note <span class="hint">Optional, e.g. "Heavy weights if possible"</span><input class="in" id="so-${s.id}" data-sf="note" value="${esc(s.note)}"></label>
+      <div><span class="label">Exercises</span>${s.ex.map((e, i) => row(e, "ex", s, i, s.ex.length)).join("") || `<p class="muted" style="margin:6px 0 0">No exercises yet.</p>`}</div>
+      <button class="btn" type="button" data-add="ex">+ Add exercise</button>
+      <div><div class="grid2" style="align-items:end"><span class="label">Core finisher</span>
+        <label class="fl" for="sr-${s.id}">Rounds<input class="in small-in num" id="sr-${s.id}" data-sf="rounds" inputmode="numeric" value="${s.rounds}"></label></div>
+        ${s.core.map((c, i) => row(c, "core", s, i, s.core.length)).join("")}</div>
+      <button class="btn" type="button" data-add="core">+ Add core move</button>
+      <button class="btn danger" type="button" data-delsess>${armed === "sess-" + s.id ? "Tap again to remove this session" : "Remove session " + (si + 1)}</button>
+    </article></section>`;
+  });
+  html += `<section class="block"><button class="btn wide" type="button" data-addsess>+ Add a session</button>
+    ${p.id === S.active ? `<a class="finish" href="#home">Done</a>` : `<button class="finish" type="button" data-useplan="${p.id}">Follow this plan</button><a class="finish ghost" href="#plans">Done</a>`}</section>`;
+  $("#view").innerHTML = html;
+}
+
+/* ---- Library + picker ---- */
+function libList(filterG, q) {
+  q = (q || "").trim().toLowerCase();
+  return Object.keys(LIB).filter(k => (filterG === "All" || LIB[k].g === filterG) &&
+    (!q || (LIB[k].name + " " + LIB[k].works + " " + LIB[k].eq).toLowerCase().includes(q)));
+}
+function libGridHTML(keys, attr) {
+  return keys.length ? `<div class="lib-grid">${keys.map(k => `<button type="button" class="lcard" ${attr}="${k}">
+    <span class="demo" data-demo="${k}"></span><b>${esc(LIB[k].name)}</b><small>${esc(LIB[k].works)}</small></button>`).join("")}</div>`
+    : `<p class="empty">No exercises match. Try another word.</p>`;
+}
+function libControls(prefix, F) {
+  return `<input class="in" id="${prefix}Search" type="search" placeholder="Search, e.g. glutes, dumbbell, squat" value="${esc(F.q)}" aria-label="Search exercises">
+    <div class="chips" role="group" aria-label="Filter">${["All", ...GROUPS].map(g => `<button type="button" class="chip" data-grp="${g}" aria-pressed="${F.g === g}">${g}</button>`).join("")}</div>`;
+}
+function renderLibrary() {
+  $("#view").innerHTML = `<div class="stack"><div class="shead" style="padding-top:0"><a href="#learn">← Learn</a></div>
+    <section class="hello"><h1>Exercise library</h1><p class="muted">${Object.keys(LIB).length} exercises with animations. Tap one to learn how to do it.</p></section>
+    ${libControls("lib", LIBF)}<div id="libGrid">${libGridHTML(libList(LIBF.g, LIBF.q), "data-info")}</div></div>`;
+}
+function refreshGrid() {
+  const inSheet = !$("#sheet").hidden && $("#pickGrid");
+  const grid = inSheet ? $("#pickGrid") : $("#libGrid"), F = inSheet ? PICKF : LIBF; if (!grid) return;
+  grid.innerHTML = libGridHTML(libList(F.g, F.q), inSheet ? "data-pick" : "data-info");
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.grp === F.g));
+  mountDemos(grid);
+}
+
+/* ---- Sheets ---- */
+let pickTarget = null, lastFocus = null;
+function openSheet(html) {
+  lastFocus = document.activeElement;
+  $("#sheetIn").innerHTML = html; $("#sheet").hidden = false; $("#sheetIn").scrollTop = 0;
+  mountDemos($("#sheetIn"));
+  const c = $("#sheetIn [data-close]"); if (c) c.focus();
+}
+function closeSheet() { if ($("#sheet").hidden) return; $("#sheet").hidden = true; $("#sheetIn").innerHTML = ""; pickTarget = null; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function infoSheet(k) {
+  const g = LIB[k]; if (!g) return;
+  const easy = g.easier && LIB[g.easier] ? `<button class="btn" type="button" data-info="${g.easier}">Too hard? Try ${esc(LIB[g.easier].name)}</button>` : "";
+  openSheet(`<div class="sheet-top"><h2 id="sheetTitle">${esc(g.name)}</h2><button class="btn" type="button" data-close>Close</button></div>
+    <div class="demo" data-demo="${k}" role="img" aria-label="Animation of ${esc(g.name)}"></div>
+    <div class="tools"><span class="pill">${esc(g.g)}</span><span class="pill">${esc(g.eq)}</span></div>
+    <p style="margin:0"><span class="label">Works</span> ${esc(g.works)}</p>
+    <div class="guide" style="padding:0;gap:8px"><ol style="margin:0">${g.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
+    <p class="tip"><b>Tip</b> ${esc(g.tip)}</p>${easy}`);
+}
+function pickerSheet(pid, sid, kind) {
+  pickTarget = { pid, sid, kind };
+  PICKF.q = ""; PICKF.g = kind === "core" ? "Core" : "All";
+  openSheet(`<div class="sheet-top"><h2 id="sheetTitle">${kind === "core" ? "Add a core move" : "Add an exercise"}</h2><button class="btn" type="button" data-close>Close</button></div>
+    ${libControls("pick", PICKF)}<div id="pickGrid">${libGridHTML(libList(PICKF.g, PICKF.q), "data-pick")}</div>`);
+}
+
+/* ---- Learn ---- */
+function renderLearn() {
+  $("#view").innerHTML = `<div class="stack"><section class="hello"><h1>Learn</h1><p class="muted">Short guides for beginners, plus every exercise with an animation.</p></section>
+    ${GUIDES.map(g => `<a class="card gcard" href="#guide-${g.id}"><span class="label">${g.mins} min read</span><h2>${esc(g.title)}</h2><span class="muted">${esc(g.blurb)}</span></a>`).join("")}
+    <a class="card gcard" href="#library"><span class="label">${Object.keys(LIB).length} exercises</span><h2>Exercise library</h2><span class="muted">Animated demos and step-by-step how-tos for every move.</span></a></div>`;
+}
+function renderGuide(id) {
+  const g = GUIDES.find(x => x.id === id); if (!g) { location.hash = "learn"; return; }
+  let html = `<div class="guide"><div class="shead" style="padding-top:0"><a href="#learn">← Learn</a><span class="label">${g.mins} min read</span><h1>${esc(g.title)}</h1></div>`;
+  g.sections.forEach((s, i) => {
+    html += `<section>${s.h ? `<h2>${esc(s.h)}</h2>` : ""}${(s.p || []).map(t => `<p>${esc(t)}</p>`).join("")}${s.list ? `<ul>${s.list.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}${s.tip ? `<p class="tip">${esc(s.tip)}</p>` : ""}</section>`;
+    if (g.calc && i === 2) html += calcHTML();
+  });
+  $("#view").innerHTML = html + `</div>`;
+  if (g.calc) calcUpdate();
+}
+
+/* ---- Nutrition calculator (Mifflin-St Jeor) ---- */
+function calcHTML() {
+  const c = Object.assign({ wu: "kg", hu: "cm", sex: "f", act: "1.375", goal: "maintain" }, S.calc);
+  const opt = (v, cur, t) => `<option value="${v}"${String(cur) === v ? " selected" : ""}>${t}</option>`;
+  return `<section class="card calc" id="calc"><span class="label">Your numbers</span><h2>Nutrition calculator</h2>
+    <div class="grid2"><label class="fl" for="cWu">Weight in<select class="in" id="cWu" data-c="wu">${opt("kg", c.wu, "kg")}${opt("st", c.wu, "stone & lb")}</select></label>
+      <div class="grid2" style="align-items:end"><label class="fl" for="cW1">${c.wu === "st" ? "st" : "kg"}<input class="in num" id="cW1" data-c="w1" inputmode="decimal" value="${esc(c.w1)}"></label>
+      ${c.wu === "st" ? `<label class="fl" for="cW2">lb<input class="in num" id="cW2" data-c="w2" inputmode="decimal" value="${esc(c.w2)}"></label>` : "<span></span>"}</div></div>
+    <div class="grid2"><label class="fl" for="cHu">Height in<select class="in" id="cHu" data-c="hu">${opt("cm", c.hu, "cm")}${opt("ft", c.hu, "feet & inches")}</select></label>
+      <div class="grid2" style="align-items:end"><label class="fl" for="cH1">${c.hu === "ft" ? "ft" : "cm"}<input class="in num" id="cH1" data-c="h1" inputmode="decimal" value="${esc(c.h1)}"></label>
+      ${c.hu === "ft" ? `<label class="fl" for="cH2">in<input class="in num" id="cH2" data-c="h2" inputmode="decimal" value="${esc(c.h2)}"></label>` : "<span></span>"}</div></div>
+    <div class="grid2"><label class="fl" for="cAge">Age<input class="in num" id="cAge" data-c="age" inputmode="numeric" value="${esc(c.age)}"></label>
+      <label class="fl" for="cSex">Formula for<select class="in" id="cSex" data-c="sex">${opt("f", c.sex, "Female body")}${opt("m", c.sex, "Male body")}</select></label></div>
+    <label class="fl" for="cAct">How active are you?<select class="in" id="cAct" data-c="act">${opt("1.2", c.act, "Mostly sitting, little exercise")}${opt("1.375", c.act, "Light: training 1 to 3 days a week")}${opt("1.55", c.act, "Moderate: training 3 to 5 days a week")}${opt("1.725", c.act, "Very active: hard training or a physical job")}</select></label>
+    <label class="fl" for="cGoal">Your goal<select class="in" id="cGoal" data-c="goal">${opt("lose", c.goal, "Lose fat slowly")}${opt("maintain", c.goal, "Stay the same, get stronger")}${opt("build", c.goal, "Build muscle")}</select></label>
+    <div id="calcOut" aria-live="polite"></div>
+    <p class="muted" style="margin:0;font-size:13px">Estimates only, from the Mifflin-St Jeor formula. Treat them as a starting point, and adjust by how you feel and how your weight changes over a few weeks. Saved to your account.</p></section>`;
+}
+function calcUpdate() {
+  const out = $("#calcOut"); if (!out) return;
+  const c = Object.assign({ wu: "kg", hu: "cm", sex: "f", act: "1.375", goal: "maintain" }, S.calc);
+  const kg = c.wu === "st" ? (num(c.w1) || 0) * 6.35029 + (num(c.w2) || 0) * 0.453592 : num(c.w1);
+  const cm = c.hu === "ft" ? (num(c.h1) || 0) * 30.48 + (num(c.h2) || 0) * 2.54 : num(c.h1);
+  const age = num(c.age);
+  if (!kg || !cm || !age || kg < 30 || kg > 300 || cm < 120 || cm > 230 || age < 16 || age > 99) {
+    out.innerHTML = `<p class="tile muted" style="margin:0">Fill in your weight, height and age to see your numbers.${age && age < 16 ? " This calculator is for adults. Under 18s should talk to a GP or school nurse about food." : ""}</p>`; return;
+  }
+  const bmr = 10 * kg + 6.25 * cm - 5 * age + (c.sex === "m" ? 5 : -161), maint = bmr * parseFloat(c.act);
+  const target = c.goal === "lose" ? maint * 0.85 : c.goal === "build" ? maint * 1.07 : maint;
+  const r50 = n => Math.round(n / 50) * 50, floor = c.sex === "m" ? 1500 : 1200;
+  const low = target < floor;
+  out.innerHTML = `<div class="results">
+    <div class="tile hl"><small>Daily calories for your goal</small><b>${r50(Math.max(target, floor)).toLocaleString("en-GB")}</b><small>kcal</small></div>
+    <div class="tile hl"><small>Protein</small><b>${Math.round(kg * 1.6)} g</b><small>a day (up to ${Math.round(kg * 2.2)} g is fine)</small></div>
+    <div class="tile"><small>Maintenance</small><b>${r50(maint).toLocaleString("en-GB")}</b><small>kcal to stay the same</small></div>
+    <div class="tile"><small>Water</small><b>${(kg * 0.033).toFixed(1)} L</b><small>a day, more when training</small></div></div>
+    ${low ? `<p class="tip" style="margin-top:10px">We don't suggest going below ${floor.toLocaleString("en-GB")} kcal a day without support from a GP or dietitian, so that's shown instead.</p>` : ""}
+    <p style="margin:10px 0 0">That's about <b>${Math.round(kg * 1.6 / 4)} g of protein</b> at each of 4 meals and snacks.</p>`;
+}
+
+/* ---- Progress + account ---- */
 function renderProgress() {
-  let html = `<section class="hello"><h1>Progress</h1><p class="muted">Your heaviest set for each exercise, week by week. Green means you went up.</p></section>`;
-  for (const s of SESSIONS) {
-    html += `<section class="card"><span class="label">${s.name}</span><h2 style="font-size:20px;margin:2px 0 8px">${esc(s.focus)}</h2>
-      <div class="tablewrap"><table><thead><tr><th>Exercise</th>${Array.from({ length: WEEKS }, (_, i) => `<th class="${i + 1 === S.week ? "cur" : ""}">W${i + 1}</th>`).join("")}</tr></thead><tbody>`;
-    s.ex.forEach((e, i) => {
+  const p = plan();
+  if (!p) { $("#view").innerHTML = `<div class="stack"><section class="hello"><h1>Progress</h1><p class="muted">Pick a plan and log a session to see your progress here.</p></section><a class="finish" href="#home">Choose a plan</a></div>`; return; }
+  let sessions = 0, sets = 0, kg = 0;
+  for (const k in S.logs) if (k.startsWith(p.id + "|")) { const l = S.logs[k]; if (l.done) sessions++; for (const e in l.sets) for (const x of l.sets[e]) if (x.done) { sets++; kg += (num(x.kg) || 0) * (num(x.reps) || 0); } }
+  let html = `<section class="hello"><span class="label">${esc(p.name)}</span><h1>Progress</h1><p class="muted">Your heaviest set for each exercise, week by week. Green means you went up.</p></section>
+    <div class="results"><div class="tile hl"><small>Sessions done</small><b class="num">${sessions}</b></div><div class="tile hl"><small>Sets logged</small><b class="num">${sets}</b></div>
+    <div class="tile" style="grid-column:1/-1"><small>Total weight lifted (kg × reps)</small><b class="num">${Math.round(kg).toLocaleString("en-GB")} kg</b></div></div>`;
+  for (const s of p.sessions) {
+    if (!s.ex.length) continue;
+    html += `<section class="card"><span class="label">${esc(s.name)}</span><h2 style="font-size:20px;margin:2px 0 8px">${esc(s.focus || s.name)}</h2>
+      <div class="tablewrap"><table><thead><tr><th>Exercise</th>${Array.from({ length: p.weeks }, (_, i) => `<th class="${i + 1 === weekOf(p) ? "cur" : ""}">W${i + 1}</th>`).join("")}</tr></thead><tbody>`;
+    for (const e of s.ex) {
       let prev = null;
-      html += `<tr><td>${esc(e[0])}</td>`;
-      for (let w = 1; w <= WEEKS; w++) {
-        const t = topSet(s.id, w, i);
+      html += `<tr><td>${esc(exName(e))}</td>`;
+      for (let w = 1; w <= p.weeks; w++) {
+        const t = topSet(p, s, w, e);
         if (!t) { html += `<td class="empty">·</td>`; continue; }
-        html += `<td class="${prev !== null && t.kg > prev ? "up" : ""}">${fmtKg(t.kg)}</td>`;
-        prev = t.kg;
+        html += `<td class="${prev !== null && t.kg > prev ? "up" : ""}">${fmtKg(t.kg)}</td>`; prev = t.kg;
       }
       html += `</tr>`;
-    });
+    }
     html += `</tbody></table></div><p class="label" style="margin:10px 0 0">Weights in kg</p></section>`;
   }
-  html += `<section class="card" style="display:grid;gap:10px"><span class="label">Backup</span>
-    <p class="muted" style="margin:0;font-size:14px">Your log is saved on this phone only. Copy a backup now and then and keep it in Notes, so nothing is lost if the browser data is cleared.</p>
-    <div class="tools"><button class="btn" type="button" id="copyBk">Copy backup</button><button class="btn" type="button" id="restoreBk">Restore from pasted backup</button></div>
-    <textarea id="bk" aria-label="Backup text" placeholder="Paste a backup here, then tap Restore"></textarea>
-    <div class="msg" id="bkMsg" role="status"></div>
-    <span class="label" style="margin-top:6px">Start again</span>
-    <div class="tools"><button class="btn danger" type="button" id="reset">${resetArmed ? "Tap again to clear all six weeks" : "Clear log for a new 6-week block"}</button></div>
-  </section>`;
   $("#view").innerHTML = `<div class="stack">${html}</div>`;
+}
+function renderAccount() {
+  const p = plan();
+  $("#view").innerHTML = `<div class="stack"><section class="hello"><h1>${USER ? esc(displayName()) : "Your data"}</h1>
+    <p class="muted">${USER ? esc(USER.email) + " · your plans and logs are saved to your account and sync across your devices." : "Everything is saved on this device only."}</p></section>
+    ${USER ? `<section class="card" style="display:grid;gap:10px"><span class="label">Account</span><p style="margin:0">Sync: <b>${esc($("#sync").textContent || "Saved")}</b></p>
+      <div class="tools"><button class="btn" type="button" data-signout>Log out</button><button class="btn" type="button" data-changepw>Change password</button></div><p class="msg" id="acctMsg" role="status"></p></section>` : ""}
+    <section class="card" style="display:grid;gap:10px"><span class="label">Backup</span>
+      <p class="muted" style="margin:0;font-size:14px">${USER ? "Your data is already backed up to your account. You can also copy it as text." : "Copy a backup now and then and keep it in Notes, so nothing is lost if your browser data is cleared."}</p>
+      <div class="tools"><button class="btn" type="button" id="copyBk">Copy backup</button><button class="btn" type="button" id="restoreBk">Restore from pasted backup</button></div>
+      <textarea id="bk" aria-label="Backup text" placeholder="Paste a backup here, then tap Restore"></textarea><p class="msg" id="bkMsg" role="status"></p></section>
+    ${p ? `<section class="card" style="display:grid;gap:10px"><span class="label">Start again</span><p class="muted" style="margin:0;font-size:14px">Clears every logged set for ${esc(p.name)} and goes back to week 1. The plan itself stays.</p>
+      <div class="tools"><button class="btn danger" type="button" data-resetplan>${armed === "reset" ? "Tap again to clear the log" : "Clear this plan's log"}</button></div></section>` : ""}
+    <p class="muted center" style="font-size:13px">Lift Log gives general fitness information, not medical advice.</p></div>`;
 }
 
 /* ---- Router ---- */
 function route() {
-  const h = (location.hash || "#home").slice(1);
-  $("#navHome").setAttribute("aria-current", h === "progress" ? "false" : "page");
-  $("#navProg").setAttribute("aria-current", h === "progress" ? "page" : "false");
-  renderWeeks();
-  if (sess(h)) renderSession(h);
-  else if (h === "progress") renderProgress();
-  else renderHome();
+  if ($("#app").hidden) return;
+  const h = (location.hash || "#home").slice(1), i = h.indexOf("-");
+  const page = i < 0 ? h : h.slice(0, i), arg = i < 0 ? "" : h.slice(i + 1);
+  const tab = { sess: "home", plan: "plans", guide: "learn", library: "learn" }[page] || page;
+  document.querySelectorAll("[data-nav]").forEach(a => a.setAttribute("aria-current", a.dataset.nav === tab ? "page" : "false"));
+  $("#avatar").setAttribute("aria-current", page === "account" ? "page" : "false");
+  $("#avatar").innerHTML = USER ? esc(displayName().charAt(0).toUpperCase()) : PERSON;
+  renderWeeks(plan(), ["home", "sess", "progress"].includes(page) || !["plans", "plan", "learn", "guide", "library", "account"].includes(page));
+  ({ sess: () => renderSession(arg), plans: renderPlans, plan: () => renderEditor(arg), learn: renderLearn, guide: () => renderGuide(arg),
+     library: renderLibrary, progress: renderProgress, account: renderAccount }[page] || renderHome)();
+  mountDemos($("#view"));
 }
-function rerenderKeepScroll() { const y = scrollY; route(); scrollTo(0, y); }
-addEventListener("hashchange", () => { resetArmed = false; route(); scrollTo(0, 0); });
+function rerender() { const y = scrollY; route(); scrollTo(0, y); }
+addEventListener("hashchange", () => { armed = null; closeSheet(); route(); scrollTo(0, 0); });
 
-/* ---- Events ---- */
+let toastT;
+function toast(t) { const el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 2200); }
+
+/* ================= Events ================= */
 document.addEventListener("toggle", ev => { const d = ev.target; if (d.dataset && d.dataset.how) d.open ? OPEN.add(d.dataset.how) : OPEN.delete(d.dataset.how); }, true);
+document.addEventListener("submit", ev => { const f = ev.target.closest("form[data-auth]"); if (f) { ev.preventDefault(); authSubmit(f); } });
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") closeSheet(); });
+$("#sheet").addEventListener("click", ev => { if (ev.target.id === "sheet") closeSheet(); });
+
 document.addEventListener("input", ev => {
-  const inp = ev.target.closest("input[data-f]"); if (!inp) return;
-  const sid = location.hash.slice(1), i = +inp.closest("[data-ex]").dataset.ex, j = +inp.closest("[data-set]").dataset.set;
-  getLog(sid, S.week, true).sets[i][j][inp.dataset.f] = inp.value.trim();
-  save();
-});
-document.addEventListener("click", ev => {
   const t = ev.target;
-  const wk = t.closest("[data-week]");
-  if (wk) { S.week = +wk.dataset.week; save(); rerenderKeepScroll(); return; }
-  const sid = location.hash.slice(1);
-  const l = sess(sid) ? getLog(sid, S.week, true) : null;
-  if (t.closest("[data-warm]")) { l.warm = !l.warm; save(); rerenderKeepScroll(); return; }
-  const core = t.closest("[data-core]");
-  if (core) { const r = +core.dataset.core; l.core[r] = !l.core[r]; save(); rerenderKeepScroll(); if (l.core[r] && r < CORE_ROUNDS - 1) startRest(60, "Rest before round " + (r + 2)); return; }
-  if (t.closest("[data-tick]")) {
-    const i = +t.closest("[data-ex]").dataset.ex, j = +t.closest("[data-set]").dataset.set, set = l.sets[i][j];
-    set.done = !set.done;
-    if (set.done) {
-      // Fill blanks from the set above, or from last week's best.
-      const above = l.sets[i][j - 1], lt = lastTime(sid, S.week, i);
-      if (!set.kg) set.kg = above && above.kg ? above.kg : lt ? fmtKg(lt.kg) : "";
-      if (!set.reps && above && above.reps) set.reps = above.reps;
-      const ex = sess(sid).ex, lastSet = j === l.sets[i].length - 1;
-      startRest(S.rest, lastSet ? (ex[i + 1] ? "Next: " + ex[i + 1][0] : "Core finisher next") : `Rest · then set ${j + 2} of ${ex[i][0]}`);
-    }
-    save(); rerenderKeepScroll(); return;
+  if (t.id === "libSearch" || t.id === "pickSearch") { (t.id === "pickSearch" ? PICKF : LIBF).q = t.value; refreshGrid(); return; }
+  if (t.dataset.c) { S.calc = Object.assign({}, S.calc, { [t.dataset.c]: t.value }); save(); if (t.tagName === "SELECT" && /^(wu|hu)$/.test(t.dataset.c)) rerender(); else calcUpdate(); return; }
+  const p = plan();
+  if (t.dataset.f) {   // a set's kg or reps
+    const e = t.closest("[data-eid]").dataset.eid, j = +t.closest("[data-set]").dataset.set, s = sessOf(p, location.hash.slice(6));
+    getLog(p, s, weekOf(p), true).sets[e][j][t.dataset.f] = t.value.trim(); save(); return;
   }
-  if (t.closest("[data-finish]")) { l.done = new Date().toISOString(); save(); stopRest(); location.hash = "home"; return; }
-  if (t.closest("[data-undo]")) { l.done = null; save(); rerenderKeepScroll(); return; }
+  const ep = planById(location.hash.slice(6)); if (!ep || !location.hash.startsWith("#plan-")) return;
+  if (t.dataset.pf) {
+    const f = t.dataset.pf;
+    if (f === "weeks") { const n = parseInt(t.value, 10); if (n >= 1) ep.weeks = clamp(n, 1, 16); }
+    else if (f.startsWith("wu.")) ep.warmup[f.slice(3)] = t.value;
+    else ep[f] = t.value;
+    save(); return;
+  }
+  const s = ep.sessions.find(x => x.id === (t.closest("[data-sid]") || {}).dataset?.sid); if (!s) return;
+  if (t.dataset.sf) { if (t.dataset.sf === "rounds") { const n = parseInt(t.value, 10); if (n >= 0) s.rounds = clamp(n, 0, 6); } else s[t.dataset.sf] = t.value; save(); return; }
+  if (t.dataset.xf) {
+    const r = t.closest("[data-eid]"), list = r.dataset.kind === "core" ? s.core : s.ex, e = list.find(x => x.id === r.dataset.eid);
+    if (t.dataset.xf === "sets") { const n = parseInt(t.value, 10); if (n >= 1) e.sets = clamp(n, 1, 10); } else e.reps = t.value;
+    save();
+  }
+});
+document.addEventListener("change", ev => { if (ev.target.matches("[data-pf=weeks], [data-xf=sets], [data-sf=rounds]")) rerender(); });
+
+document.addEventListener("click", async ev => {
+  const t = ev.target, on = sel => t.closest(sel);
+  let el;
+  if (on("[data-amode]")) return showAuth(on("[data-amode]").dataset.amode);
+  if (on("[data-close]")) return closeSheet();
+  if ((el = on("[data-info]"))) { ev.preventDefault(); return infoSheet(el.dataset.info); }
+  if ((el = on("[data-grp]"))) { (!$("#sheet").hidden ? PICKF : LIBF).g = el.dataset.grp; return refreshGrid(); }
+  if ((el = on("[data-pick]")) && pickTarget) {
+    const p = planById(pickTarget.pid), s = sessOf(p, pickTarget.sid), k = el.dataset.pick;
+    if (pickTarget.kind === "core") s.core.push({ id: uid(), k, name: "", reps: "10–15" });
+    else s.ex.push({ id: uid(), k, name: "", reps: LIB[k].g === "Cardio" ? "30 sec" : "8 to 12", sets: 3 });
+    save(); closeSheet(); rerender(); toast(LIB[k].name + " added"); return;
+  }
+  if ((el = on("[data-week]"))) { const p = plan(); S.weekBy[p.id] = +el.dataset.week; save(); return rerender(); }
+  if (on("[data-hidewelcome]")) { S.hideWelcome = true; save(); return rerender(); }
+  if ((el = on("[data-usetemplate]"))) {
+    const tpl = TEMPLATES.find(x => x.id === el.dataset.usetemplate), p = planFromTemplate(tpl, false);
+    S.plans.push(p); S.active = p.id; S.weekBy[p.id] = 1; save(); toast("Now following " + p.name); location.hash = "home"; return;
+  }
+  if (on("[data-newblank]")) {
+    ev.preventDefault();
+    const p = { id: uid(), name: "My plan", weeks: 6, warmup: { what: "Exercise bike", time: "10 minutes", note: "Easy pace, then a little faster" },
+      sessions: [{ id: uid(), name: "Day 1", focus: "", note: "", rounds: 2, ex: [], core: [] }] };
+    S.plans.push(p); if (!S.active) S.active = p.id; save(); location.hash = "plan-" + p.id; return;
+  }
+  if ((el = on("[data-useplan]"))) { S.active = el.dataset.useplan; save(); toast("Now following " + plan().name); location.hash = "home"; return; }
+  if ((el = on("[data-copyplan]"))) {
+    const src = planById(el.dataset.copyplan), p = clone(src); p.id = uid(); p.name = "Copy of " + src.name;
+    S.plans.push(p); save(); location.hash = "plan-" + p.id; return;
+  }
+  if ((el = on("[data-delplan]"))) {
+    const id = el.dataset.delplan;
+    if (armed !== "del-" + id) { armed = "del-" + id; return rerender(); }
+    armed = null; S.plans = S.plans.filter(p => p.id !== id);
+    for (const k in S.logs) if (k.startsWith(id + "|")) delete S.logs[k];
+    delete S.weekBy[id]; S = normalize(S); save(); toast("Plan deleted"); return rerender();
+  }
+  // Plan editor
+  const ep = location.hash.startsWith("#plan-") ? planById(location.hash.slice(6)) : null;
+  if (ep) {
+    const s = ep.sessions.find(x => x.id === (t.closest("[data-sid]") || {}).dataset?.sid);
+    if (on("[data-addsess]")) { ep.sessions.push({ id: uid(), name: "Day " + (ep.sessions.length + 1), focus: "", note: "", rounds: 2, ex: [], core: [] }); save(); return rerender(); }
+    if (s && (el = on("[data-add]"))) return pickerSheet(ep.id, s.id, el.dataset.add);
+    if (s && on("[data-delsess]")) {
+      if (armed !== "sess-" + s.id) { armed = "sess-" + s.id; return rerender(); }
+      armed = null; ep.sessions = ep.sessions.filter(x => x !== s); save(); return rerender();
+    }
+    const r = t.closest(".erow");
+    if (s && r) {
+      const list = r.dataset.kind === "core" ? s.core : s.ex, i = list.findIndex(x => x.id === r.dataset.eid);
+      if ((el = on("[data-move]"))) { const j = i + +el.dataset.move; if (j >= 0 && j < list.length) { [list[i], list[j]] = [list[j], list[i]]; save(); rerender(); } return; }
+      if (on("[data-remove]")) { list.splice(i, 1); save(); return rerender(); }
+    }
+  }
+  // Session
+  const p = plan(), s = location.hash.startsWith("#sess-") && sessOf(p, location.hash.slice(6));
+  if (s) {
+    const w = weekOf(p), l = getLog(p, s, w, true);
+    if (on("[data-warm]")) { l.warm = !l.warm; save(); return rerender(); }
+    if ((el = on("[data-core]"))) { const r = +el.dataset.core; l.core[r] = !l.core[r]; save(); rerender(); if (l.core[r] && r < s.rounds - 1) startRest(60, "Rest before round " + (r + 2)); return; }
+    if (on("[data-tick]")) {
+      const eid = t.closest("[data-eid]").dataset.eid, j = +t.closest("[data-set]").dataset.set;
+      const i = s.ex.findIndex(e => e.id === eid), e = s.ex[i], set = l.sets[eid][j];
+      set.done = !set.done;
+      if (set.done) {
+        // Fill blanks from the set above, or from last week's best.
+        const above = l.sets[eid][j - 1], lt = lastTime(p, s, w, e);
+        if (!set.kg) set.kg = above && above.kg ? above.kg : lt ? fmtKg(lt.kg) : "";
+        if (!set.reps && above && above.reps) set.reps = above.reps;
+        const lastSet = j === e.sets - 1, nx = s.ex[i + 1];
+        startRest(S.rest, lastSet ? (nx ? "Next: " + exName(nx) : s.core.length ? "Core finisher next" : "Last set done") : `Rest · then set ${j + 2} of ${exName(e)}`);
+      }
+      save(); return rerender();
+    }
+    if (on("[data-finish]")) { l.done = new Date().toISOString(); save(); stopRest(); toast("Session saved. Well done!"); location.hash = "home"; return; }
+    if (on("[data-undo]")) { l.done = null; save(); return rerender(); }
+  }
+  // Account
+  if (on("[data-signout]")) return signOut();
+  if (on("[data-changepw]")) {
+    const { error } = await sb.auth.resetPasswordForEmail(USER.email, { redirectTo: HERE });
+    const m = $("#acctMsg"); if (m) { m.className = "msg " + (error ? "err" : "ok"); m.textContent = error ? friendly(error) : "We've emailed you a link to choose a new password."; }
+    return;
+  }
+  if (on("[data-resetplan]")) {
+    if (armed !== "reset") { armed = "reset"; return rerender(); }
+    armed = null; const id = S.active; for (const k in S.logs) if (k.startsWith(id + "|")) delete S.logs[k];
+    S.weekBy[id] = 1; save(); toast("Log cleared"); location.hash = "home"; return;
+  }
   if (t.id === "copyBk") {
     const txt = JSON.stringify(S), box = $("#bk"); box.value = txt;
-    const ok = () => $("#bkMsg").textContent = "Backup copied. Paste it into Notes to keep it safe.";
-    const fb = () => { box.focus(); box.select(); $("#bkMsg").textContent = "Backup is in the box. Select it all and copy."; };
+    const ok = () => { $("#bkMsg").className = "msg ok"; $("#bkMsg").textContent = "Backup copied. Paste it into Notes to keep it safe."; };
+    const fb = () => { box.focus(); box.select(); $("#bkMsg").className = "msg"; $("#bkMsg").textContent = "Backup is in the box. Select it all and copy."; };
     try { navigator.clipboard.writeText(txt).then(ok, fb); } catch (e) { fb(); }
     return;
   }
   if (t.id === "restoreBk") {
     try {
-      const d = JSON.parse($("#bk").value);
+      let d = JSON.parse($("#bk").value);
       if (!d || typeof d.logs !== "object") throw 0;
-      S = Object.assign({ week: 1, rest: 90, logs: {} }, d); save();
-      route(); $("#bkMsg").textContent = "Backup restored.";
-    } catch (e) { $("#bkMsg").textContent = "That text isn't a Lift Log backup. Copy the whole backup and try again."; }
-    return;
-  }
-  if (t.id === "reset") {
-    if (!resetArmed) { resetArmed = true; rerenderKeepScroll(); return; }
-    resetArmed = false; S.logs = {}; S.week = 1; save(); location.hash = "home"; route();
+      if (!d.v) d = migrateV1(d);
+      S = normalize(d); save(); rerender(); $("#bkMsg").className = "msg ok"; $("#bkMsg").textContent = "Backup restored.";
+    } catch (e) { $("#bkMsg").className = "msg err"; $("#bkMsg").textContent = "That text isn't a Lift Log backup. Copy the whole backup and try again."; }
   }
 });
 
-/* ---- Rest timer ---- */
+/* ================= Rest timer ================= */
 let tEnd = 0, tLen = 0, tInt = null, beeped = false, wake = null;
 function startRest(sec, label) {
   tLen = sec; tEnd = Date.now() + sec * 1000; beeped = false;
@@ -721,5 +967,8 @@ function beep() {
 $("#tAdd").onclick = () => { tEnd += 15000; tLen += 15; beeped = false; tickRest(); };
 $("#tSkip").onclick = stopRest;
 
-route();
+/* ================= Start ================= */
+if (!CLOUD) { loadLocal("local"); showApp(); }
+else if (!sb) showAuth("broken");
+else { showAuth("loading"); sb.auth.onAuthStateChange((ev, session) => setTimeout(() => onAuth(ev, session), 0)); }
 </script>
