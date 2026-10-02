@@ -286,17 +286,10 @@
   .prog{position:absolute!important;left:14px;right:14px;bottom:0;height:2px;background:rgba(236,232,225,.08);border-radius:2px;overflow:hidden;z-index:2!important}
   .prog i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0);transition:transform .5s linear}
   .dock-bar{position:relative;overflow:hidden}
-  .dock-bar>*:not(.spec){position:relative;z-index:1}
-  .spec{position:absolute;inset:0;display:flex;align-items:flex-end;gap:3px;padding:0 12px;opacity:0;transition:opacity .6s;pointer-events:none;
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
-  .spec i{flex:1;height:8%;border-radius:2px 2px 0 0;background:linear-gradient(0deg,rgba(224,115,111,.75),rgba(224,115,111,.05))}
-  .playing .spec{opacity:.22}
+  .dock-bar>*{position:relative;z-index:1}
   .dock-art{width:50px;height:50px}
   .dock-art{position:relative;flex:none;width:46px;height:46px;border-radius:10px;overflow:hidden}
   .dock-art img{width:100%!important;height:100%!important;border-radius:0!important}
-  .viz{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:0 12px 9px;background:linear-gradient(0deg,rgba(10,10,11,.5),transparent 70%);opacity:0;transition:opacity .5s}
-  .viz i{flex:1;height:12%;border-radius:2px 2px 0 0;background:linear-gradient(0deg,var(--accent),#ffd2c8);opacity:.85}
-  .playing .viz{opacity:1}
   .eq{height:13px;gap:2.5px;margin-right:8px;vertical-align:-2px}
   .eq i{width:3px}
   .playing .dock-meta .label{color:var(--text)}
@@ -527,8 +520,7 @@
 <div class="dock" id="dock" aria-label="Music player">
   <div class="dock-panel" id="dockPanel"></div>
   <div class="dock-bar">
-    <div class="spec" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="dock-art"><img id="dockImg" src="img/nobody-cares.jpg" alt=""><div class="viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="dock-art"><img id="dockImg" src="img/nobody-cares.jpg" alt=""></div>
     <div class="dock-meta">
       <span class="label"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>C.Wood</span>
       <b id="dockTitle">Listen to C.Wood</b>
@@ -618,10 +610,9 @@
   }
 
   // pulse: runs only while Spotify reports music playing
-  const root = document.documentElement, glow = document.getElementById('pulse'), bars = dock.querySelectorAll('.eq i, .viz i, .spec i');
+  const root = document.documentElement, glow = document.getElementById('pulse'), bars = dock.querySelectorAll('.eq i');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const BEAT = 60000 / 90; // ~90 bpm, a typical hip-hop tempo
-  const nSmall = dock.querySelectorAll('.eq i, .viz i').length;
   let playing = false, raf = 0, t0 = 0, lastBeat = -1, amp = 1, barAmp = Array.from(bars, () => 1), jitter = barAmp.slice();
   function setPlaying(on) {
     if (on === playing) return; playing = on;
@@ -639,11 +630,7 @@
     root.style.setProperty('--beat', v.toFixed(3));
     glow.style.transform = 'scale(' + (.85 + v * .3).toFixed(3) + ')';
     glow.style.setProperty('--glow', (.12 + v * .28).toFixed(3));
-    bars.forEach((b, i) => {
-      const spec = i >= nSmall, shape = spec ? .55 + .45 * Math.sin((i - nSmall) / 35 * Math.PI) : 1; // spectrum arcs higher in the middle
-      const lv = Math.min(1, (v * barAmp[i] * 1.2 + jitter[i] * .3 * (.3 + v)) * shape);
-      b.style.height = (spec ? 4 + 30 * lv : 12 + 46 * lv).toFixed(0) + '%';
-    });
+    bars.forEach((b, i) => b.style.height = (20 + 80 * Math.min(1, v * barAmp[i] * 1.2 + jitter[i] * .3 * (.3 + v))).toFixed(0) + '%');
     raf = requestAnimationFrame(tick);
   }
   // gentle eased scrolling for in-page links
