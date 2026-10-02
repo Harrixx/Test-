@@ -150,7 +150,7 @@
 
   /* discography */
   .disco{background:var(--bg-2)}
-  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(14px,1.8vw,24px)}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(14px,1.8vw,24px)}
   .rel{display:block;cursor:pointer}
   .rel .cv{position:relative;aspect-ratio:1;overflow:hidden;background:var(--bg-3);container-type:inline-size}
   .rel .cv img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease),filter .6s}
@@ -161,18 +161,8 @@
   .rel h4{font:400 clamp(1.1rem,1.6vw,1.4rem)/1.15 var(--serif);margin:0}
   .rel h4 small{display:block;font:400 12.5px/1.4 var(--sans);color:var(--dim);margin-top:4px}
   .rel .yr{font:500 11px/1 var(--sans);letter-spacing:.2em;color:var(--dim);white-space:nowrap}
-  .type-tile{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:9%}
-  .type-tile .logo{width:38%}
-  .type-tile .big{font:400 26cqi/.85 var(--serif);letter-spacing:-.02em}
-  .tile-illest{background-color:var(--coral);color:#fff;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px)}
-  .tile-illest .big{font-family:"Bodoni Moda",Didot,"Instrument Serif",serif;letter-spacing:.04em;font-size:19cqi}
-  .tile-nomore{background:linear-gradient(160deg,#3a3129,#14110f);color:#E9DCCB}
-  .tile-nomore .big{font-family:var(--sans);font-weight:600;letter-spacing:-.04em;text-transform:uppercase}
-  .tile-lost{background:radial-gradient(80% 70% at 50% 40%,#2a2c33,#0c0c0e);color:var(--text)}
-  .tile-lost .big{font-style:italic}
-  .tile-lost .tag{font:500 max(8px,4.6cqi)/1.5 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
   .rel .cv::after{right:10px;bottom:10px;padding:8px 12px;font-size:10px}
-  @media (max-width:1100px){.grid{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:1180px){.grid{grid-template-columns:repeat(4,1fr)}}
   @media (max-width:820px){.grid{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}.rel .yr{font-size:10px;letter-spacing:.12em}.rel .cv::after{display:none}}
 
@@ -244,7 +234,7 @@
   .g{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:clamp(14px,2vw,28px);align-items:end}
   .g figure{margin:0}
   .g img{width:100%;object-fit:cover;filter:grayscale(.15) contrast(1.05)}
-  .g1 img{aspect-ratio:3/2}.g2 img{aspect-ratio:1}.g3 img{aspect-ratio:4/5}
+  .g1 img{aspect-ratio:3/2}.g2 img{aspect-ratio:1}.g3 img{aspect-ratio:1}
   .g figcaption{padding-top:12px}
   @media (max-width:860px){.g{grid-template-columns:1fr 1fr}.g1{grid-column:1/-1}}
 
@@ -425,7 +415,7 @@
           <div class="meta"><h4>Tunnel Vision<small>Freestyle</small></h4><span class="yr">2022</span></div>
         </a>
         <a class="rel rv" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
-          <div class="cv"><div class="type-tile tile-nomore"><svg class="logo" viewBox="0 0 840 560"><use href="#cw"/></svg><div class="big">No<br>More</div></div></div>
+          <div class="cv"><img src="img/no-more.jpg" alt="No More artwork" loading="lazy"></div>
           <div class="meta"><h4>No More<small>Single</small></h4><span class="yr">2022</span></div>
         </a>
         <a class="rel rv d1" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
@@ -437,7 +427,11 @@
           <div class="meta"><h4>The Hills<small>Let Me Paint A Picture</small></h4><span class="yr">2021</span></div>
         </a>
         <a class="rel rv" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
-          <div class="cv"><div class="type-tile tile-illest"><svg class="logo" viewBox="0 0 840 560"><use href="#cw"/></svg><div class="big">ILLEST</div></div></div>
+          <div class="cv"><img src="img/daydreaming.jpg" alt="Daydreaming artwork" loading="lazy"></div>
+          <div class="meta"><h4>Daydreaming<small>Single</small></h4><span class="yr">2021</span></div>
+        </a>
+        <a class="rel rv d1" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
+          <div class="cv"><img src="img/illest.jpg" alt="Illest artwork" loading="lazy"></div>
           <div class="meta"><h4>Illest<small>Debut EP · 7 tracks</small></h4><span class="yr">2021</span></div>
         </a>
       </div>
@@ -447,6 +441,7 @@
   <div class="press" aria-label="Press">
     <div class="wrap">
       <span class="label">As featured in</span>
+      <span class="pn">BBC Music Introducing</span>
       <span class="pn">Yorkshire Evening Post</span><span class="pn"><i>ON</i> Magazine</span><span class="pn">Yorkshire Live</span><span class="pn">Ratings Game Music</span>
     </div>
   </div>
@@ -478,11 +473,13 @@
         <ol class="tl rv">
           <li><time>Age 14</time><div><b>First lyrics</b><span>Starts writing in Huddersfield.</span></div></li>
           <li><time>2020</time><div><b>First releases</b><span>Starts recording and releasing music at the start of the pandemic.</span></div></li>
-          <li><time>Jan 2021</time><div><b>Illest</b><span>The debut EP: his first track and <em>Inner Spirit</em> remastered, plus five new songs.</span></div></li>
+          <li><time>29 Jan 2021</time><div><b>Illest</b><span>The debut EP: his first track and <em>Inner Spirit</em> remastered, plus five new songs.</span></div></li>
+          <li><time>Feb 2021</time><div><b>BBC Radio Leeds</b><span>Played on BBC Music Introducing West Yorkshire.</span></div></li>
+          <li><time>Jun 2021</time><div><b>Daydreaming</b><span>New single, out 4 June.</span></div></li>
           <li><time>Oct 2021</time><div><b>Prepared</b><span>Recorded a year earlier, released on YouTube and SoundCloud.</span></div></li>
           <li><time>Nov 2021</time><div><b>The Hills</b><span>Let Me Paint A Picture, with a push for the download charts.</span></div></li>
           <li><time>Early 2022</time><div><b>Lost</b><span>Written after losing friends to suicide. All proceeds to Andy's Man Club.</span></div></li>
-          <li><time>Apr 2022</time><div><b>No More</b><span>New single, and a feature in the <em>Yorkshire Evening Post</em>.</span></div></li>
+          <li><time>8 Apr 2022</time><div><b>No More</b><span>New single, and a feature in the <em>Yorkshire Evening Post</em>.</span></div></li>
           <li><time>Jun 2022</time><div><b>Tunnel Vision</b><span>A freestyle, out on all platforms.</span></div></li>
           <li><time>Jul 2022</time><div><b>Where Do I Go?</b><span>His sound on a drill beat.</span></div></li>
           <li><time>Jan 2023</time><div><b>Nobody Cares</b><span>A song for anyone who's ever felt alone.</span></div></li>
@@ -497,7 +494,7 @@
       <div class="g">
         <figure class="rv g1"><img src="img/connor-bench.jpg" alt="Connor sitting on a park bench" loading="lazy"><figcaption class="label">Photo · @ashleystone.fp</figcaption></figure>
         <figure class="rv d1 g2"><img src="img/connor-fence.jpg" alt="Connor behind a wire fence, from the Prepared video" loading="lazy"><figcaption class="label">Prepared, 2021</figcaption></figure>
-        <figure class="rv d2 g3"><img src="img/connor-woods.jpg" alt="Connor standing in woodland" loading="lazy"><figcaption class="label">West Yorkshire</figcaption></figure>
+        <figure class="rv d2 g3"><img src="img/bbc-introducing.jpg" alt="C.Wood on BBC Music Introducing West Yorkshire" loading="lazy"><figcaption class="label">BBC Music Introducing, 2021</figcaption></figure>
       </div>
     </div>
   </section>
