@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Monoton&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@600&display=swap">
 <style>
-/* Layout: one-screen phone app. Neon sign header, the bar counter (patrons), a fix-up strip, the merge board, an info tray. Single dark look: a harbour pub after dark. */
+/* Layout: one-screen phone app with two tabs. Bar: neon sign, counter of patrons, fix-up strip, merge board, info tray. Karaoke: a stage you tap for tokens, plus a token shop. Single dark look: a harbour pub after dark. */
 :root{
   --night:#170d10;      /* page ground, deep oxblood */
   --wood:#2c1914;       /* counter + panels */
@@ -15,57 +15,66 @@
   --neon:#ff5f9e;       /* neon pink accent */
   --amber:#ffb547;      /* coins, stars, warm light */
   --mint:#62e8c0;       /* "ready to serve" */
+  --violet:#a98bff;     /* tokens */
   --line:rgba(244,230,212,.12);
   --f-sign:"Monoton", "Bricolage Grotesque", system-ui, sans-serif;
   --f-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-hand:"Caveat", "Comic Sans MS", cursive;
   color-scheme:dark;
 }
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--night);color:var(--cream);font-family:var(--f-ui);font-size:15px;
   background-image:radial-gradient(120% 60% at 50% -10%, rgba(255,95,158,.12), transparent 60%);
   -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-.app{max-width:460px;margin:0 auto;padding:10px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.app{max-width:460px;margin:0 auto;padding:10px 16px calc(84px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
+.view{display:flex;flex-direction:column;gap:10px}
 
 /* header */
-.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .sign{font-family:var(--f-sign);font-weight:400;font-size:22px;line-height:1;color:var(--neon);letter-spacing:.02em;margin:0;
   text-shadow:0 0 6px rgba(255,95,158,.8),0 0 18px rgba(255,95,158,.5)}
 .sign.flicker{animation:flicker 3.2s infinite}
 @keyframes flicker{0%,18%,22%,60%,64%,100%{opacity:1}20%,62%{opacity:.25;text-shadow:none}}
-.stats{display:flex;gap:6px}
-.stat{display:flex;align-items:center;gap:4px;background:var(--wood);border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 7px;font-weight:600;font-variant-numeric:tabular-nums;font-size:14px}
+.stats{display:flex;gap:5px;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:3px;background:var(--wood);border:1px solid var(--line);border-radius:999px;padding:3px 8px 3px 6px;font-weight:600;font-variant-numeric:tabular-nums;font-size:13px}
 .stat small{font-size:10px;color:var(--muted);font-weight:400;margin-left:2px}
 .stat.energy{cursor:pointer}
+.stat.tok{color:var(--violet)}
+
+/* caricature avatars */
+.ava{width:52px;height:52px;border-radius:50%;overflow:hidden;flex:none;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.35);background:var(--wood)}
+.ava svg{display:block;width:100%;height:100%}
+.ava.emoji{display:grid;place-items:center;font-size:26px}
 
 /* counter */
-.counter{background:linear-gradient(var(--wood-hi),var(--wood));border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+.counter{background:linear-gradient(var(--wood-hi),var(--wood));border:1px solid var(--line);border-radius:14px;padding:10px 6px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
   box-shadow:inset 0 -6px 0 rgba(0,0,0,.25)}
-.patron{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;position:relative;transition:transform .35s, opacity .35s}
+.patron{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;position:relative;transition:transform .35s, opacity .35s}
 .patron.leaving{transform:translateY(-14px);opacity:0}
 .patron.arriving{animation:arrive .4s ease-out}
 @keyframes arrive{from{transform:translateY(12px);opacity:0}}
-.ava{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:26px;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
-.pname{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.order{display:flex;gap:4px}
-.chip{position:relative;width:34px;height:34px;border-radius:9px;background:var(--cell);border:1px solid var(--line);display:grid;place-items:center;font-size:20px}
+.pname{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.order{display:flex;gap:3px}
+.chip{position:relative;width:32px;height:32px;border-radius:9px;background:var(--cell);border:1px solid var(--line);display:grid;place-items:center;font-size:19px}
 .chip.have{border-color:var(--mint);box-shadow:0 0 8px rgba(98,232,192,.35)}
 .chip.have::after{content:"✓";position:absolute;right:-5px;top:-6px;background:var(--mint);color:var(--night);font-size:10px;font-weight:800;width:14px;height:14px;border-radius:50%;display:grid;place-items:center}
-.serve{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--wood);color:var(--muted);border:1px solid var(--line)}
+.serve{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--wood);color:var(--muted);border:1px solid var(--line)}
 .serve.ready{background:var(--mint);color:var(--night);border-color:transparent;animation:nudge 1.6s infinite}
 @keyframes nudge{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
-.reward{font-size:11px;color:var(--amber);font-variant-numeric:tabular-nums}
+.reward{font-size:10px;color:var(--amber);font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* fix-up strip */
 .story{display:flex;align-items:center;gap:10px;background:var(--wood);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 .story .txt{flex:1;min-width:0}
-.story .ch{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.story .ch{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .story .task{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .btn{font-weight:800;padding:8px 12px;border-radius:10px;background:var(--wood-hi);border:1px solid var(--line);white-space:nowrap}
 .btn.go{background:var(--amber);color:var(--night);border-color:transparent}
-.btn[disabled]{opacity:.45;cursor:default}
+.btn.tok{background:var(--violet);color:var(--night);border-color:transparent}
+.btn[disabled]{opacity:.4;cursor:default}
 .book{font-size:20px;padding:6px 8px;position:relative}
 .book .dot{position:absolute;top:2px;right:2px;width:9px;height:9px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon)}
 
@@ -74,7 +83,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .cell{aspect-ratio:1;max-width:100%;background:var(--cell);border-radius:9px;display:grid;place-items:center;position:relative}
 .cell.sel{box-shadow:0 0 0 2px var(--amber) inset}
 .cell.target{box-shadow:0 0 0 2px var(--mint) inset;background:#1d2420}
-.item{font-size:min(7.2vw,30px);line-height:1;position:relative;display:grid;place-items:center;width:100%;height:100%;cursor:grab}
+.item{font-size:min(6.8vw,28px);line-height:1;position:relative;display:grid;place-items:center;width:100%;height:100%;cursor:grab}
 .item.pop{animation:pop .35s ease-out}
 @keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
 .item.dragging{opacity:.25}
@@ -83,6 +92,8 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .cell.wanted::before{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 5px var(--mint)}
 .gen .item{background:radial-gradient(circle,rgba(255,95,158,.22),transparent 70%);border-radius:9px;box-shadow:0 0 0 1.5px rgba(255,95,158,.55) inset}
 .gen .item::after{content:"TAP";position:absolute;bottom:2px;font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--neon)}
+.gen.locked .item{filter:grayscale(1) brightness(.55);box-shadow:0 0 0 1px var(--line) inset;background:none}
+.gen.locked .item::after{content:attr(data-lock);color:var(--muted);filter:none}
 .ghost{position:fixed;pointer-events:none;z-index:50;font-size:36px;transform:translate(-50%,-60%);filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
 
 /* info tray */
@@ -95,13 +106,60 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .tray .ladder span{opacity:.35}
 .tray .hint{color:var(--muted);font-size:13px}
 
+/* karaoke */
+.stage{position:relative;height:340px;border-radius:16px;overflow:hidden;border:1px solid var(--line);cursor:pointer;touch-action:manipulation;
+  background:
+    radial-gradient(50% 60% at 50% 38%, rgba(255,230,180,.28), transparent 70%),
+    repeating-linear-gradient(90deg, #5a0f22 0 18px, #470b1b 18px 36px)}
+.stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:84px;background:linear-gradient(#3a2117,#24140f);border-top:3px solid #6b3f22}
+.spot{position:absolute;left:50%;top:-20px;width:220px;height:300px;transform:translateX(-50%);background:conic-gradient(from 160deg at 50% 0, transparent 0 8deg, rgba(255,240,200,.14) 8deg 32deg, transparent 32deg);pointer-events:none}
+.singer{position:absolute;left:50%;top:60px;width:150px;transform:translateX(-50%);z-index:2;pointer-events:none;transform-origin:50% 100%}
+.singer .ava{width:150px;height:150px;box-shadow:0 0 0 4px rgba(255,181,71,.6),0 0 40px rgba(255,181,71,.35)}
+.singer.bop{animation:bop .22s ease-out}
+@keyframes bop{50%{transform:translateX(-50%) scale(1.05) rotate(-3deg)}}
+.mic{position:absolute;left:calc(50% + 46px);top:170px;font-size:34px;z-index:3;pointer-events:none;transform:rotate(-20deg)}
+.songcard{position:absolute;left:12px;top:12px;right:12px;z-index:3;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
+.songcard .now{background:rgba(0,0,0,.45);border-radius:10px;padding:6px 10px;min-width:0}
+.songcard .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.songcard .t{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.combo{background:rgba(0,0,0,.45);border-radius:10px;padding:6px 10px;text-align:right;flex:none}
+.combo b{font-size:20px;color:var(--violet);font-variant-numeric:tabular-nums}
+.crowd{position:absolute;left:0;right:0;bottom:6px;z-index:4;display:flex;justify-content:center;gap:2px;pointer-events:none}
+.crowd .ava{width:56px;height:56px;margin-bottom:-14px}
+.crowd .ava:nth-child(odd){animation:sway 1.4s ease-in-out infinite}
+.crowd .ava:nth-child(even){animation:sway 1.4s ease-in-out infinite reverse}
+@keyframes sway{50%{transform:translateY(-6px) rotate(4deg)}}
+.float{position:absolute;z-index:6;pointer-events:none;font-weight:800;color:var(--violet);font-size:20px;text-shadow:0 2px 6px rgba(0,0,0,.6);animation:rise .9s ease-out forwards}
+.float.note{color:var(--amber);font-size:22px}
+@keyframes rise{to{transform:translateY(-80px) scale(1.2);opacity:0}}
+.tapme{position:absolute;left:0;right:0;top:232px;text-align:center;z-index:3;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--cream);opacity:.8;pointer-events:none}
+.meter{height:8px;background:var(--cell);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--neon));width:0;transition:width .15s}
+.meterrow{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
+.shop{background:var(--wood);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.shop h2{margin:0;font-size:17px}
+.shop p{margin:0;color:var(--muted);font-size:13px}
+.sitem{display:flex;align-items:center;gap:10px}
+.sitem .ic{font-size:26px;width:36px;text-align:center}
+.sitem .d{flex:1;min-width:0}
+.sitem .d b{display:block}
+.sitem .d span{font-size:12px;color:var(--muted)}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(23,13,16,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:8px}
+.tab{flex:1;max-width:200px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px;border-radius:12px;color:var(--muted);font-size:12px;font-weight:600;position:relative}
+.tab .i{font-size:22px}
+.tab[aria-selected="true"]{color:var(--cream);background:var(--wood)}
+.tab .badge{position:absolute;top:2px;left:calc(50% + 10px);background:var(--violet);color:var(--night);font-size:10px;font-weight:800;padding:1px 6px;border-radius:999px;font-variant-numeric:tabular-nums}
+
 /* toast */
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--night);font-weight:600;padding:8px 14px;border-radius:999px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--night);font-weight:600;padding:8px 14px;border-radius:999px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1}
 
 /* gossip note pinned after serving */
-.note{position:fixed;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translateX(-50%) rotate(-1.5deg);width:min(360px,calc(100% - 40px));background:#fff4c9;color:#2a1a10;border-radius:4px;padding:12px 14px 10px;z-index:55;box-shadow:0 10px 30px rgba(0,0,0,.5);font-family:var(--f-hand);font-size:22px;line-height:1.15;animation:pin .3s ease-out}
-.note .who{font-family:var(--f-ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a5a3a;margin-bottom:4px;display:flex;justify-content:space-between}
+.note{position:fixed;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translateX(-50%) rotate(-1.5deg);width:min(360px,calc(100% - 40px));background:#fff4c9;color:#2a1a10;border-radius:4px;padding:10px 14px 10px;z-index:55;box-shadow:0 10px 30px rgba(0,0,0,.5);font-family:var(--f-hand);font-size:22px;line-height:1.15;animation:pin .3s ease-out;display:flex;gap:10px;align-items:flex-start}
+.note .ava{width:44px;height:44px}
+.note .who{font-family:var(--f-ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a5a3a;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px}
 .note .new{color:#c2185b;font-weight:800}
 @keyframes pin{from{transform:translateX(-50%) rotate(-8deg) scale(.8);opacity:0}}
 
@@ -109,7 +167,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .overlay{position:fixed;inset:0;background:rgba(10,5,7,.72);z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
 .overlay.center{align-items:center}
 .scene{width:min(440px,100%);background:var(--wood-hi);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;gap:12px;cursor:pointer;animation:arrive .25s ease-out}
-.scene .ava{flex:none}
+.scene .ava{width:72px;height:72px}
 .scene .say{flex:1;min-width:0}
 .scene .who{font-weight:800;color:var(--amber);font-size:13px;letter-spacing:.04em}
 .scene .line{font-size:17px;line-height:1.4;margin-top:2px;text-wrap:pretty}
@@ -120,10 +178,10 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .card h2{margin:0 0 4px;font-size:20px;text-wrap:balance}
 .card p{margin:4px 0 12px;color:var(--muted);line-height:1.45}
 .card .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-.gb-who{display:flex;align-items:center;gap:8px;margin:14px 0 6px;font-weight:800}
-.gb-who .ava{width:30px;height:30px;font-size:17px}
+.gb-who{display:flex;align-items:center;gap:10px;margin:16px 0 6px;font-weight:800}
+.gb-who .ava{width:40px;height:40px}
 .gb-who small{color:var(--muted);font-weight:400}
-.gb-line{font-family:var(--f-hand);font-size:20px;line-height:1.2;padding:4px 0 4px 38px;color:var(--cream)}
+.gb-line{font-family:var(--f-hand);font-size:20px;line-height:1.2;padding:4px 0 4px 50px;color:var(--cream)}
 .gb-line.locked{font-family:var(--f-ui);font-size:13px;color:var(--muted);opacity:.6}
 .chapter-card{text-align:center}
 .chapter-card .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--neon)}
@@ -140,83 +198,299 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
       <button class="stat energy" id="stEnergy" aria-label="Energy">⚡<span id="vEnergy">100</span><small id="vTimer"></small></button>
       <div class="stat" aria-label="Coins">🪙<span id="vCoins">0</span></div>
       <div class="stat" aria-label="Stars">⭐<span id="vStars">0</span></div>
+      <div class="stat tok" aria-label="Tokens">🎟️<span id="vTokens">0</span></div>
     </div>
   </header>
 
-  <section class="counter" id="counter" aria-label="Customers at the bar"></section>
+  <div class="view" id="barView">
+    <section class="counter" id="counter" aria-label="Customers at the bar"></section>
+    <section class="story">
+      <div class="txt">
+        <div class="ch" id="chLabel"></div>
+        <div class="task" id="taskLabel"></div>
+      </div>
+      <button class="btn go" id="taskBtn"></button>
+      <button class="book" id="bookBtn" aria-label="Gossip book">📒<span class="dot" id="bookDot" hidden></span></button>
+    </section>
+    <section class="board" id="board" aria-label="Bar board"></section>
+    <section class="tray" id="tray"></section>
+    <button class="reset" id="resetBtn">Start a new game</button>
+  </div>
 
-  <section class="story">
-    <div class="txt">
-      <div class="ch" id="chLabel"></div>
-      <div class="task" id="taskLabel"></div>
+  <div class="view" id="karaokeView" hidden>
+    <section class="stage" id="stage" aria-label="Karaoke stage. Tap to cheer and earn tokens.">
+      <div class="spot"></div>
+      <div class="songcard">
+        <div class="now"><div class="k">Now singing</div><div class="t" id="songTitle"></div></div>
+        <div class="combo"><div class="k" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)">Cheer</div><b id="comboMult">×1</b></div>
+      </div>
+      <div class="singer" id="singer"></div>
+      <div class="mic">🎤</div>
+      <div class="tapme" id="tapme">Tap the stage to cheer</div>
+      <div class="crowd" id="crowd"></div>
+    </section>
+    <div>
+      <div class="meterrow"><span id="encoreLabel">Encore in 60 cheers</span><span>Tap fast for ×2 and ×3</span></div>
+      <div class="meter"><i id="encoreBar"></i></div>
     </div>
-    <button class="btn go" id="taskBtn"></button>
-    <button class="book" id="bookBtn" aria-label="Gossip book">📒<span class="dot" id="bookDot" hidden></span></button>
-  </section>
-
-  <section class="board" id="board" aria-label="Bar board"></section>
-
-  <section class="tray" id="tray"></section>
-  <button class="reset" id="resetBtn">Start a new game</button>
+    <section class="shop">
+      <div><h2>Token shop</h2><p>The crowd tips in 🎟️ tokens. Spend them on the bar.</p></div>
+      <div id="shopList" style="display:flex;flex-direction:column;gap:10px"></div>
+    </section>
+  </div>
 </div>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" id="tabBar" aria-selected="true"><span class="i">🍺</span>Bar</button>
+  <button class="tab" role="tab" id="tabKaraoke" aria-selected="false"><span class="i">🎤</span>Karaoke<span class="badge" id="tokBadge" hidden></span></button>
+</nav>
 <div class="toast" id="toast"></div>
 <div id="layer"></div>
 
 <script>
 (() => {
 'use strict';
-const COLS = 7, ROWS = 8, N = COLS * ROWS;
+const COLS = 7, ROWS = 9, N = COLS * ROWS;
 const E_MAX = 100, E_REGEN_MS = 20000;
 const SAVE_KEY = 'gossipbar.v1';
 
+/* ---------- caricatures (drawn as SVG) ---------- */
+function shade(hex, a){
+  const n = parseInt(hex.slice(1),16), ch = [n>>16, n>>8&255, n&255];
+  return '#' + ch.map(v => Math.max(0,Math.min(255,Math.round(a<0 ? v*(1+a) : v+(255-v)*a)))).map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function face(L){
+  const s = L.skin, sd = shade(s,-.18), h = L.hair || '#333', ink = '#2a1712';
+  const ey = 44, eyeL = 39, eyeR = 61;
+  let o = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="100" height="100" fill="${L.bg}"/>`;
+  // hair behind the head
+  if (L.hairStyle==='long') o += `<path d="M18 44 Q12 80 22 98 L78 98 Q88 80 82 44 Z" fill="${h}"/>`;
+  if (L.hairStyle==='pony') o += `<path d="M72 26 Q96 46 84 86 Q80 62 68 42Z" fill="${h}"/>`;
+  if (L.hairStyle==='bouffant') o += `<ellipse cx="50" cy="44" rx="42" ry="34" fill="${h}"/>`;
+  // body + neck
+  o += `<path d="M8 100 Q10 80 50 78 Q90 80 92 100 Z" fill="${L.shirt}"/>`;
+  o += `<rect x="43" y="64" width="14" height="16" fill="${sd}"/>`;
+  const acc = L.acc;
+  if (acc==='dogcollar') o += `<path d="M38 79 Q50 84 62 79 L62 83 Q50 88 38 83Z" fill="#fff"/><rect x="47" y="80" width="6" height="5" fill="#fff"/>`;
+  if (acc==='chain') o += `<path d="M28 84 Q50 100 72 84" stroke="#e8b830" stroke-width="3.5" fill="none" stroke-dasharray="3 1.5"/><circle cx="50" cy="93" r="5" fill="#e8b830" stroke="#a87c10"/>`;
+  if (acc==='pearls') o += [30,36,42,50,58,64,70].map((x,i)=>`<circle cx="${x}" cy="${83+[0,2.5,4,5,4,2.5,0][i]}" r="2.3" fill="#f6f1e6"/>`).join('');
+  if (acc==='whistle') o += `<path d="M40 79 L52 92" stroke="#f2f2f2" stroke-width="1.5"/><rect x="50" y="90" width="9" height="5" rx="2" fill="#c0c4c8"/>`;
+  if (acc==='scrubs') o += `<path d="M40 79 L50 90 L60 79" stroke="${shade(L.shirt,-.3)}" stroke-width="2.5" fill="none"/>`;
+  if (acc==='collarup') o += `<path d="M30 82 L42 72 L46 84Z M70 82 L58 72 L54 84Z" fill="${shade(L.shirt,.15)}"/>`;
+  // ears
+  o += `<ellipse cx="21" cy="50" rx="6" ry="8" fill="${s}"/><ellipse cx="79" cy="50" rx="6" ry="8" fill="${s}"/>`;
+  if (L.earrings==='hoop') o += `<circle cx="20" cy="60" r="4" fill="none" stroke="#e8b830" stroke-width="1.6"/><circle cx="80" cy="60" r="4" fill="none" stroke="#e8b830" stroke-width="1.6"/>`;
+  if (L.earrings==='drop') o += `<circle cx="20" cy="59" r="2.6" fill="#7ad7f0"/><circle cx="80" cy="59" r="2.6" fill="#7ad7f0"/>`;
+  // head
+  const head = {
+    oval:`<ellipse cx="50" cy="46" rx="29" ry="32" fill="${s}"/>`,
+    round:`<ellipse cx="50" cy="47" rx="31" ry="30" fill="${s}"/>`,
+    long:`<ellipse cx="50" cy="45" rx="26" ry="34" fill="${s}"/>`,
+    jaw:`<ellipse cx="50" cy="44" rx="29" ry="29" fill="${s}"/><ellipse cx="50" cy="60" rx="27" ry="18" fill="${s}"/>`,
+  }[L.head || 'oval'];
+  o += head;
+  if (L.blush) o += `<circle cx="31" cy="57" r="6" fill="#ff6b6b" opacity=".28"/><circle cx="69" cy="57" r="6" fill="#ff6b6b" opacity=".28"/>`;
+  if (L.freckles) o += [[30,54],[34,57],[29,58],[66,54],[70,57],[71,53]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1" fill="${shade(s,-.35)}"/>`).join('');
+  if (L.wrinkles) o += `<path d="M36 27 Q43 25 50 27 Q57 25 64 27 M38 31 Q50 29 62 31 M28 46 l-4 -2 M28 49 l-4 1 M72 46 l4 -2 M72 49 l4 1" stroke="${sd}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
+  // eyes
+  const big = L.eyes==='wide', rx = big?7:6, ry = big?8:6.5, px = L.eyes==='side'?2.6:0.6;
+  for (const ex of [eyeL, eyeR]){
+    o += `<ellipse cx="${ex}" cy="${ey}" rx="${rx}" ry="${ry}" fill="#fff"/>`;
+    o += `<circle cx="${ex+px}" cy="${ey+1}" r="${big?3.4:3}" fill="${ink}"/><circle cx="${ex+px+1}" cy="${ey}" r="1" fill="#fff"/>`;
+    if (L.eyes==='sleepy') o += `<path d="M${ex-rx-1} ${ey+.5} A${rx+1} ${ry+1} 0 0 1 ${ex+rx+1} ${ey+.5} Z" fill="${s}"/><path d="M${ex-rx} ${ey+.5} L${ex+rx} ${ey+.5}" stroke="${ink}" stroke-width="1.4"/>`;
+    if (L.lashes) o += `<path d="M${ex-rx} ${ey-3} l-3 -3 M${ex-rx+3} ${ey-ry+1} l-1 -4 M${ex+rx} ${ey-3} l3 -3 M${ex+rx-3} ${ey-ry+1} l1 -4" stroke="${ink}" stroke-width="1.3" stroke-linecap="round"/>`;
+  }
+  // brows
+  const bc = L.brow || shade(h,-.25), by = ey - ry - 4;
+  const brows = {
+    flat:`M${eyeL-7} ${by} L${eyeL+7} ${by} M${eyeR-7} ${by} L${eyeR+7} ${by}`,
+    up:`M${eyeL-7} ${by+1} L${eyeL+7} ${by-3} M${eyeR-7} ${by-3} L${eyeR+7} ${by+1}`,
+    angry:`M${eyeL-7} ${by-3} L${eyeL+7} ${by+2} M${eyeR-7} ${by+2} L${eyeR+7} ${by-3}`,
+    raised:`M${eyeL-7} ${by-5} Q${eyeL} ${by-10} ${eyeL+7} ${by-5} M${eyeR-7} ${by} L${eyeR+7} ${by}`,
+  }[L.brows || 'flat'];
+  o += `<path d="${brows}" stroke="${bc}" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
+  // facial hair (under the mouth)
+  const fh = L.beardColor || h;
+  if (L.beard==='beard') o += `<path d="M21 46 Q20 86 50 92 Q80 86 79 46 Q76 68 62 71 Q50 66 38 71 Q24 68 21 46Z" fill="${fh}"/>`;
+  if (L.beard==='stubble') o += `<path d="M23 52 Q24 84 50 88 Q76 84 77 52 Q72 70 50 70 Q28 70 23 52Z" fill="${fh}" opacity=".28"/>`;
+  // nose
+  const nose = {
+    big:`<ellipse cx="50" cy="56" rx="8.5" ry="7.5" fill="${sd}"/><circle cx="46" cy="59" r="1.4" fill="${shade(s,-.45)}"/><circle cx="54" cy="59" r="1.4" fill="${shade(s,-.45)}"/>`,
+    pointy:`<path d="M48 44 Q51 52 60 60 Q53 63 46 60 Z" fill="${sd}"/>`,
+    red:`<circle cx="50" cy="56" r="8" fill="#d9665e"/><circle cx="47" cy="53" r="2" fill="#fff" opacity=".45"/>`,
+    button:`<ellipse cx="50" cy="56" rx="4.5" ry="3.5" fill="${L.noseColor || sd}"/>`,
+  }[L.nose || 'button'];
+  o += nose;
+  // mouth
+  const lips = L.lips || '#6b1f24', my = 68;
+  const mouth = {
+    grin:`<path d="M36 ${my-3} Q50 ${my+12} 64 ${my-3} Z" fill="#4a1518" stroke="${lips}" stroke-width="${L.lips?2.5:0}"/><path d="M38 ${my-2} L62 ${my-2} Q60 ${my+2} 57 ${my+2} L43 ${my+2} Q40 ${my+2} 38 ${my-2}Z" fill="#fff"/>`,
+    smile:`<path d="M40 ${my-2} Q50 ${my+6} 60 ${my-2}" stroke="${lips}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
+    smirk:`<path d="M41 ${my} Q53 ${my+3} 61 ${my-5}" stroke="${lips}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
+    o:`<ellipse cx="50" cy="${my+1}" rx="4.5" ry="5.5" fill="#4a1518"/>`,
+    frown:`<path d="M41 ${my+3} Q50 ${my-4} 59 ${my+3}" stroke="${lips}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
+    pursed:`<ellipse cx="50" cy="${my}" rx="5" ry="3.2" fill="${lips}"/>`,
+  }[L.mouth || 'smile'];
+  o += mouth;
+  // moustache (over the lip)
+  const tc = L.tacheColor || fh;
+  if (L.tache==='tache') o += `<path d="M35 64 Q42 56 50 60 Q58 56 65 64 Q58 62 50 64 Q42 62 35 64Z" fill="${tc}"/>`;
+  if (L.tache==='handlebar') o += `<path d="M30 56 Q33 66 43 62 Q48 59 50 61 Q52 59 57 62 Q67 66 70 56 Q70 66 58 66 Q52 66 50 64 Q48 66 42 66 Q30 66 30 56Z" fill="${tc}"/>`;
+  // glasses
+  if (L.glasses==='round') o += `<g fill="rgba(255,255,255,.12)" stroke="#1e1e1e" stroke-width="2"><circle cx="${eyeL}" cy="${ey}" r="9"/><circle cx="${eyeR}" cy="${ey}" r="9"/></g><path d="M48 ${ey} Q50 ${ey-2} 52 ${ey}" stroke="#1e1e1e" stroke-width="2" fill="none"/>`;
+  if (L.glasses==='specs') o += `<path d="M30 ${ey} A9 8 0 0 0 48 ${ey} Z M52 ${ey} A9 8 0 0 0 70 ${ey} Z" fill="rgba(255,255,255,.12)" stroke="#b08a3e" stroke-width="1.8"/><path d="M48 ${ey} L52 ${ey}" stroke="#b08a3e" stroke-width="1.8"/>`;
+  if (L.glasses==='shades') o += `<path d="M28 ${ey-6} H48 V${ey+3} Q48 ${ey+8} 40 ${ey+8} H34 Q28 ${ey+8} 28 ${ey+2}Z M52 ${ey-6} H72 V${ey+2} Q72 ${ey+8} 66 ${ey+8} H60 Q52 ${ey+8} 52 ${ey+3}Z" fill="#111"/><path d="M48 ${ey-4} H52" stroke="#111" stroke-width="2.5"/><path d="M32 ${ey-3} l6 0 M56 ${ey-3} l6 0" stroke="#fff" opacity=".35" stroke-width="1.6"/>`;
+  // hair on top
+  const hairTop = {
+    short:`<path d="M20 44 Q17 11 50 11 Q83 11 80 44 Q76 25 50 23 Q24 25 20 44Z" fill="${h}"/>`,
+    quiff:`<path d="M20 44 Q17 13 46 11 Q40 2 62 3 Q86 6 80 44 Q76 25 50 23 Q24 25 20 44Z" fill="${h}"/><path d="M48 6 Q62 2 74 12" stroke="#fff" opacity=".3" stroke-width="2" fill="none"/>`,
+    slick:`<path d="M20 44 Q17 12 50 12 Q83 12 80 44 Q78 26 62 21 Q40 20 26 32 Q22 38 20 44Z" fill="${h}"/><path d="M34 18 Q50 13 70 18" stroke="#fff" opacity=".28" stroke-width="2" fill="none"/>`,
+    bald:`<path d="M19 50 Q16 32 27 28 Q24 38 25 50Z M81 50 Q84 32 73 28 Q76 38 75 50Z" fill="${h}"/><ellipse cx="42" cy="22" rx="8" ry="4" fill="#fff" opacity=".22"/>`,
+    curly:[[22,38],[26,26],[34,17],[45,12],[56,12],[67,17],[75,26],[79,38],[40,20],[52,18],[63,21]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="9" fill="${h}"/>`).join(''),
+    bun:`<circle cx="50" cy="9" r="10" fill="${h}"/><path d="M20 44 Q17 13 50 13 Q83 13 80 44 Q76 26 50 24 Q24 26 20 44Z" fill="${h}"/>`,
+    long:`<path d="M19 50 Q14 10 50 10 Q86 10 81 50 Q78 26 60 22 Q50 30 34 28 Q24 34 19 50Z" fill="${h}"/>`,
+    pony:`<path d="M20 44 Q17 11 50 11 Q83 11 80 44 Q76 25 50 22 Q24 25 20 44Z" fill="${h}"/>`,
+    bouffant:`<ellipse cx="50" cy="20" rx="38" ry="18" fill="${h}"/><path d="M30 14 Q50 4 70 14" stroke="#fff" opacity=".3" stroke-width="2.5" fill="none"/>`,
+    helmet:`<path d="M15 50 Q12 4 50 4 Q88 4 85 50 Q80 46 78 30 Q60 26 50 30 Q40 26 22 30 Q20 46 15 50Z" fill="${h}"/><path d="M24 18 Q50 8 76 18" stroke="#fff" opacity=".35" stroke-width="3" fill="none"/>`,
+    crop:`<path d="M22 40 Q21 15 50 15 Q79 15 78 40 Q74 23 50 21 Q26 23 22 40Z" fill="${h}"/>`,
+  }[L.hairStyle] || '';
+  o += hairTop;
+  if (L.hatShades) o += `<path d="M30 20 H48 V25 Q48 28 42 28 H36 Q30 28 30 24Z M52 20 H70 V24 Q70 28 64 28 H58 Q52 28 52 25Z" fill="#1a1a1a"/><path d="M48 21 H52" stroke="#1a1a1a" stroke-width="2"/>`;
+  // hats
+  const hc = L.hatColor || '#333';
+  if (L.hat==='beanie') o += `<path d="M17 40 Q17 4 50 4 Q83 4 83 40 Z" fill="${hc}"/><rect x="15" y="31" width="70" height="11" rx="4" fill="${shade(hc,-.25)}"/><circle cx="50" cy="5" r="6" fill="${shade(hc,.35)}"/>`;
+  if (L.hat==='cap') o += `<path d="M19 36 Q20 8 50 8 Q80 8 81 36 Z" fill="${hc}"/><rect x="18" y="30" width="64" height="7" fill="${shade(hc,-.3)}"/><path d="M18 36 Q50 48 82 36 Q50 42 18 36Z" fill="#111"/><circle cx="50" cy="22" r="4" fill="#e8b830"/>`;
+  if (L.hat==='captain') o += `<ellipse cx="50" cy="20" rx="36" ry="13" fill="#f4f4f4"/><rect x="18" y="22" width="64" height="11" fill="#1f2d4a"/><path d="M22 33 Q50 48 78 33 Q50 40 22 33Z" fill="#111"/><circle cx="50" cy="27" r="4" fill="#e8b830"/><path d="M38 30 Q50 34 62 30" stroke="#e8b830" stroke-width="1.5" fill="none"/>`;
+  return o + '</svg>';
+}
+
 /* ---------- content ---------- */
 const CHAINS = {
-  brew:  { gen:['🚰','Beer Tap'],    items:[['🌾','Barley'],['🍺','Half Pint'],['🍻','Two Pints'],['🫗','Jug of Ale'],['🛢️','Keg'],['🏆','Champion Stout']] },
-  fruit: { gen:['🧺','Fruit Crate'], items:[['🍋','Lemon'],['🍊','Orange'],['🍹','Harbour Punch'],['🍸','Martini'],['🍾','Bubbly'],['🥂','Toast of the Town']] },
-  snack: { gen:['🍳','Fryer'],       items:[['🥜','Peanuts'],['🥨','Pretzel'],['🍟','Chips'],['🐟','Fish Supper'],['🍔','Gull Burger'],['🎂','Party Cake']] },
+  brew:    { unlock:0, home:56, gen:['🚰','Beer Tap'],       items:[['🌾','Barley'],['🍺','Half Pint'],['🍻','Two Pints'],['🫗','Jug of Ale'],['🛢️','Keg'],['🏆','Champion Stout']] },
+  fruit:   { unlock:0, home:57, gen:['🧺','Fruit Crate'],    items:[['🍋','Lemon'],['🍊','Orange'],['🍹','Harbour Punch'],['🍸','Martini'],['🍾','Bubbly'],['🎆','Firework Fizz']] },
+  snack:   { unlock:0, home:58, gen:['🍳','Fryer'],          items:[['🥜','Peanuts'],['🥨','Pretzel'],['🍟','Chips'],['🐟','Fish Supper'],['🍔','Gull Burger'],['🎂','Party Cake']] },
+  coffee:  { unlock:0, home:59, gen:['☕','Coffee Machine'], items:[['🫘','Coffee Beans'],['🍵','Espresso'],['🥛','Flat White'],['🧋','Iced Latte'],['🍫','Mocha'],['🍨','Affogato']] },
+  wine:    { unlock:1, home:60, gen:['🏺','Wine Cellar'],    items:[['🍇','Grapes'],['🍷','Glass of Red'],['🧀','Wine and Cheese'],['🥂','Clinking Glasses'],['🕯️','Candlelit Bottle'],['💍','Proposal Special']] },
+  spirits: { unlock:2, home:61, gen:['🗄️','Spirits Shelf'],  items:[['🧊','Ice'],['🥃','Whisky Dram'],['🍯','Hot Toddy'],['🔥','Flaming Shot'],['🏴‍☠️',"Smuggler's Rum"],['👑',"Captain's Reserve"]] },
 };
 const MAX_T = 5;
 
 const PEOPLE = {
-  lou:  { name:'Lou', role:'Fisherman', face:'🧔‍♂️', bg:'#2f5670', from:0, gossip:[
+  lou:  { name:'Lou', role:'Fisherman', from:0,
+    look:{bg:'#2f5670',skin:'#e8b48f',head:'jaw',hair:'#9aa0a6',hat:'beanie',hatColor:'#1f3f8a',beard:'beard',beardColor:'#cfd3d8',nose:'red',eyes:'sleepy',brows:'flat',brow:'#8d9196',mouth:'smile',shirt:'#e5b62f',wrinkles:true},
+    gossip:[
     "The harbourmaster's boat went out at midnight. No nets. No lights.",
     "Caught a cod with a wedding ring in its belly. Nobody's claimed it. Interesting, that.",
     "Rosa slipped me a free pint every Friday. Said it was for listening. Never said listening to what.",
     "Somebody's been measuring the slipway. Twice. With a laser thingy.",
     "The Mayor can't tie a knot. Never trust a harbour man who can't tie a knot."]},
-  dina: { name:'Dina', role:'Hairdresser', face:'💁‍♀️', bg:'#8e3a64', from:0, gossip:[
+  dina: { name:'Dina', role:'Hairdresser', from:0,
+    look:{bg:'#8e3a64',skin:'#f1c6a8',head:'oval',hair:'#ff7ab8',hairStyle:'bouffant',eyes:'wide',lashes:true,brows:'raised',brow:'#7a2a50',nose:'button',mouth:'smirk',lips:'#c2185b',earrings:'hoop',shirt:'#2b2b2b',blush:true},
+    gossip:[
     "Mrs Penrose's new perm? It's a wig. You didn't hear it from me.",
     "The vicar's taking salsa lessons over in Porthbury. Tuesdays. In sequins.",
     "The Mayor's wife booked a colour for Saturday. She only goes blonde when she's furious.",
     "Benny reads the postcards. All of them. He told me himself.",
     "Rosa had a blow-dry the morning she vanished. Nobody gets a blow-dry to run away."]},
-  edie: { name:'Gran Edie', role:'Retired lollipop lady', face:'👵', bg:'#6b5a2e', from:0, gossip:[
+  edie: { name:'Gran Edie', role:'Retired lollipop lady', from:0,
+    look:{bg:'#6b5a2e',skin:'#efc9b0',head:'round',hair:'#eeeeee',hairStyle:'bun',glasses:'round',brows:'up',brow:'#bdbdbd',nose:'pointy',mouth:'grin',shirt:'#9b7fc0',wrinkles:true,blush:true,acc:'pearls'},
+    gossip:[
     "In 1974 this bar had a piano. Then the Mayor's father 'borrowed' it.",
     "The new café on Quay Street has the same owner as the betting shop. Same shifty eyes.",
     "I see everything from my window. Everything. Even things I'd rather not.",
     "That stranger in sunglasses carried my shopping home. Wouldn't take a penny.",
     "Rosa sent me a postcard. No stamp, no postmark. Just 'Keep the kettle on'."]},
-  benny:{ name:'Benny', role:'Postman', face:'🧑‍🦰', bg:'#8a3a28', from:0, gossip:[
+  benny:{ name:'Benny', role:'Postman', from:0,
+    look:{bg:'#8a3a28',skin:'#f3c7a6',head:'long',hair:'#d8682a',hairStyle:'short',hat:'cap',hatColor:'#c8102e',eyes:'wide',brows:'up',nose:'big',mouth:'grin',freckles:true,shirt:'#c8102e'},
+    gossip:[
     "Three letters to the Mayor this week from a property firm. Thick envelopes. Very thick.",
     "I don't read the postcards. I just... notice them.",
     "Someone posted a key to this bar. No name. I gave it to the chap in the sunglasses.",
     "The lighthouse keeper gets a parcel of marmalade every month. From Spain.",
     "The harbour vote's been moved to a Tuesday morning. Who's free on a Tuesday morning?"]},
-  vic:  { name:'Vic', role:'The stranger', face:'🕵️', bg:'#34344c', from:1, gossip:[
+  marco:{ name:'Marco', role:'Runs the chip shop', from:0,
+    look:{bg:'#2d5a3c',skin:'#d9a07a',head:'round',hair:'#1e1a17',hairStyle:'curly',eyes:'wide',brows:'flat',nose:'big',mouth:'grin',tache:'tache',shirt:'#f4f4f4',blush:true},
+    gossip:[
+    "The secret to my batter? Beer. From this bar. Don't tell the council.",
+    "The Mayor ordered fish supper for twelve. On a Wednesday! Who's he feeding?",
+    "Kev comes in every day for chips. Every day. Then says he's 'on a cut'.",
+    "Gulls stole a whole cod off Gil yesterday. Best thing I've seen all year.",
+    "Rosa taught me to make mushy peas. I have never been the same."]},
+  priya:{ name:'Priya', role:'Vet', from:0,
+    look:{bg:'#1f5a5a',skin:'#b97a56',head:'oval',hair:'#1a1210',hairStyle:'pony',glasses:'round',brows:'flat',nose:'button',mouth:'smile',shirt:'#36a3a0',acc:'scrubs'},
+    gossip:[
+    "Mrs Penrose's cat is on a diet. Mrs Penrose feeds it sardines at midnight.",
+    "I once treated a seagull with a hangover. Don't ask whose pint it stole.",
+    "Gil's dog came in with a property brochure in its mouth. 'Marina Heights. Forty berths.'",
+    "Benny's terrified of a chihuahua on Fore Street. Takes the long way round every day.",
+    "Kev rescued a dog off the rocks last week. Made me promise not to tell anyone. Oops."]},
+  kev:  { name:'Kev', role:'Lifeguard', from:0,
+    look:{bg:'#b0392e',skin:'#f0b48e',head:'jaw',hair:'#f2d16b',hairStyle:'quiff',eyes:'wide',brows:'raised',brow:'#c9a540',nose:'button',noseColor:'#e0685a',mouth:'grin',shirt:'#d7262e',acc:'whistle'},
+    gossip:[
+    "I'm not saying I can't swim. I'm saying I've never needed to.",
+    "Tasha asked me to pose with a surfboard. I don't own one. It was Gil's ironing board.",
+    "Someone's been night swimming off the point. Torch, wetsuit, the lot. Very professional.",
+    "The Mayor asked me how deep the harbour is. Weird question for a Mayor.",
+    "Chips are carbs. Carbs are fuel. I'm fuelling."]},
+  tasha:{ name:'Tasha', role:'Influencer', from:0,
+    look:{bg:'#7b4aa0',skin:'#f6d0b6',head:'oval',hair:'#f3d77a',hairStyle:'long',hatShades:true,eyes:'wide',lashes:true,brows:'raised',brow:'#b89a4a',nose:'button',mouth:'grin',lips:'#e0457b',earrings:'drop',shirt:'#ffffff',blush:true},
+    gossip:[
+    "This bar's lighting is SO good. Do you mind if I film? Too late, I'm filming.",
+    "My video of Gran Edie dancing got forty thousand views. She wants a cut.",
+    "A property firm offered to pay me to post about 'the new Gullhaven marina'. Bit suspicious, right?",
+    "Dina told me a secret and I didn't post it. Growth.",
+    "The stranger in sunglasses has zero social media. Zero. Who even ARE you?"]},
+  vic:  { name:'Vic', role:'The stranger', from:1,
+    look:{bg:'#34344c',skin:'#c98e6b',head:'oval',hair:'#1b1b1b',hairStyle:'slick',glasses:'shades',brows:'angry',nose:'pointy',mouth:'smirk',beard:'stubble',beardColor:'#1b1b1b',shirt:'#1b1b22',acc:'collarup'},
+    gossip:[
     "You pour like her. Rosa. Same wrist.",
     "I'm not a stranger. I'm just someone you haven't met yet.",
     "Check under the third floorboard by the dartboard. Or don't. Your bar.",
     "The Mayor orders gin when he's lying. Watch what he drinks.",
     "She's safe. That's all I can tell you. For now."]},
-  rex:  { name:'Mayor Rex', role:'The Mayor', face:'🤵', bg:'#523866', from:2, gossip:[
+  hugh: { name:'Rev. Hugh', role:'Vicar', from:1,
+    look:{bg:'#3b4a5e',skin:'#f2c9b1',head:'round',hair:'#6b4f3a',hairStyle:'bald',glasses:'round',eyes:'wide',brows:'up',nose:'button',mouth:'o',shirt:'#1a1a1a',acc:'dogcollar',blush:true},
+    gossip:[
+    "Thou shalt not gossip. But the organist and the harbourmaster had words on Sunday.",
+    "Yes, it's salsa. Yes, it's in Porthbury. No, I will not demonstrate.",
+    "Someone left forty pounds in the collection plate with a note: 'For the boats. R.'",
+    "The Mayor hasn't been to church in years. Turned up last Sunday. Prayed very loudly.",
+    "Confession is sacred. But Gil has looked very guilty lately. That's all I'll say."]},
+  penrose:{ name:'Mrs Penrose', role:'Retired headmistress', from:1,
+    look:{bg:'#5e3b4a',skin:'#f3d2bd',head:'long',hair:'#8b7fa8',hairStyle:'helmet',glasses:'specs',eyes:'sleepy',brows:'angry',brow:'#6b5f88',nose:'pointy',mouth:'pursed',lips:'#b0465c',shirt:'#3f6d8c',acc:'pearls',wrinkles:true},
+    gossip:[
+    "It is NOT a wig. It is a hairpiece. There is a difference, Dina.",
+    "I taught the Mayor at primary school. He copied his spelling tests then, too.",
+    "The lifeguard has never once gone in the sea. I've been watching.",
+    "Tasha photographed my scones and called them 'rustic'. I have never been so insulted.",
+    "I saw Rosa on the cliff path last week. Wearing a hat. Rosa never wears hats."]},
+  sal:  { name:'Big Sal', role:'Lobster skipper', from:1,
+    look:{bg:'#7a4b23',skin:'#c88e6a',head:'jaw',hair:'#a8a8a8',hairStyle:'crop',brows:'angry',brow:'#7d7d7d',nose:'big',mouth:'grin',earrings:'hoop',shirt:'#f07a1a',wrinkles:true},
+    gossip:[
+    "Gil charged me double harbour fees this month. Said it was 'admin'. Admin my left boot.",
+    "Lou says he caught the biggest cod in Gullhaven. He bought it off me.",
+    "There's a yacht moored off the point. Shiny. Nobody's been aboard in daylight.",
+    "I lost a lobster pot last Tuesday. Found it in the Mayor's garden. Don't ask.",
+    "Rosa paid my mooring for three winters. I never knew till now."]},
+  rex:  { name:'Mayor Rex', role:'The Mayor', from:2,
+    look:{bg:'#523866',skin:'#f0b8a0',head:'jaw',hair:'#8c8c8c',hairStyle:'slick',eyes:'side',brows:'angry',brow:'#5c5c5c',nose:'big',mouth:'grin',tache:'handlebar',tacheColor:'#6a6a6a',shirt:'#2a2a3a',acc:'chain',blush:true},
+    gossip:[
     "Lovely little bar. Shame about the location. And the roof. And the drains.",
     "I'm a man of the people. Mostly the people with yachts.",
     "My offer still stands. It's getting smaller, mind.",
     "Who's been talking to Dina? Everyone's been talking to Dina.",
     "Fine. One more pint. But I'm not enjoying it."]},
+  gil:  { name:'Gil', role:'Harbourmaster', from:2,
+    look:{bg:'#23415e',skin:'#e3a988',head:'long',hair:'#4a4a4a',hat:'captain',eyes:'side',brows:'up',nose:'pointy',mouth:'frown',tache:'tache',shirt:'#1f2d4a'},
+    gossip:[
+    "Nothing to see at the harbour. Nothing at all. Move along.",
+    "Those weren't surveyors. They were bird watchers. With a measuring tape.",
+    "Fine. The Mayor buys me lunch. A man's got to eat.",
+    "If anyone asks, I was at home on Tuesday night. Watching the snooker.",
+    "Rosa always knew when I was lying. You've got her eyes."]},
 };
-const ROSA = { name:'Aunt Rosa', face:'👩‍🦳', bg:'#7a4a2a' };
-const YOU = null; // narrator
+const ROSA = { name:'Aunt Rosa', look:{bg:'#7a4a2a',skin:'#e2a985',head:'oval',hair:'#d9d9d9',hairStyle:'long',brows:'flat',nose:'pointy',mouth:'smile',lips:'#a33',earrings:'drop',shirt:'#2e6b5e',wrinkles:true} };
+const SONGS = ['Drunken Sailor','Whiskey in the Jar','Molly Malone','Blow the Man Down','Haul Away Joe','The Leaving of Liverpool','Spanish Ladies','Bound for South Australia'];
 
 // scene lines: [speaker key | null for narration | 'letter', text]
 const CHAPTERS = [
@@ -225,7 +499,8 @@ const CHAPTERS = [
       [null,"Gullhaven. A harbour town with one bar, one Mayor, and no secrets that last past closing time."],
       [null,"Your Aunt Rosa ran The Gull for twenty years. A month ago she vanished and left it to you."],
       ['lou',"You'll be the niece, then. Pour us something. The town gets chatty when it's fed."],
-      [null,"Tap a machine to make something. Drag two of the same together to make something better. Serve the regulars and they'll talk."]],
+      [null,"Tap a machine to make something. Drag two of the same together to make something better. Serve the regulars and they'll talk."],
+      [null,"Short on energy? Head to the Karaoke tab and cheer the singers. The crowd tips in tokens."]],
     tasks:[
       { name:'Wipe down the bar', cost:1, scene:[
         ['lou',"Rosa never left a glass unwiped. Twenty years, never missed a Friday."],
@@ -250,7 +525,8 @@ const CHAPTERS = [
   { title:'Whispers on the Pier',
     intro:[
       [null,"Word spreads that The Gull is open again. New faces at the bar, including the one in sunglasses."],
-      ['dina',"That stranger's called Vic. Pays in coins. Tips well. Nobody knows where they sleep."]],
+      ['dina',"That stranger's called Vic. Pays in coins. Tips well. Nobody knows where they sleep."],
+      [null,"The wine cellar is open. New drinks are on the menu."]],
     tasks:[
       { name:'Polish the brass taps', cost:3, scene:[
         ['dina',"Edie saw the Mayor on the pier at three in the morning. With surveyors. In hi-vis."],
@@ -261,7 +537,7 @@ const CHAPTERS = [
       { name:'Unlock the back room', cost:4, scene:[
         [null,"The brass key fits. Inside: a desk, a kettle, and a ledger in Rosa's handwriting."],
         [null,"Every page is the same. Harbour fees, paid in cash, for every fishing boat in Gullhaven. For eleven years."],
-        ['lou',"So that's who it was. We all thought the council had gone soft."]]},
+        ['sal',"So that's who it was. We all thought the council had gone soft."]]},
       { name:'Mend the pool table', cost:4, scene:[
         ['lou',"I've worked it out. Rex wants the harbour for a marina. Yachts. Forty berths."],
         ['lou',"No room for our boats. And no fishermen means no reason for this bar. That's why he wants it."]]},
@@ -273,7 +549,8 @@ const CHAPTERS = [
   { title:'The Harbour Vote',
     intro:[
       [null,"The vote on the marina is in nine days. The Mayor has moved it to a Tuesday morning."],
-      ['benny',"Leave the Tuesday to me. I know every letterbox in this town."]],
+      ['benny',"Leave the Tuesday to me. I know every letterbox in this town."],
+      [null,"The spirits shelf is unlocked. Gil the harbourmaster has started drinking here. Nervously."]],
     tasks:[
       { name:'String up the fairy lights', cost:4, scene:[
         ['dina',"I've told twelve clients the vote's on Tuesday. They've each told twelve more. That's how it works."],
@@ -287,7 +564,8 @@ const CHAPTERS = [
         [null,"You pour him a gin. He doesn't notice what he ordered. Vic does."]]},
       { name:'Lay out a feast', cost:6, scene:[
         [null,"Tuesday morning. The bar is full before you've unlocked the door."],
-        [null,"Halfway through the Mayor's speech, the back room door opens."],
+        ['gil',"I... I need to say something. Before the vote. About the harbour fees."],
+        [null,"Halfway through Gil's confession, the back room door opens."],
         ['rosa',"Sorry I'm late. I brought my bookkeeping."]]},
       { name:'Raise a toast to the harbour', cost:6, scene:[
         [null,"The ledger goes round the room. So does a round of Rosa's specials. The vote isn't close."],
@@ -298,20 +576,35 @@ const CHAPTERS = [
     ]},
 ];
 
+const SHOP = [
+  { id:'energy',  ic:'⚡', name:'Power nap',          desc:'+30 energy',                                 cost:120 },
+  { id:'reroll',  ic:'🔄', name:'Round on the house', desc:'Every customer orders something new',        cost:80 },
+  { id:'crate',   ic:'📦', name:'Mystery delivery',   desc:'A random level 3 item lands on the board',  cost:200 },
+  { id:'upgrade', ic:'✨', name:'Golden glass',       desc:'Upgrade the item selected on the bar by one level', cost:250 },
+  { id:'star',    ic:'⭐', name:'Rave review',        desc:'+1 star for the fix-up list',                cost:400 },
+];
+
 /* ---------- state ---------- */
 let S;
 function freshState(){
   const board = Array(N).fill(null);
-  board[51] = {g:'brew'}; board[53] = {g:'fruit'}; board[55] = {g:'snack'};
-  [[44,'brew',0],[45,'brew',0],[46,'fruit',0],[38,'fruit',0],[47,'snack',0],[40,'snack',0]].forEach(([i,c,t])=>board[i]={c,t});
-  return { board, energy:E_MAX, eTs:Date.now(), coins:20, stars:0, served:0,
-    ch:0, task:0, introSeen:{}, patrons:[], heard:{}, bookNew:false, done:false };
+  [[49,'brew',0],[50,'brew',0],[51,'fruit',0],[44,'fruit',0],[53,'snack',0],[46,'snack',0],[54,'coffee',0],[47,'coffee',0]].forEach(([i,c,t])=>board[i]={c,t});
+  return { board, energy:E_MAX, eTs:Date.now(), coins:20, stars:0, tokens:0, served:0,
+    ch:0, task:0, introSeen:{}, patrons:[], heard:{}, bookNew:false,
+    kara:{ who:'dina', song:0, cheers:0 } };
 }
 function load(){
   try { const raw = localStorage.getItem(SAVE_KEY); if (raw) return JSON.parse(raw); } catch(e){}
   return null;
 }
 function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e){} }
+function migrate(s){
+  while (s.board.length < N) s.board.push(null);
+  s.tokens ??= 0;
+  s.kara ??= { who:'dina', song:0, cheers:0 };
+  s.patrons = (s.patrons||[]).filter(p => PEOPLE[p.who]);
+  return s;
+}
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
@@ -319,10 +612,27 @@ const rnd = n => Math.floor(Math.random()*n);
 const pick = a => a[rnd(a.length)];
 const itemOf = it => CHAINS[it.c].items[it.t];
 const genOf = it => CHAINS[it.g].gen;
+const unlocked = c => CHAINS[c].unlock <= S.ch;
 const speaker = k => k==='rosa' ? ROSA : PEOPLE[k];
-function avatar(p, extra=''){ return `<div class="ava ${extra}" style="background:${p.bg}">${p.face}</div>`; }
+function avatar(p){ return `<div class="ava">${face(p.look)}</div>`; }
 let toastT;
-function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),1800); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2000); }
+
+/* ---------- generators ---------- */
+function ensureGens(announce){
+  for (const c of Object.keys(CHAINS)){
+    let i = S.board.findIndex(b => b && b.g===c);
+    if (i < 0){
+      const home = CHAINS[c].home;
+      i = S.board[home] ? nearestEmpty(home) : home;
+      if (i < 0) continue; // board full; try again next time
+      S.board[i] = { g:c };
+    }
+    const was = S.board[i].locked;
+    S.board[i].locked = !unlocked(c);
+    if (announce && was && !S.board[i].locked) toast(`New on the menu: ${CHAINS[c].gen[1]} unlocked`);
+  }
+}
 
 /* ---------- energy ---------- */
 function tickEnergy(){
@@ -333,17 +643,19 @@ function tickEnergy(){
 }
 
 /* ---------- patrons & orders ---------- */
+const SEATS = 4;
+function townsfolk(){ return Object.keys(PEOPLE).filter(k => PEOPLE[k].from <= S.ch); }
 function availablePeople(){
   const here = new Set(S.patrons.map(p=>p.who));
-  return Object.keys(PEOPLE).filter(k => PEOPLE[k].from <= S.ch && !here.has(k));
+  return townsfolk().filter(k => !here.has(k));
 }
 function makeOrder(){
   const cap = Math.min(MAX_T, 1 + Math.floor(S.served/3));
   const count = S.served < 3 ? 1 : (Math.random() < .45 ? 2 : 1);
+  const chains = Object.keys(CHAINS).filter(unlocked);
   const order = [];
   for (let i=0;i<count;i++){
-    const c = pick(Object.keys(CHAINS));
-    // lean towards the middle of what's reachable
+    const c = pick(chains);
     const t = Math.max(1, Math.min(cap, 1 + rnd(cap) - (Math.random()<.4 && cap>2 ? 1 : 0)));
     order.push({c,t});
   }
@@ -354,9 +666,8 @@ function newPatron(){
   const pool = availablePeople(); if (!pool.length) return null;
   return { who: pick(pool), ...makeOrder(), fresh:true };
 }
-function fillPatrons(){ while (S.patrons.length < 3){ const p = newPatron(); if(!p) break; S.patrons.push(p); } }
+function fillPatrons(){ while (S.patrons.length < SEATS){ const p = newPatron(); if(!p) break; S.patrons.push(p); } }
 
-// which board cells would satisfy this order (null if not all present)
 function findCells(order){
   const used = new Set(), cells = [];
   for (const o of order){
@@ -369,17 +680,21 @@ function findCells(order){
 }
 
 /* ---------- rendering ---------- */
-let sel = -1, dragFrom = -1, popAt = -1;
+let sel = -1, popAt = -1, tab = 'bar';
 
-function render(){
-  tickEnergy();
+function renderStats(){
   $('vEnergy').textContent = S.energy;
   $('vCoins').textContent = S.coins;
   $('vStars').textContent = S.stars;
+  $('vTokens').textContent = S.tokens;
   renderTimer();
+}
+function render(){
+  tickEnergy();
+  renderStats();
   $('sign').classList.toggle('flicker', S.ch===0 && S.task<2);
+  if (tab==='karaoke'){ renderKaraoke(); return; }
 
-  // counter
   const wanted = new Set();
   $('counter').innerHTML = S.patrons.map((p,i)=>{
     const who = PEOPLE[p.who];
@@ -398,13 +713,11 @@ function render(){
   }).join('');
   S.patrons.forEach(p=>delete p.fresh);
 
-  // story strip
   if (S.ch < CHAPTERS.length){
     const ch = CHAPTERS[S.ch], t = ch.tasks[S.task];
     $('chLabel').textContent = `Chapter ${S.ch+1} · ${ch.title} · ${S.task+1}/${ch.tasks.length}`;
     $('taskLabel').textContent = t.name;
     $('taskBtn').textContent = `⭐ ${t.cost}`;
-    $('taskBtn').disabled = false;
     $('taskBtn').classList.toggle('go', S.stars >= t.cost);
   } else {
     $('chLabel').textContent = 'The Gull is saved';
@@ -414,15 +727,15 @@ function render(){
   }
   $('bookDot').hidden = !S.bookNew;
 
-  // board
   const html = [];
   for (let i=0;i<N;i++){
     const b = S.board[i];
     let inner = '', cls = 'cell';
-    if (b && b.g){ cls += ' gen'; inner = `<div class="item">${genOf(b)[0]}</div>`; }
-    else if (b){
-      const pips = '<i></i>'.repeat(b.t+1);
-      inner = `<div class="item ${i===popAt?'pop':''}">${itemOf(b)[0]}<span class="pips">${pips}</span></div>`;
+    if (b && b.g){
+      cls += ' gen' + (b.locked ? ' locked' : '');
+      inner = `<div class="item" data-lock="CH ${CHAINS[b.g].unlock+1}">${genOf(b)[0]}</div>`;
+    } else if (b){
+      inner = `<div class="item ${i===popAt?'pop':''}">${itemOf(b)[0]}<span class="pips">${'<i></i>'.repeat(b.t+1)}</span></div>`;
       if (wanted.has(i)) cls += ' wanted';
     }
     if (i===sel) cls += ' sel';
@@ -444,18 +757,19 @@ const HINTS = [
   'Drag two matching items together to merge them into something better.',
   'A green dot means a customer wants that item. Hit Serve.',
   'Spend ⭐ on the fix-up list to hear what happens next.',
+  'Out of energy? Cheer the singers on the Karaoke tab to earn 🎟️ tokens.',
 ];
 function renderTray(){
   const b = sel>=0 ? S.board[sel] : null;
   if (!b){
-    const hint = HINTS[Math.min(S.served, HINTS.length-1)];
-    $('tray').innerHTML = `<div class="meta"><div class="hint">${hint}</div></div>`;
+    $('tray').innerHTML = `<div class="meta"><div class="hint">${HINTS[Math.min(S.served, HINTS.length-1)]}</div></div>`;
     return;
   }
   if (b.g){
     const [e,n] = genOf(b);
-    const ladder = CHAINS[b.g].items.map(x=>`<span style="opacity:1">${x[0]}</span>`).join('');
-    $('tray').innerHTML = `<div class="big">${e}</div><div class="meta"><div class="nm">${n}</div><div class="ladder">${ladder}</div></div>`;
+    const ladder = CHAINS[b.g].items.map(x=>x[0]).join('');
+    const sub = b.locked ? `<div class="hint">Unlocks in chapter ${CHAINS[b.g].unlock+1}</div>` : `<div class="ladder">${ladder}</div>`;
+    $('tray').innerHTML = `<div class="big">${e}</div><div class="meta"><div class="nm">${n}</div>${sub}</div>`;
     return;
   }
   const [e,n] = itemOf(b);
@@ -467,19 +781,20 @@ function renderTray(){
   $('sellBtn').onclick = () => { S.coins += val; S.board[sel]=null; sel=-1; save(); render(); };
 }
 
-/* ---------- actions ---------- */
+/* ---------- bar actions ---------- */
 function nearestEmpty(from){
   const fr = Math.floor(from/COLS), fc = from%COLS;
   let best=-1, bd=1e9;
   for (let i=0;i<N;i++){
     if (S.board[i]) continue;
-    const r=Math.floor(i/COLS), c=i%COLS, d=Math.hypot(r-fr,c-fc);
+    const d=Math.hypot(Math.floor(i/COLS)-fr, i%COLS-fc);
     if (d<bd){ bd=d; best=i; }
   }
   return best;
 }
 function produce(i){
   const g = S.board[i];
+  if (g.locked){ toast(`The ${genOf(g)[1]} opens in chapter ${CHAINS[g.g].unlock+1}.`); render(); return; }
   tickEnergy();
   if (S.energy <= 0){ openEnergy(); return; }
   const to = nearestEmpty(i);
@@ -490,7 +805,7 @@ function produce(i){
   popAt = to; save(); render();
 }
 function moveOrMerge(from, to){
-  if (from===to) return;
+  if (from===to){ render(); return; }
   const a = S.board[from], b = S.board[to];
   if (a && b && !a.g && !b.g && a.c===b.c && a.t===b.t && a.t<MAX_T){
     S.board[to] = { c:a.c, t:a.t+1 }; S.board[from] = null;
@@ -508,7 +823,6 @@ function serve(i){
   cells.forEach(c=>{ S.board[c]=null; if (c===sel) sel=-1; });
   S.coins += p.coins; S.stars += p.stars; S.served++;
   S.energy = Math.min(E_MAX + 50, S.energy + 2);
-  // gossip
   const who = PEOPLE[p.who];
   const heard = S.heard[p.who] || (S.heard[p.who] = []);
   const unheard = who.gossip.map((_,k)=>k).filter(k=>!heard.includes(k));
@@ -516,7 +830,6 @@ function serve(i){
   const isNew = !heard.includes(k);
   if (isNew){ heard.push(k); S.bookNew = true; }
   showNote(who, who.gossip[k], isNew);
-  // leave + replace
   const el = document.querySelector(`.patron[data-i="${i}"]`);
   if (el) el.classList.add('leaving');
   S.patrons.splice(i,1);
@@ -529,10 +842,112 @@ function showNote(who, text, isNew){
   document.querySelectorAll('.note').forEach(n=>n.remove());
   const n = document.createElement('div');
   n.className = 'note';
-  n.innerHTML = `<div class="who"><span>${who.name} leans in…</span>${isNew?'<span class="new">New gossip</span>':''}</div>${text}`;
+  n.innerHTML = `${avatar(who)}<div><div class="who"><span>${who.name} leans in…</span>${isNew?'<span class="new">New gossip</span>':''}</div>${text}</div>`;
   n.onclick = () => n.remove();
   document.body.appendChild(n);
-  clearTimeout(noteT); noteT = setTimeout(()=>n.remove(), 4200);
+  clearTimeout(noteT); noteT = setTimeout(()=>n.remove(), 4500);
+}
+
+/* ---------- karaoke ---------- */
+const ENCORE = 60;
+let combo = 0, lastTap = 0, karaSaveT;
+function mult(){ return combo >= 30 ? 3 : combo >= 10 ? 2 : 1; }
+function renderKaraoke(){
+  const k = S.kara;
+  if (!PEOPLE[k.who] || PEOPLE[k.who].from > S.ch) k.who = 'dina';
+  const singer = PEOPLE[k.who];
+  if ($('singer').dataset.who !== k.who){
+    $('singer').dataset.who = k.who;
+    $('singer').innerHTML = avatar(singer);
+    const crowd = townsfolk().filter(x=>x!==k.who).sort(()=>Math.random()-.5).slice(0,6);
+    $('crowd').innerHTML = crowd.map(x=>avatar(PEOPLE[x])).join('');
+  }
+  $('songTitle').textContent = `${singer.name}: “${SONGS[k.song % SONGS.length]}”`;
+  $('comboMult').textContent = '×' + mult();
+  $('encoreLabel').textContent = `Encore bonus in ${ENCORE - k.cheers} cheers`;
+  $('encoreBar').style.width = (k.cheers/ENCORE*100) + '%';
+  renderShop();
+}
+function renderShop(){
+  $('shopList').innerHTML = SHOP.map(it=>{
+    let desc = it.desc;
+    if (it.id==='upgrade'){
+      const b = sel>=0 ? S.board[sel] : null;
+      desc = b && !b.g && b.t<MAX_T ? `Turn your ${itemOf(b)[1]} into ${CHAINS[b.c].items[b.t+1][1]}` : 'Select an item on the Bar tab first';
+    }
+    const can = S.tokens >= it.cost && shopUsable(it.id);
+    return `<div class="sitem"><div class="ic">${it.ic}</div><div class="d"><b>${it.name}</b><span>${desc}</span></div>
+      <button class="btn tok" data-buy="${it.id}" ${can?'':'disabled'}>🎟️ ${it.cost}</button></div>`;
+  }).join('');
+}
+function shopUsable(id){
+  if (id==='upgrade'){ const b = sel>=0 ? S.board[sel] : null; return !!(b && !b.g && b.t<MAX_T); }
+  if (id==='crate') return S.board.some(b=>!b);
+  return true;
+}
+function buy(id){
+  const it = SHOP.find(x=>x.id===id);
+  if (!it || S.tokens < it.cost || !shopUsable(id)) return;
+  S.tokens -= it.cost;
+  if (id==='energy'){ S.energy += 30; toast('+30 ⚡ energy'); }
+  if (id==='star'){ S.stars += 1; toast('+1 ⭐ star'); }
+  if (id==='reroll'){ S.patrons = S.patrons.map(p=>({ who:p.who, ...makeOrder(), fresh:true })); toast('New orders at the bar'); }
+  if (id==='crate'){
+    const c = pick(Object.keys(CHAINS).filter(unlocked));
+    const to = nearestEmpty(N-1);
+    S.board[to] = { c, t:2 }; popAt = to; sel = to;
+    toast(`Delivery: ${itemOf(S.board[to])[1]}`);
+  }
+  if (id==='upgrade'){ const b = S.board[sel]; S.board[sel] = { c:b.c, t:b.t+1 }; popAt = sel; toast(`Upgraded to ${itemOf(S.board[sel])[1]}`); }
+  save(); render();
+}
+function cheer(e){
+  const now = performance.now();
+  combo = (now - lastTap < 450) ? combo + 1 : 0;
+  lastTap = now;
+  const m = mult();
+  S.tokens += m;
+  S.kara.cheers++;
+  const r = $('stage').getBoundingClientRect();
+  const x = (e.clientX ?? r.left + r.width/2) - r.left, y = (e.clientY ?? r.top + r.height/2) - r.top;
+  floatAt(x, y, `+${m}🎟️`, '');
+  if (Math.random() < .5) floatAt(x + (Math.random()*60-30), y - 10, pick(['♪','♫','♬']), 'note');
+  const sg = $('singer'); sg.classList.remove('bop'); void sg.offsetWidth; sg.classList.add('bop');
+  $('tapme').hidden = true;
+  if (S.kara.cheers >= ENCORE){
+    S.tokens += 25;
+    toast(`Encore! The crowd tips 25 🎟️`);
+    S.kara.cheers = 0;
+    S.kara.song++;
+    S.kara.who = pick(townsfolk().filter(k=>k!==S.kara.who));
+  }
+  renderStats();
+  renderKaraoke();
+  updateBadge();
+  clearTimeout(karaSaveT); karaSaveT = setTimeout(save, 400);
+}
+function floatAt(x, y, text, cls){
+  const f = document.createElement('div');
+  f.className = 'float ' + cls; f.textContent = text;
+  f.style.left = (x-18)+'px'; f.style.top = (y-20)+'px';
+  $('stage').appendChild(f);
+  setTimeout(()=>f.remove(), 900);
+}
+function updateBadge(){
+  const cheapest = Math.min(...SHOP.map(s=>s.cost));
+  $('tokBadge').hidden = tab==='karaoke' || S.tokens < cheapest;
+  $('tokBadge').textContent = S.tokens;
+}
+function setTab(t){
+  tab = t;
+  $('barView').hidden = t!=='bar';
+  $('karaokeView').hidden = t!=='karaoke';
+  $('tabBar').setAttribute('aria-selected', t==='bar');
+  $('tabKaraoke').setAttribute('aria-selected', t==='karaoke');
+  if (t==='karaoke'){ $('singer').dataset.who=''; combo = 0; }
+  updateBadge();
+  render();
+  window.scrollTo(0,0);
 }
 
 /* ---------- overlays ---------- */
@@ -544,7 +959,7 @@ function playScene(lines, done){
     const [who, text] = lines[k++];
     let ava = '', name = '', cls = 'line';
     if (who===null){ cls += ' narr'; }
-    else if (who==='letter'){ ava = avatar({bg:ROSA.bg, face:'✉️'}); name = 'A letter from Rosa'; cls += ' letter'; }
+    else if (who==='letter'){ ava = `<div class="ava emoji" style="background:${ROSA.look.bg}">✉️</div>`; name = 'A letter from Rosa'; cls += ' letter'; }
     else { const s = speaker(who); ava = avatar(s); name = s.name; }
     $('layer').innerHTML = `<div class="overlay" id="sceneOv"><div class="scene" role="dialog" aria-live="polite" tabindex="0">${ava}
       <div class="say">${name?`<div class="who">${name}</div>`:''}<div class="${cls}">${text}</div>
@@ -570,8 +985,8 @@ function maybeIntro(){
   });
 }
 function doTask(){
-  if (S.ch >= CHAPTERS.length){ // replay the whole story from the book
-    const all = CHAPTERS.flatMap(c=>[[null, `Chapter ${CHAPTERS.indexOf(c)+1}: ${c.title}`], ...c.intro, ...c.tasks.flatMap(t=>t.scene)]);
+  if (S.ch >= CHAPTERS.length){
+    const all = CHAPTERS.flatMap((c,i)=>[[null, `Chapter ${i+1}: ${c.title}`], ...c.intro, ...c.tasks.flatMap(t=>t.scene)]);
     playScene(all); return;
   }
   const ch = CHAPTERS[S.ch], t = ch.tasks[S.task];
@@ -583,18 +998,19 @@ function doTask(){
     if (!finished) return;
     const wasLast = S.ch === CHAPTERS.length-1;
     S.ch++; S.task = 0; S.coins += 50; S.energy = Math.max(S.energy, E_MAX);
-    fillPatrons(); save(); render();
+    ensureGens(true); fillPatrons(); save(); render();
     if (wasLast) chapterCard('The end', 'The Gull is saved', 'You finished the story. Customers keep coming, and there is still gossip to collect in the book.', 'Keep pouring');
-    else chapterCard(`Chapter ${S.ch} complete`, CHAPTERS[S.ch-1].title, 'Bonus: 🪙50 and a full tank of ⚡.', 'Next chapter', maybeIntro);
+    else chapterCard(`Chapter ${S.ch} complete`, CHAPTERS[S.ch-1].title, 'Bonus: 🪙50 and a full tank of ⚡. New customers are in town.', 'Next chapter', maybeIntro);
   });
 }
 function openEnergy(){
   const cost = 40;
   $('layer').innerHTML = `<div class="overlay center"><div class="card">
     <h2>Out of steam?</h2>
-    <p>Energy refills by 1 every ${E_REGEN_MS/1000} seconds, and serving a customer gives back 2. Or put the kettle on now: 50 ⚡ for 🪙${cost}.</p>
-    <div class="row"><button class="btn" id="eNo">Not now</button><button class="btn go" id="eYes" ${S.coins<cost?'disabled':''}>Buy 50 ⚡</button></div></div></div>`;
+    <p>Energy refills by 1 every ${E_REGEN_MS/1000} seconds, and serving a customer gives back 2. You can buy 50 ⚡ for 🪙${cost}, or earn 🎟️ tokens on the Karaoke tab and buy it there.</p>
+    <div class="row"><button class="btn" id="eNo">Not now</button><button class="btn tok" id="eKara">Go to Karaoke</button><button class="btn go" id="eYes" ${S.coins<cost?'disabled':''}>Buy 50 ⚡</button></div></div></div>`;
   $('eNo').onclick = closeLayer;
+  $('eKara').onclick = () => { closeLayer(); setTab('karaoke'); };
   $('eYes').onclick = () => { if (S.coins<cost) return; S.coins-=cost; S.energy+=50; save(); closeLayer(); render(); };
 }
 function openBook(){
@@ -604,8 +1020,8 @@ function openBook(){
   const body = Object.entries(PEOPLE).map(([k,p])=>{
     const heard = S.heard[k] || [];
     const lines = p.gossip.map((g,i)=> heard.includes(i) ? `<div class="gb-line">“${g}”</div>` : '').join('');
-    const locked = p.gossip.length - heard.length;
-    const lockTxt = p.from > S.ch ? 'Not in town yet.' : (locked ? `${locked} more to hear. Serve ${p.name} again.` : '');
+    const left = p.gossip.length - heard.length;
+    const lockTxt = p.from > S.ch ? `Arrives in chapter ${p.from+1}.` : (left ? `${left} more to hear. Serve ${p.name} again.` : '');
     return `<div class="gb-who">${avatar(p)}<span>${p.name} <small>· ${p.role}</small></span></div>${lines}${lockTxt?`<div class="gb-line locked">${lockTxt}</div>`:''}`;
   }).join('');
   $('layer').innerHTML = `<div class="overlay center"><div class="card">
@@ -616,10 +1032,10 @@ function openBook(){
 }
 function confirmReset(){
   $('layer').innerHTML = `<div class="overlay center"><div class="card">
-    <h2>Start a new game?</h2><p>Your board, coins, stars, story progress and gossip book will be wiped.</p>
+    <h2>Start a new game?</h2><p>Your board, coins, stars, tokens, story progress and gossip book will be wiped.</p>
     <div class="row"><button class="btn" id="rNo">Keep playing</button><button class="btn go" id="rYes">Start again</button></div></div></div>`;
   $('rNo').onclick = closeLayer;
-  $('rYes').onclick = () => { S = freshState(); fillPatrons(); sel=-1; save(); closeLayer(); render(); maybeIntro(); };
+  $('rYes').onclick = () => { S = freshState(); ensureGens(); fillPatrons(); sel=-1; save(); closeLayer(); render(); maybeIntro(); };
 }
 
 /* ---------- input: tap & drag on the board ---------- */
@@ -634,7 +1050,7 @@ $('board').addEventListener('pointerdown', e => {
 $('board').addEventListener('pointermove', e => {
   if (!down || !S.board[down.i]) return;
   if (!down.dragging && Math.hypot(e.clientX-down.x, e.clientY-down.y) > 7){
-    down.dragging = true; dragFrom = down.i;
+    down.dragging = true;
     const b = S.board[down.i];
     ghost = document.createElement('div'); ghost.className='ghost';
     ghost.textContent = b.g ? genOf(b)[0] : itemOf(b)[0];
@@ -655,7 +1071,6 @@ function endPointer(e, cancelled){
   if (ghost){ ghost.remove(); ghost = null; }
   if (d.dragging){
     const t = cancelled ? -1 : cellAt(e.clientX, e.clientY);
-    dragFrom = -1;
     if (t>=0) moveOrMerge(d.i, t); else render();
     return;
   }
@@ -673,11 +1088,17 @@ $('taskBtn').onclick = doTask;
 $('bookBtn').onclick = openBook;
 $('stEnergy').onclick = openEnergy;
 $('resetBtn').onclick = confirmReset;
+$('tabBar').onclick = () => setTab('bar');
+$('tabKaraoke').onclick = () => setTab('karaoke');
+$('stage').addEventListener('pointerdown', e => { e.preventDefault(); cheer(e); });
+$('stage').addEventListener('keydown', e => { if (e.key===' '||e.key==='Enter'){ e.preventDefault(); cheer({}); } });
+$('stage').tabIndex = 0;
+$('shopList').addEventListener('click', e => { const b = e.target.closest('[data-buy]'); if (b) buy(b.dataset.buy); });
 
 /* ---------- boot ---------- */
 function start(data){
-  S = (data && data.state) || load() || freshState();
-  fillPatrons(); save(); render(); maybeIntro();
+  S = migrate((data && data.state) || load() || freshState());
+  ensureGens(); fillPatrons(); save(); render(); updateBadge(); maybeIntro();
   setInterval(()=>{ const before = S.energy; tickEnergy(); if (S.energy!==before){ $('vEnergy').textContent=S.energy; save(); } renderTimer(); }, 1000);
 }
 window.claude?.hot?.snapshot?.(() => ({ state:S }));
