@@ -275,8 +275,8 @@
     opacity:0;transform:scale(.8);transition:opacity 1.2s var(--ease);mix-blend-mode:screen;will-change:transform,opacity}
   .playing .pulse{opacity:var(--glow,.4)}
   .dock-bar img{transition:box-shadow .3s}
-  .playing .dock-art{box-shadow:0 0 calc(var(--beat,0)*28px) rgba(224,115,111,calc(var(--beat,0)*.9))}
-  .playing .dock-bar{border-color:rgba(224,115,111,calc(.12 + var(--beat,0)*.35))}
+  .playing .dock-art{box-shadow:0 0 calc(var(--beat,0)*12px) rgba(224,115,111,calc(var(--beat,0)*.45))}
+  .playing .dock-bar{border-color:rgba(224,115,111,calc(.1 + var(--beat,0)*.15))}
   .playing .eq i{animation:none!important}
   @media (prefers-reduced-motion:reduce){.pulse{display:none}}
 
@@ -290,12 +290,12 @@
   .spec{position:absolute;inset:0;display:flex;align-items:flex-end;gap:3px;padding:0 12px;opacity:0;transition:opacity .6s;pointer-events:none;
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
   .spec i{flex:1;height:8%;border-radius:2px 2px 0 0;background:linear-gradient(0deg,rgba(224,115,111,.75),rgba(224,115,111,.05))}
-  .playing .spec{opacity:.5}
+  .playing .spec{opacity:.22}
   .dock-art{width:50px;height:50px}
   .dock-art{position:relative;flex:none;width:46px;height:46px;border-radius:10px;overflow:hidden}
   .dock-art img{width:100%!important;height:100%!important;border-radius:0!important}
-  .viz{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:0 12px 9px;background:linear-gradient(0deg,rgba(10,10,11,.75),rgba(10,10,11,.15));opacity:0;transition:opacity .5s}
-  .viz i{flex:1;height:12%;border-radius:2px 2px 0 0;background:linear-gradient(0deg,var(--accent),#ffd2c8);box-shadow:0 0 5px rgba(224,115,111,.5)}
+  .viz{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:0 12px 9px;background:linear-gradient(0deg,rgba(10,10,11,.5),transparent 70%);opacity:0;transition:opacity .5s}
+  .viz i{flex:1;height:12%;border-radius:2px 2px 0 0;background:linear-gradient(0deg,var(--accent),#ffd2c8);opacity:.85}
   .playing .viz{opacity:1}
   .eq{height:13px;gap:2.5px;margin-right:8px;vertical-align:-2px}
   .eq i{width:3px}
@@ -638,11 +638,11 @@
     const v = Math.min(1, env + sub);
     root.style.setProperty('--beat', v.toFixed(3));
     glow.style.transform = 'scale(' + (.85 + v * .3).toFixed(3) + ')';
-    glow.style.setProperty('--glow', (.25 + v * .6).toFixed(3));
+    glow.style.setProperty('--glow', (.12 + v * .28).toFixed(3));
     bars.forEach((b, i) => {
       const spec = i >= nSmall, shape = spec ? .55 + .45 * Math.sin((i - nSmall) / 35 * Math.PI) : 1; // spectrum arcs higher in the middle
       const lv = Math.min(1, (v * barAmp[i] * 1.2 + jitter[i] * .3 * (.3 + v)) * shape);
-      b.style.height = (spec ? 6 + 58 * lv : 14 + 76 * lv).toFixed(0) + '%';
+      b.style.height = (spec ? 4 + 30 * lv : 12 + 46 * lv).toFixed(0) + '%';
     });
     raf = requestAnimationFrame(tick);
   }
