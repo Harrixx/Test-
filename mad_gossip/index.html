@@ -369,6 +369,21 @@ button.bubble{font:inherit;cursor:pointer;width:100%}
 .cell.flash{animation:flash .6s ease-in-out 4}
 @keyframes flash{50%{box-shadow:inset 0 0 0 4px #fff,0 0 18px #fff;background:rgba(255,255,255,.6)}}
 
+/* tutorial spotlight + coach */
+#tutHole{position:fixed;z-index:65;border-radius:16px;border:3px solid #fff;box-shadow:0 0 0 9999px rgba(40,10,60,.45),0 0 24px rgba(255,255,255,.9);pointer-events:none;animation:holepulse 1.2s ease-in-out infinite}
+@keyframes holepulse{50%{box-shadow:0 0 0 9999px rgba(40,10,60,.45),0 0 4px rgba(255,255,255,.6)}}
+#tutCoach{position:fixed;left:50%;transform:translateX(-50%);width:min(420px,calc(100% - 24px));z-index:66;display:flex;gap:10px;align-items:flex-end;background:linear-gradient(160deg,#fff,#fff0f8);border:2px solid #fff;border-radius:22px;padding:10px 12px;box-shadow:0 14px 36px rgba(109,40,217,.35);animation:arrive .3s ease-out;box-sizing:border-box}
+#tutCoach.up{top:calc(8px + env(safe-area-inset-top,0px))}
+#tutCoach.down{bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+#tutCoach .portrait{width:58px;height:76px;flex:none;border-radius:14px}
+#tutCoach .cbody{flex:1;min-width:0}
+#tutCoach .cwho{font-size:12px;font-weight:700;color:var(--neon);display:flex;justify-content:space-between}
+#tutCoach .cwho span{color:var(--muted);font-weight:600}
+#tutCoach .ctext{font-size:15px;line-height:1.35;margin:2px 0 6px}
+#tutCoach .crow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#tutCoach .crow .btn{padding:6px 14px}
+#tutCoach .cdo{font-size:13px;font-weight:700;color:var(--violet);animation:nudge 1.4s infinite}
+
 /* level road map */
 .mapcard{flex:1;min-height:0;border-radius:24px;border:3px solid #fff;overflow:hidden;background:linear-gradient(#ffd9ec 0%,#ecdcff 45%,#c9ecff 100%);box-shadow:var(--glow)}
 #mapSvg{width:100%;height:100%;display:block}
@@ -453,6 +468,7 @@ button.bubble{font:inherit;cursor:pointer;width:100%}
         <div class="task" id="taskLabel"></div>
       </div>
       <button class="btn go" id="taskBtn"></button>
+      <button class="book" id="helpBtn" aria-label="How to play">❓</button>
       <button class="book" id="bookBtn" aria-label="Tea diary">📒<span class="dot" id="bookDot" hidden></span></button>
     </section>
     <section class="tray" id="tray" hidden></section>
@@ -514,6 +530,8 @@ button.bubble{font:inherit;cursor:pointer;width:100%}
   <button class="tab" role="tab" id="tabHome" aria-selected="false"><span class="i">🏠</span>Home<span class="badge" id="homeBadge" style="background:#e2b07a" hidden></span></button>
 </nav>
 <div class="toast" id="toast"></div>
+<div id="tutHole" hidden></div>
+<div id="tutCoach" hidden></div>
 <div id="layer"></div>
 
 <script>
@@ -832,12 +850,7 @@ const CHAPTERS = [
       [null,"Gullhaven. One bar, one Mayor, and zero secrets that survive past closing time."],
       [null,"Your Aunt Rosa ran The Gull for twenty years. A month ago she vanished and left it to you. Plot twist."],
       ['imani',"Omg hiii, you must be Rosa's niece! I'm Imani, I DJ here on Fridays. We've literally been waiting for you."],
-      ['poppy',"Quick tutorial, because I'm a librarian and I physically cannot help it: tap a glowing machine to pour a drink."],
-      ['finn',"Then drag two of the same drink together to level it up. Easy. Delish."],
-      ['ruby',"Serve everyone and they'll spill the tea. Every. Single. Drop."],
-      ['poppy',"Stuck on a drink? Tap whoever's ordering and they'll show you exactly how to make it."],
-      ['zara',"Out of energy? Karaoke tab. Tap the stage like it owes you money. The crowd tips in tokens. Cardio!"],
-      ['sofia',"And everyone pays in planks too, so you can glow up Rosa's flat upstairs. It's... a project."],
+      ['poppy',"Don't panic. We'll show you how everything works. Step by step. I've made a checklist."],
       ['leo',"Right, enough chat. Pour us something. Gullhaven gets gossipy when it's fed."]],
     tasks:[
       { name:'Wipe down the bar', cost:1, scene:[
@@ -1073,7 +1086,7 @@ function freshState(){
   [[49,'brew',0],[50,'brew',0],[51,'wine',0],[44,'wine',0],[53,'cocktail',0],[46,'cocktail',0],[54,'fizz',0],[47,'fizz',0]].forEach(([i,c,t])=>board[i]={c,t});
   return { board, energy:E_BASE, eTs:Date.now(), coins:20, stars:0, tokens:0, planks:0, served:0, home:{}, feed:[], feedUnread:0,
     ch:0, task:0, introSeen:{}, patrons:[], heard:{}, bookNew:false,
-    kara:{ who:'imani', song:0, cheers:0 }, cast:2 };
+    kara:{ who:'imani', song:0, cheers:0 }, cast:2, tut:0 };
 }
 function load(){
   try { const raw = localStorage.getItem(SAVE_KEY); if (raw) return JSON.parse(raw); } catch(e){}
@@ -1081,6 +1094,7 @@ function load(){
 }
 function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e){} }
 function migrate(s){
+  if (s.tut === undefined) s.tut = s.served > 0 ? -1 : 0;
   if (s.cast !== 2){ s.cast = 2; s.feed = []; s.feedUnread = 0; s.heard = {}; s.patrons = []; if (s.kara) s.kara.who = 'imani'; }
   while (s.board.length < N) s.board.push(null);
   s.tokens ??= 0; s.planks ??= 0; s.home ??= {}; s.feed ??= []; s.feedUnread ??= 0;
@@ -1246,6 +1260,7 @@ function render(){
   $('board').innerHTML = html.join('');
   popAt = -1;
   renderTray();
+  tutPlace();
 }
 
 function renderTimer(){
@@ -1305,8 +1320,8 @@ function produce(i){
   if (to < 0){ toast("Board's full, bestie. Merge or sell something 💅"); return; }
   if (S.energy >= eMax()) S.eTs = Date.now();
   S.energy--;
-  S.board[to] = { c:g.g, t: Math.random()<.12 ? 1 : 0 };
-  popAt = to; save(); render();
+  S.board[to] = { c:g.g, t: (Math.random()<.12 && !(S.tut>=0 && S.tut<4)) ? 1 : 0 };
+  popAt = to; save(); render(); tutEvent('pour');
 }
 function moveOrMerge(from, to){
   if (from===to){ render(); return; }
@@ -1314,6 +1329,7 @@ function moveOrMerge(from, to){
   if (a && b && !a.g && !b.g && a.c===b.c && a.t===b.t && a.t<MAX_T){
     S.board[to] = { c:a.c, t:a.t+1 }; S.board[from] = null;
     popAt = to; sel = to;
+    tutEvent('merge');
     if (a.t+1 === MAX_T) toast(`${itemName(S.board[to])}! That's mega delish, that 🤌`);
     else if (a.t+1 >= 3 && Math.random() < .5) toast(`${itemName(S.board[to])}. ${pick(SLAY)}`);
   } else {
@@ -1343,6 +1359,7 @@ function serve(i){
   save(); updateBadges();
   toast(`${pick(SLAY)} +${p.coins}🪙 +${p.stars}⭐ +${p.planks||2}🪵`);
   if (posted) setTimeout(()=>toast('New tea just dropped ☕'), 2100);
+  tutEvent('serve');
   setTimeout(render, 320);
 }
 let noteT;
@@ -1536,8 +1553,76 @@ function tapLevel(i){
   toast(`Level ${i+1} is locked. Finish level ${cur+1} first, bestie 🔒`);
 }
 
+/* ---------- interactive tutorial ---------- */
+// Each step: who coaches, what they say, what to spotlight, and what the player must do ('next' = tap Next).
+const cellsOf = (c,t) => S.board.map((b,i) => b && !b.g && b.c===c && b.t===t ? i : -1).filter(i => i >= 0);
+const genCell = c => S.board.findIndex(b => b && b.g === c);
+const q = sel => document.querySelector(sel);
+const TUT = [
+  { who:'imani', text:"Welcome to The Gull! Quick tour so you can run this bar like a pro. Ready? 💅", wait:'next' },
+  { who:'poppy', text:"This glowing thing is the Beer Tap. Tap it to pour a Half of Lager 🍺", wait:'pour',
+    target:() => [q(`[data-cell="${genCell('brew')}"]`)] },
+  { who:'poppy', text:"Yesss. Tap it once more so you've got a matching pair.", wait:'pour',
+    skip:() => cellsOf('brew',0).length >= 2, target:() => [q(`[data-cell="${genCell('brew')}"]`)] },
+  { who:'finn', text:"Now drag one Half of Lager onto the other. Two the same = one better drink. Delish 🤌", wait:'merge',
+    target:() => cellsOf('brew',0).slice(0,2).map(i => q(`[data-cell="${i}"]`)) },
+  { who:'ruby', text:"Ooh, someone's thirsty! Tap them to see exactly how to make their order.", wait:'recipe',
+    enter:() => { const p = S.patrons[0]; if (p) Object.assign(p, { order:[{c:'brew',t:1}], coins:10, stars:1, planks:2 }); },
+    target:() => [q('.patron[data-i="0"] .howbtn')] },
+  { who:'ruby', text:"You already made that Pint of Lager. Hit Serve and get the tea ☕", wait:'serve',
+    target:() => [q('.patron[data-i="0"] .serve')] },
+  { who:'zara', text:"Every serve earns ⭐ stars. Spend them on levels to unlock the story. Tap Play!", wait:() => {
+      const L = LEVELS[levelNow()]; return L && S.stars >= L.task.cost ? 'level' : 'next'; },
+    target:() => [q('#taskBtn')] },
+  { who:'sofia', text:"This is your level road map. Follow it all the way to the 🏆 and save The Gull.", wait:'next', target:() => [q('#tabMap')] },
+  { who:'leo', text:"The Tea is the town group chat. Serve people to unlock new gossip. It gets messy.", wait:'next', target:() => [q('#tabFeed')] },
+  { who:'imani', text:"Out of ⚡ energy? Karaoke! Tap the stage to hype the singer and earn 🎟️ tokens.", wait:'next', target:() => [q('#tabKaraoke')] },
+  { who:'lily', text:"Home is Rosa's old flat. Spend 🪵 planks on glow-ups: every one adds max energy.", wait:'next', target:() => [q('#tabHome')] },
+  { who:'rafi', text:"Forget something? Tap ❓ to replay this tour any time. Now go serve, bestie ✨", wait:'next', target:() => [q('#helpBtn')], last:true },
+];
+const tutWait = st => typeof st.wait === 'function' ? st.wait() : st.wait;
+function tutEnter(){
+  while (S.tut >= 0 && S.tut < TUT.length && TUT[S.tut].skip && TUT[S.tut].skip()) S.tut++;
+  if (S.tut >= TUT.length){ S.tut = -1; }
+  if (S.tut >= 0 && TUT[S.tut].enter){ TUT[S.tut].enter(); }
+  save(); render(); tutPlace();
+}
+function tutNext(){
+  if (S.tut < 0) return;
+  if (TUT[S.tut].last){ S.tut = -1; save(); tutPlace(); toast("Tutorial done. You ate that 💅"); return; }
+  S.tut++; tutEnter();
+}
+function tutEvent(name){
+  if (!S || S.tut < 0 || S.tut >= TUT.length) return;
+  if (tutWait(TUT[S.tut]) === name) tutNext();
+}
+function tutPlace(){
+  const hole = $('tutHole'), coach = $('tutCoach');
+  const busy = $('layer').innerHTML.trim() !== '';
+  if (!S || S.tut < 0 || S.tut >= TUT.length || busy || tab !== 'bar'){
+    hole.hidden = coach.hidden = true;
+    return;
+  }
+  const st = TUT[S.tut], els = (st.target ? st.target() : []).filter(Boolean);
+  let midY = innerHeight * .6;
+  if (els.length){
+    const rs = els.map(e => e.getBoundingClientRect());
+    const x1 = Math.min(...rs.map(r=>r.left)) - 6, y1 = Math.min(...rs.map(r=>r.top)) - 6;
+    const x2 = Math.max(...rs.map(r=>r.right)) + 6, y2 = Math.max(...rs.map(r=>r.bottom)) + 6;
+    Object.assign(hole.style, { left:x1+'px', top:y1+'px', width:(x2-x1)+'px', height:(y2-y1)+'px' });
+    hole.hidden = false; midY = (y1+y2)/2;
+  } else hole.hidden = true;
+  const who = PEOPLE[st.who], wait = tutWait(st);
+  coach.className = midY > innerHeight * .5 ? 'up' : 'down';
+  coach.innerHTML = `${portrait(who)}<div class="cbody"><div class="cwho">${who.name} <span>${S.tut+1}/${TUT.length}</span></div><div class="ctext">${st.text}</div>
+    <div class="crow"><button class="reset" id="tutSkip">Skip tour</button>${wait==='next'?`<button class="btn go" id="tutNextBtn">${st.last?'Let\'s go 💅':'Next ➜'}</button>`:'<span class="cdo">Your turn 👆</span>'}</div></div>`;
+  coach.hidden = false;
+  $('tutSkip').onclick = () => { S.tut = -1; save(); tutPlace(); };
+  if ($('tutNextBtn')) $('tutNextBtn').onclick = tutNext;
+}
+
 /* ---------- overlays ---------- */
-function closeLayer(){ $('layer').innerHTML=''; }
+function closeLayer(){ $('layer').innerHTML=''; tutPlace(); }
 function playScene(lines, done){
   let k = 0;
   const step = () => {
@@ -1577,6 +1662,7 @@ function doTask(){
   }
   const ch = CHAPTERS[S.ch], t = ch.tasks[S.task];
   if (S.stars < t.cost){ toast(`You need ${t.cost - S.stars} more ⭐. Go serve someone, bestie.`); return; }
+  tutEvent('level');
   S.stars -= t.cost; S.task++;
   const lvDone = levelNow();
   const finished = S.task >= ch.tasks.length;
@@ -1612,6 +1698,7 @@ function openRecipe(i){
       <button class="btn tok findgen" data-gen="${o.c}">Find the ${gE} ${gN}</button></div>`;
   }).join('');
   const ready = !!findCells(p.order);
+  setTimeout(() => tutEvent('recipe'));
   $('layer').innerHTML = `<div class="overlay center"><div class="card recipecard">
     <div class="rhead">${portrait(who)}<div><div class="k">${who.name} · ${who.role}</div>
       <h2>“Bestie, can I get ${p.order.length>1?'these':'this'}? Here's how 👇”</h2></div></div>
@@ -1715,6 +1802,8 @@ $('counter').addEventListener('click', e => {
 });
 $('taskBtn').onclick = doTask;
 $('bookBtn').onclick = openBook;
+$('helpBtn').onclick = () => { setTab('bar'); S.tut = 0; save(); tutEnter(); };
+window.addEventListener('resize', () => tutPlace());
 $('stEnergy').onclick = openEnergy;
 
 $('tabBar').onclick = () => setTab('bar');
