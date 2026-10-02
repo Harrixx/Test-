@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C.Wood · Music</title>
+<meta name="description" content="C.Wood: Leeds rapper and songwriter. Honest, conscious lyrics about real life and mental health. Debut EP Illest out now.">
+<meta property="og:title" content="C.Wood">
+<meta property="og:description" content="Leeds rapper and songwriter. Debut EP Illest out now.">
+<meta name="theme-color" content="#D4686B">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D4686B;
+    --coral-deep:#B9504F;
+    --ink:#121112;
+    --ink-2:#1C1A1B;
+    --paper:#F7F1EC;
+    --muted:#A8A0A0;
+    --line:rgba(255,255,255,.12);
+    --wrap:1120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--paper);font:400 17px/1.65 "Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img,svg{display:block;max-width:100%}
+  a{color:inherit}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+  .serif{font-family:"Bodoni Moda",Georgia,serif}
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--coral);font-weight:500;margin:0 0 14px}
+  h2{font:400 clamp(2.2rem,6vw,4rem)/1.05 "Bodoni Moda",Georgia,serif;margin:0 0 24px;letter-spacing:-.01em}
+  p{margin:0 0 1.1em}
+  .skip{position:absolute;left:-999px}
+  .skip:focus{left:16px;top:16px;background:#fff;color:#000;padding:8px 12px;z-index:99}
+
+  /* textured coral, like the EP cover */
+  .ribbed{background-color:var(--coral);background-image:
+      repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0 1px,transparent 1px 3px),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 7px)}
+
+  /* nav */
+  .nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,backdrop-filter .3s}
+  .nav.solid{background:rgba(18,17,18,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .nav .mini{width:84px;color:#fff}
+  .nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0}
+  .nav a{text-decoration:none;font-size:.82rem;letter-spacing:.22em;text-transform:uppercase}
+  .nav ul a{opacity:.85}
+  .nav ul a:hover{opacity:1;color:#fff}
+  .burger{display:none;background:none;border:0;color:#fff;padding:8px;cursor:pointer}
+  @media (max-width:760px){
+    .burger{display:block}
+    .nav ul{position:fixed;inset:68px 0 auto 0;flex-direction:column;gap:0;background:rgba(18,17,18,.97);padding:8px 20px 20px;transform:translateY(-130%);transition:transform .35s}
+    .nav ul li a{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+    .nav.open ul{transform:none}
+  }
+
+  /* hero */
+  .hero{min-height:100svh;display:grid;place-items:center;position:relative;overflow:hidden;color:#fff;padding:100px 20px 80px}
+  .hero::after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(transparent,rgba(18,17,18,.35))}
+  .logo{width:min(560px,86vw);filter:drop-shadow(0 6px 10px rgba(80,20,20,.35))}
+  .logo .frame{fill:none;stroke:#fff;stroke-width:34;stroke-linejoin:miter}
+  .logo text{fill:#fff;font-family:"Jost",sans-serif;font-weight:300}
+  .hero .logo .f1,.hero .logo .f2{stroke-dasharray:1800;stroke-dashoffset:1800;animation:draw 1.6s cubic-bezier(.6,0,.2,1) forwards}
+  .hero .logo .f2{animation-delay:.25s}
+  .hero .logo text{opacity:0;animation:fade 1s .9s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{to{opacity:1}}
+  .hero .tag{position:relative;z-index:1;text-align:center;margin-top:34px;font-size:.95rem;letter-spacing:.34em;text-transform:uppercase;opacity:0;animation:fade 1s 1.4s forwards}
+  .hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;opacity:0;animation:fade 1s 1.7s forwards;position:relative;z-index:1}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;border:1.5px solid currentColor;text-decoration:none;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;transition:background .2s,color .2s}
+  .btn.fill{background:#fff;color:var(--coral-deep);border-color:#fff}
+  .btn.fill:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn:not(.fill):hover{background:#fff;color:var(--coral-deep)}
+  .scroll{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:1;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;opacity:.8;text-decoration:none}
+  @media (prefers-reduced-motion:reduce){
+    .hero .logo .f1,.hero .logo .f2,.hero .logo text,.hero .tag,.hero .cta{animation:none;opacity:1;stroke-dashoffset:0}
+    .reveal{opacity:1!important;transform:none!important}
+  }
+
+  @media (max-width:480px){.hero .tag{font-size:.78rem;letter-spacing:.22em}}
+  section{padding:110px 0}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}
+  .reveal.in{opacity:1;transform:none}
+
+  /* music */
+  .ep{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;align-items:center}
+  .cover{aspect-ratio:1;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:9%;color:#fff;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+  .cover .logo{width:62%;color:#fff}
+  .cover .title{font:400 clamp(3rem,9vw,6.4rem)/.9 "Bodoni Moda",serif;letter-spacing:.06em;text-shadow:0 4px 10px rgba(80,20,20,.3)}
+  .ep h3{font:400 clamp(2.6rem,7vw,4.6rem)/1 "Bodoni Moda",serif;margin:0 0 8px;letter-spacing:.04em}
+  .meta{color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;margin-bottom:24px}
+  .tracks{list-style:none;padding:0;margin:26px 0 30px;border-top:1px solid var(--line)}
+  .tracks li{display:flex;gap:18px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .tracks span{color:var(--coral);font-variant-numeric:tabular-nums;min-width:24px;white-space:nowrap}
+  .tracks em{color:var(--muted);font-style:normal;margin-left:auto;font-size:.85rem}
+  .listen{display:flex;flex-wrap:wrap;gap:10px}
+  .listen .btn{color:var(--paper)}
+  .listen .btn:hover{background:var(--coral);border-color:var(--coral);color:#fff}
+  @media (max-width:820px){.ep{grid-template-columns:1fr;gap:40px}}
+
+  .singles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:90px}
+  .single{background:var(--ink-2);border:1px solid var(--line);padding:30px;position:relative;overflow:hidden}
+  .single::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--coral)}
+  .single h4{font:400 1.9rem/1.1 "Bodoni Moda",serif;margin:6px 0 12px}
+  .single p{color:#cfc7c4;font-size:.95rem;margin:0}
+  .single .k{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+
+  /* story */
+  .story{background:var(--paper);color:var(--ink)}
+  .story .grid{display:grid;grid-template-columns:1fr 1.4fr;gap:70px}
+  .story .big{font:400 clamp(1.7rem,3.6vw,2.6rem)/1.25 "Bodoni Moda",serif;margin:0;position:sticky;top:110px}
+  .story .big i{color:var(--coral-deep)}
+  .story p{font-size:1.08rem;color:#3a3536}
+  .timeline{list-style:none;padding:0;margin:40px 0 0;border-left:2px solid var(--coral)}
+  .timeline li{padding:0 0 26px 26px;position:relative}
+  .timeline li::before{content:"";position:absolute;left:-7px;top:9px;width:12px;height:12px;background:var(--coral);border-radius:50%}
+  .timeline b{display:block;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:var(--coral-deep)}
+  @media (max-width:820px){.story .grid{grid-template-columns:1fr;gap:30px}.story .big{position:static}}
+
+  /* mental health */
+  .mh{color:#fff;text-align:center}
+  .mh .wrap{max-width:820px}
+  .mh .eyebrow{color:#fff;opacity:.85}
+  .mh blockquote{font:400 clamp(2rem,5.5vw,3.6rem)/1.12 "Bodoni Moda",serif;margin:0 0 30px}
+  .mh p{font-size:1.1rem;opacity:.95}
+  .help{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:44px 0 0;text-align:left}
+  .help a{display:block;background:rgba(18,17,18,.88);padding:22px;text-decoration:none;transition:transform .2s}
+  .help a:hover{transform:translateY(-3px)}
+  .help b{display:block;font-size:1.25rem;font-weight:500}
+  .help span{font-size:.9rem;color:#cfc7c4}
+  .help strong{color:var(--coral);font-weight:600}
+
+  /* follow / contact */
+  .follow{text-align:center}
+  .socials{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin:34px 0 60px}
+  .socials a{width:58px;height:58px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;transition:background .2s,border-color .2s}
+  .socials a:hover{background:var(--coral);border-color:var(--coral)}
+  .socials svg{width:22px;height:22px;fill:currentColor}
+  .contact{max-width:560px;margin:0 auto;background:var(--ink-2);border:1px solid var(--line);padding:38px}
+  .contact p{color:#cfc7c4}
+  .contact .btn{color:var(--paper)}
+  .contact .btn:hover{background:var(--coral);border-color:var(--coral);color:#fff}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:.85rem}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  footer .mini{width:70px;color:#fff;opacity:.9}
+</style>
+</head>
+<body>
+<a class="skip" href="#music">Skip to music</a>
+
+<!-- Logo, drawn from the EP artwork -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="cw" viewBox="0 0 840 560">
+    <g fill="none" stroke="currentColor" stroke-width="34">
+      <polyline points="285,52 285,18 805,18 805,540 285,540 285,506"/>
+      <polyline points="375,150 375,105 35,105 35,445 375,445 375,400"/>
+    </g>
+    <text x="118" y="347" font-size="198" textLength="644" lengthAdjust="spacingAndGlyphs" fill="currentColor" font-family="Jost, sans-serif" font-weight="300">WOOD</text>
+  </symbol>
+</svg>
+
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="wrap">
+    <a href="#top" aria-label="C.Wood home"><svg class="mini logo" viewBox="0 0 840 560" style="filter:none"><use href="#cw"/></svg></a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+    </button>
+    <ul id="menu">
+      <li><a href="#music">Music</a></li>
+      <li><a href="#story">Story</a></li>
+      <li><a href="#talk">It's okay to talk</a></li>
+      <li><a href="#follow">Follow</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero ribbed" id="top">
+  <div style="position:relative;z-index:1">
+    <h1 style="margin:0"><span class="skip">C.Wood</span>
+      <svg class="logo" viewBox="0 0 840 560" role="img" aria-label="C.Wood logo">
+        <polyline class="frame f2" points="285,52 285,18 805,18 805,540 285,540 285,506"/>
+        <polyline class="frame f1" points="375,150 375,105 35,105 35,445 375,445 375,400"/>
+        <text x="118" y="347" font-size="198" textLength="644" lengthAdjust="spacingAndGlyphs">WOOD</text>
+      </svg>
+    </h1>
+    <p class="tag">Rapper &nbsp;·&nbsp; Songwriter &nbsp;·&nbsp; Leeds</p>
+    <div class="cta">
+      <a class="btn fill" href="#music">Listen to Illest</a>
+      <a class="btn" href="#story">His story</a>
+    </div>
+  </div>
+  <a class="scroll" href="#music">Scroll ↓</a>
+</header>
+
+<main>
+  <section id="music">
+    <div class="wrap">
+      <div class="ep reveal">
+        <div class="cover ribbed" aria-hidden="true">
+          <svg class="logo" viewBox="0 0 840 560"><use href="#cw"/></svg>
+          <div class="title">ILLEST</div>
+        </div>
+        <div>
+          <p class="eyebrow">Debut EP · Out now</p>
+          <h3>Illest</h3>
+          <p class="meta">C.Wood · January 2021 · 7 tracks</p>
+          <p>Connor's debut EP brings together remastered versions of his first track and follow-up single <em>Inner Spirit</em>, plus five songs nobody had heard before. Raw, honest and personal: it's the sound of someone turning real life into music.</p>
+          <!-- TODO (Connor): replace with the real track list in order -->
+          <ol class="tracks">
+            <li><span>01</span>Debut single <em>remastered</em></li>
+            <li><span>02</span>Inner Spirit <em>remastered</em></li>
+            <li><span>03–07</span>Five new tracks</li>
+          </ol>
+          <!-- TODO: swap the search links for Connor's direct artist / EP links -->
+          <div class="listen">
+            <a class="btn" href="https://open.spotify.com/search/C.Wood%20Illest" target="_blank" rel="noopener">Spotify</a>
+            <a class="btn" href="https://music.apple.com/gb/search?term=C.Wood%20Illest" target="_blank" rel="noopener">Apple Music</a>
+            <a class="btn" href="https://www.youtube.com/results?search_query=C.Wood+Illest" target="_blank" rel="noopener">YouTube</a>
+            <a class="btn" href="https://soundcloud.com/search?q=C.Wood" target="_blank" rel="noopener">SoundCloud</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="singles">
+        <article class="single reveal">
+          <span class="k">Single · For Andy's Man Club</span>
+          <h4>Lost</h4>
+          <p>Written after losing friends to suicide. Connor gave every penny the single made to Andy's Man Club, the peer-support group for men.</p>
+        </article>
+        <article class="single reveal">
+          <span class="k">Single</span>
+          <h4>Inner Spirit</h4>
+          <p>The follow-up to his first release, and one of the tracks that made it onto <em>Illest</em>.</p>
+        </article>
+        <article class="single reveal">
+          <span class="k">Single</span>
+          <!-- TODO (Connor): confirm release date and add a one-line description -->
+          <h4>Tunnel Vision</h4>
+          <p>A 2022 single about keeping your head down and pushing through.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="story" id="story">
+    <div class="wrap grid">
+      <p class="big reveal">Connor started writing during the hardest period of his life. <i>The music is how he got through it.</i></p>
+      <div class="reveal">
+        <p class="eyebrow" style="color:var(--coral-deep)">The story</p>
+        <p>C.Wood is Connor, a rapper and songwriter who grew up in Huddersfield and now lives in Morley, just outside Leeds.</p>
+        <p>He picked up the pen when things were at their lowest, and he's never written anything he didn't mean. His songs mix hard-hitting, conscious lyrics with catchy hooks and a flow that's all his own, and they talk openly about the stuff people usually keep to themselves.</p>
+        <p>That honesty is the point. If one track helps one person feel less alone, it's done its job.</p>
+        <!-- TODO (Connor): add your own words here, plus any gigs, radio plays or press -->
+        <ul class="timeline">
+          <li><b>Huddersfield</b>Grows up and starts writing through a tough time.</li>
+          <li><b>First releases</b>Debut track, then <em>Inner Spirit</em>.</li>
+          <li><b>January 2021</b>Debut EP <em>Illest</em> drops.</li>
+          <li><b><em>Lost</em></b>Single in memory of friends lost to suicide, with all proceeds to Andy's Man Club.</li>
+          <li><b>Now</b>Writing, recording and gigging from Leeds.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mh ribbed" id="talk">
+    <div class="wrap reveal">
+      <p class="eyebrow">Mental health</p>
+      <blockquote>It's okay to talk.</blockquote>
+      <p>Mental health runs through everything Connor writes. If something in the music hits close to home, you don't have to deal with it on your own. These people are there to listen, any time:</p>
+      <div class="help">
+        <a href="tel:116123"><b>Samaritans</b><span>Call free, day or night: <strong>116 123</strong></span></a>
+        <a href="sms:85258?body=SHOUT"><b>Shout</b><span>Text <strong>SHOUT</strong> to <strong>85258</strong>, 24/7</span></a>
+        <a href="https://andysmanclub.co.uk" target="_blank" rel="noopener"><b>Andy's Man Club</b><span>Free peer support for men, Mondays 7pm. <strong>Find a club →</strong></span></a>
+      </div>
+      <p style="margin-top:28px;font-size:.95rem">In an emergency, or if you're worried you might act on thoughts of ending your life, call <strong>999</strong>.</p>
+    </div>
+  </section>
+
+  <section class="follow" id="follow">
+    <div class="wrap reveal">
+      <p class="eyebrow">Follow</p>
+      <h2>Stay with the journey</h2>
+      <div class="socials">
+        <a href="https://www.instagram.com/c.woodd_/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 100 12.4 6.2 6.2 0 000-12.4zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-11.8a1.4 1.4 0 100 2.9 1.4 1.4 0 000-2.9z"/></svg></a>
+        <a href="https://www.facebook.com/c.wooddmusic/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 10-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0024 12z"/></svg></a>
+        <a href="https://open.spotify.com/search/C.Wood" target="_blank" rel="noopener" aria-label="Spotify"><svg viewBox="0 0 24 24"><path d="M12 0a12 12 0 100 24 12 12 0 000-24zm5.5 17.3a.7.7 0 01-1 .3c-2.8-1.7-6.4-2.1-10.6-1.2a.7.7 0 11-.3-1.4c4.6-1 8.5-.6 11.6 1.3.4.2.5.6.3 1zm1.5-3.3a.9.9 0 01-1.3.3c-3.2-2-8.1-2.6-11.9-1.4a.9.9 0 11-.5-1.8c4.3-1.3 9.7-.7 13.4 1.6.4.3.5.8.3 1.3zm.1-3.4C15.3 8.3 8.9 8.1 5.2 9.2a1.1 1.1 0 11-.6-2.1c4.2-1.3 11.3-1 15.7 1.6a1.1 1.1 0 01-1.2 1.9z"/></svg></a>
+        <a href="https://www.youtube.com/results?search_query=C.Wood+rapper+Leeds" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg></a>
+        <a href="https://soundcloud.com/search?q=C.Wood" target="_blank" rel="noopener" aria-label="SoundCloud"><svg viewBox="0 0 24 24"><path d="M1.2 14.4l.3-2-.3-2c0-.1-.1-.1-.1-.1l-.1.1-.3 2 .3 2c0 .1.1.1.1.1l.1-.1zm1.6 1.1l.4-3.1-.4-3.1c0-.1-.1-.1-.1-.1-.1 0-.1.1-.1.1l-.3 3.1.3 3.1c0 .1.1.1.1.1l.1-.1zm1.7.3l.3-3.4-.3-3.4c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.3 3.4.3 3.4c0 .1.1.2.2.2s.2-.1.2-.2zm1.7.1l.3-3.5-.3-3.7c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.3 3.7.3 3.5c0 .1.1.2.2.2s.2-.1.2-.2zm1.7 0l.3-3.5-.3-5.1c0-.1-.1-.2-.2-.2s-.2.1-.2.2l-.2 5.1.2 3.5c0 .1.1.2.2.2s.2-.1.2-.2zm1.7 0l.2-3.5-.2-5.8c0-.2-.1-.3-.3-.3s-.3.1-.3.3l-.2 5.8.2 3.5c0 .2.1.3.3.3s.3-.1.3-.3zm1.8 0l.2-3.5-.2-6.3c0-.2-.1-.3-.3-.3s-.3.1-.3.3l-.2 6.3.2 3.5c0 .2.2.3.3.3s.3-.1.3-.3zm7.2-6.8c-.4 0-.8.1-1.2.2a5.6 5.6 0 00-5.6-5.1c-.4 0-.7.1-1 .2-.1 0-.2.1-.2.3v10.9c0 .1.1.3.3.3h7.7a3.3 3.3 0 000-6.8z"/></svg></a>
+      </div>
+      <div class="contact">
+        <p class="eyebrow">Bookings &amp; press</p>
+        <p>For gigs, features, interviews or collaborations, get in touch.</p>
+        <!-- TODO (Connor): swap in a bookings email -->
+        <a class="btn" href="https://www.instagram.com/c.woodd_/" target="_blank" rel="noopener">Message on Instagram</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <svg class="mini logo" viewBox="0 0 840 560" style="filter:none" aria-hidden="true"><use href="#cw"/></svg>
+    <span>© <span id="yr">2026</span> C.Wood. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const nav = document.getElementById('nav'), burger = document.getElementById('burger');
+  const onScroll = () => nav.classList.toggle('solid', scrollY > 40);
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  burger.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  document.querySelectorAll('#menu a').forEach(a => a.addEventListener('click', () => {
+    nav.classList.remove('open'); burger.setAttribute('aria-expanded', false);
+  }));
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
