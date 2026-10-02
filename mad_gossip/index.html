@@ -329,7 +329,7 @@ html,body{overflow:hidden}
 
 /* the selected-item tray slides over the level strip, so the board never resizes */
 .strip{position:relative}
-.strip .tray{position:absolute;inset:0;z-index:3;animation:arrive .2s ease-out}
+.strip .tray{position:absolute;inset:0;z-index:3;animation:arrive .2s ease-out;background:#fff}
 .tray .meta .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-height:700px){
   .counter{padding:12px 4px 6px;gap:4px}
@@ -342,6 +342,32 @@ html,body{overflow:hidden}
   .story{padding:4px 8px}
   .story .btn{padding:6px 10px}
 }
+
+/* customer recipe card */
+.howbtn{display:block;width:100%;padding:0;position:relative;border-radius:16px}
+.howtag{position:absolute;top:3px;right:3px;background:var(--neon);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:999px;border:1.5px solid #fff;pointer-events:none}
+button.bubble{font:inherit;cursor:pointer;width:100%}
+.recipecard{max-height:86vh}
+.rhead{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.rhead .portrait{width:74px;height:96px;flex:none}
+.rhead .k{font-size:11px;color:var(--neon);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.rhead h2{font-size:17px;line-height:1.25;margin:2px 0 0}
+.recipe{background:var(--cell);border-radius:18px;padding:10px;margin-top:8px}
+.rname{display:flex;align-items:center;gap:8px;font-size:16px}
+.rname .drink{width:34px;height:34px;background:linear-gradient(135deg,#c084fc,#f472b6);border-radius:10px;padding:2px}
+.rladder{display:flex;align-items:center;gap:2px;overflow-x:auto;padding:8px 0 4px}
+.rstep{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:58px;text-align:center}
+.rstep .drink{width:40px;height:40px;background:linear-gradient(135deg,#c084fc,#f472b6);border-radius:12px;padding:3px;border:2px solid #fff;box-sizing:border-box}
+.rstep.got .drink{background:linear-gradient(135deg,#34d399,#38bdf8)}
+.rstep.goal .drink{box-shadow:0 0 0 3px var(--neon)}
+.rstep small{font-size:10px;line-height:1.1;font-weight:600}
+.rstep i{font-size:9px;color:#0f9f7c;font-style:normal;font-weight:700}
+.rarrow{flex:none;font-size:10px;font-weight:700;color:var(--violet);white-space:nowrap}
+.recipe ol{margin:6px 0 4px;padding-left:20px;font-size:13px;line-height:1.45}
+.rstat{margin:4px 0 8px!important;font-size:13px;font-weight:600;color:var(--cream)!important}
+.findgen{font-size:13px;padding:6px 12px}
+.cell.flash{animation:flash .6s ease-in-out 4}
+@keyframes flash{50%{box-shadow:inset 0 0 0 4px #fff,0 0 18px #fff;background:rgba(255,255,255,.6)}}
 
 /* level road map */
 .mapcard{flex:1;min-height:0;border-radius:24px;border:3px solid #fff;overflow:hidden;background:linear-gradient(#ffd9ec 0%,#ecdcff 45%,#c9ecff 100%);box-shadow:var(--glow)}
@@ -809,6 +835,7 @@ const CHAPTERS = [
       ['poppy',"Quick tutorial, because I'm a librarian and I physically cannot help it: tap a glowing machine to pour a drink."],
       ['finn',"Then drag two of the same drink together to level it up. Easy. Delish."],
       ['ruby',"Serve everyone and they'll spill the tea. Every. Single. Drop."],
+      ['poppy',"Stuck on a drink? Tap whoever's ordering and they'll show you exactly how to make it."],
       ['zara',"Out of energy? Karaoke tab. Tap the stage like it owes you money. The crowd tips in tokens. Cardio!"],
       ['sofia',"And everyone pays in planks too, so you can glow up Rosa's flat upstairs. It's... a project."],
       ['leo',"Right, enough chat. Pour us something. Gullhaven gets gossipy when it's fed."]],
@@ -1180,8 +1207,8 @@ function render(){
       return `<div class="chip ${ok?'have':''}" title="${CHAINS[o.c].items[o.t][0]}">${art(o.c,o.t)}</div>`;
     }).join('');
     return `<div class="patron ${p.fresh?'arriving':''}" data-i="${i}">
-      <div class="bubble" title="${who.name} wants this">${chips}</div>
-      ${portrait(who, 'named')}
+      <button class="bubble" data-how="${i}" title="How do I make this?">${chips}</button>
+      <button class="howbtn" data-how="${i}" aria-label="How do I make ${who.name}'s order?">${portrait(who, 'named')}<span class="howtag">how? 👆</span></button>
       <button class="serve ${cells?'ready':''}" data-serve="${i}" ${cells?'':'aria-disabled="true"'}>${cells?'Serve 💅':'Waiting…'}</button></div>`;
   }).join('');
   S.patrons.forEach(p=>delete p.fresh);
@@ -1565,6 +1592,42 @@ function doTask(){
     else chapterCard(`Chapter ${S.ch}: ate and left no crumbs`, CHAPTERS[S.ch-1].title, 'Bonus: 🪙50 and a full tank of ⚡. New faces in town 👀', 'Next chapter, let\'s gooo', maybeIntro);
   });
 }
+function openRecipe(i){
+  const p = S.patrons[i]; if (!p) return;
+  const who = PEOPLE[p.who];
+  const have = (c,t) => S.board.filter(b => b && !b.g && b.c===c && b.t===t).length;
+  const blocks = p.order.map(o => {
+    const C = CHAINS[o.c], [gE, gN] = C.gen, name = C.items[o.t][0];
+    const best = [...Array(o.t+1).keys()].reverse().find(t => have(o.c,t) > 0);
+    const ladder = C.items.slice(0, o.t+1).map((x,t) =>
+      `<div class="rstep ${have(o.c,t)?'got':''} ${t===o.t?'goal':''}">${art(o.c,t)}<small>${x[0]}</small>${have(o.c,t)?`<i>×${have(o.c,t)} on board</i>`:''}</div>`
+    ).join('<div class="rarrow">2× ➜</div>');
+    const steps = [`<li>Tap the <b>${gE} ${gN}</b> to pour a <b>${C.items[0][0]}</b>.</li>`]
+      .concat(C.items.slice(1, o.t+1).map((x,k) => `<li>Drag two <b>${C.items[k][0]}</b> together to make a <b>${x[0]}</b>.</li>`));
+    const status = have(o.c,o.t) ? `You've already got one. Hit Serve 💅`
+      : best !== undefined ? `You've got a ${C.items[best][0]} already, so you're ${o.t-best} merge${o.t-best>1?'s':''} away.`
+      : `Start from scratch: that's ${1<<o.t} pours of ${C.items[0][0]} in total.`;
+    return `<div class="recipe"><div class="rname">${art(o.c,o.t)}<b>${name}</b></div>
+      <div class="rladder">${ladder}</div><ol>${steps.join('')}</ol><p class="rstat">${status}</p>
+      <button class="btn tok findgen" data-gen="${o.c}">Find the ${gE} ${gN}</button></div>`;
+  }).join('');
+  const ready = !!findCells(p.order);
+  $('layer').innerHTML = `<div class="overlay center"><div class="card recipecard">
+    <div class="rhead">${portrait(who)}<div><div class="k">${who.name} · ${who.role}</div>
+      <h2>“Bestie, can I get ${p.order.length>1?'these':'this'}? Here's how 👇”</h2></div></div>
+    ${blocks}
+    <div class="row" style="margin-top:10px">${ready?'<button class="btn" id="rServe">Serve now 💅</button>':''}<button class="btn go" id="rOk">Got it ✨</button></div></div></div>`;
+  $('rOk').onclick = closeLayer;
+  if (ready) $('rServe').onclick = () => { closeLayer(); serve(i); };
+  document.querySelectorAll('.findgen').forEach(b => b.onclick = () => {
+    const gi = S.board.findIndex(x => x && x.g === b.dataset.gen);
+    closeLayer();
+    if (gi < 0) return;
+    sel = gi; render();
+    const cell = document.querySelector(`[data-cell="${gi}"]`);
+    if (cell){ cell.classList.add('flash'); setTimeout(()=>cell.classList.remove('flash'), 2400); }
+  });
+}
 function openEnergy(){
   const cost = 40;
   $('layer').innerHTML = `<div class="overlay center"><div class="card">
@@ -1646,7 +1709,10 @@ function endPointer(e, cancelled){
 $('board').addEventListener('pointerup', e => endPointer(e, false));
 $('board').addEventListener('pointercancel', e => endPointer(e, true));
 
-$('counter').addEventListener('click', e => { const b = e.target.closest('[data-serve]'); if (b) serve(+b.dataset.serve); });
+$('counter').addEventListener('click', e => {
+  const b = e.target.closest('[data-serve]'); if (b) return serve(+b.dataset.serve);
+  const h = e.target.closest('[data-how]'); if (h) openRecipe(+h.dataset.how);
+});
 $('taskBtn').onclick = doTask;
 $('bookBtn').onclick = openBook;
 $('stEnergy').onclick = openEnergy;
