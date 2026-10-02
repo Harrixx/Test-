@@ -1,0 +1,686 @@
+<title>Gossip Bar</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Monoton&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: one-screen phone app. Neon sign header, the bar counter (patrons), a fix-up strip, the merge board, an info tray. Single dark look: a harbour pub after dark. */
+:root{
+  --night:#170d10;      /* page ground, deep oxblood */
+  --wood:#2c1914;       /* counter + panels */
+  --wood-hi:#3d241b;    /* raised surfaces */
+  --cell:#21130f;       /* board cells */
+  --cream:#f4e6d4;      /* text */
+  --muted:#b59a86;      /* secondary text */
+  --neon:#ff5f9e;       /* neon pink accent */
+  --amber:#ffb547;      /* coins, stars, warm light */
+  --mint:#62e8c0;       /* "ready to serve" */
+  --line:rgba(244,230,212,.12);
+  --f-sign:"Monoton", "Bricolage Grotesque", system-ui, sans-serif;
+  --f-ui:"Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-hand:"Caveat", "Comic Sans MS", cursive;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--night);color:var(--cream);font-family:var(--f-ui);font-size:15px;
+  background-image:radial-gradient(120% 60% at 50% -10%, rgba(255,95,158,.12), transparent 60%);
+  -webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.app{max-width:460px;margin:0 auto;padding:10px 16px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sign{font-family:var(--f-sign);font-weight:400;font-size:22px;line-height:1;color:var(--neon);letter-spacing:.02em;margin:0;
+  text-shadow:0 0 6px rgba(255,95,158,.8),0 0 18px rgba(255,95,158,.5)}
+.sign.flicker{animation:flicker 3.2s infinite}
+@keyframes flicker{0%,18%,22%,60%,64%,100%{opacity:1}20%,62%{opacity:.25;text-shadow:none}}
+.stats{display:flex;gap:6px}
+.stat{display:flex;align-items:center;gap:4px;background:var(--wood);border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 7px;font-weight:600;font-variant-numeric:tabular-nums;font-size:14px}
+.stat small{font-size:10px;color:var(--muted);font-weight:400;margin-left:2px}
+.stat.energy{cursor:pointer}
+
+/* counter */
+.counter{background:linear-gradient(var(--wood-hi),var(--wood));border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  box-shadow:inset 0 -6px 0 rgba(0,0,0,.25)}
+.patron{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;position:relative;transition:transform .35s, opacity .35s}
+.patron.leaving{transform:translateY(-14px);opacity:0}
+.patron.arriving{animation:arrive .4s ease-out}
+@keyframes arrive{from{transform:translateY(12px);opacity:0}}
+.ava{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:26px;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.pname{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.order{display:flex;gap:4px}
+.chip{position:relative;width:34px;height:34px;border-radius:9px;background:var(--cell);border:1px solid var(--line);display:grid;place-items:center;font-size:20px}
+.chip.have{border-color:var(--mint);box-shadow:0 0 8px rgba(98,232,192,.35)}
+.chip.have::after{content:"✓";position:absolute;right:-5px;top:-6px;background:var(--mint);color:var(--night);font-size:10px;font-weight:800;width:14px;height:14px;border-radius:50%;display:grid;place-items:center}
+.serve{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--wood);color:var(--muted);border:1px solid var(--line)}
+.serve.ready{background:var(--mint);color:var(--night);border-color:transparent;animation:nudge 1.6s infinite}
+@keyframes nudge{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.reward{font-size:11px;color:var(--amber);font-variant-numeric:tabular-nums}
+
+/* fix-up strip */
+.story{display:flex;align-items:center;gap:10px;background:var(--wood);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.story .txt{flex:1;min-width:0}
+.story .ch{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.story .task{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{font-weight:800;padding:8px 12px;border-radius:10px;background:var(--wood-hi);border:1px solid var(--line);white-space:nowrap}
+.btn.go{background:var(--amber);color:var(--night);border-color:transparent}
+.btn[disabled]{opacity:.45;cursor:default}
+.book{font-size:20px;padding:6px 8px;position:relative}
+.book .dot{position:absolute;top:2px;right:2px;width:9px;height:9px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon)}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:#0f0809;padding:6px;border-radius:14px;border:1px solid var(--line);touch-action:none}
+.cell{aspect-ratio:1;max-width:100%;background:var(--cell);border-radius:9px;display:grid;place-items:center;position:relative}
+.cell.sel{box-shadow:0 0 0 2px var(--amber) inset}
+.cell.target{box-shadow:0 0 0 2px var(--mint) inset;background:#1d2420}
+.item{font-size:min(7.2vw,30px);line-height:1;position:relative;display:grid;place-items:center;width:100%;height:100%;cursor:grab}
+.item.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.item.dragging{opacity:.25}
+.pips{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:2px}
+.pips i{width:4px;height:4px;border-radius:50%;background:var(--amber);opacity:.85}
+.cell.wanted::before{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 5px var(--mint)}
+.gen .item{background:radial-gradient(circle,rgba(255,95,158,.22),transparent 70%);border-radius:9px;box-shadow:0 0 0 1.5px rgba(255,95,158,.55) inset}
+.gen .item::after{content:"TAP";position:absolute;bottom:2px;font-size:8px;font-weight:800;letter-spacing:.1em;color:var(--neon)}
+.ghost{position:fixed;pointer-events:none;z-index:50;font-size:36px;transform:translate(-50%,-60%);filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+
+/* info tray */
+.tray{min-height:58px;background:var(--wood);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;align-items:center;gap:10px}
+.tray .big{font-size:28px}
+.tray .meta{flex:1;min-width:0}
+.tray .nm{font-weight:600}
+.tray .ladder{font-size:15px;letter-spacing:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tray .ladder b{filter:drop-shadow(0 0 4px var(--amber))}
+.tray .ladder span{opacity:.35}
+.tray .hint{color:var(--muted);font-size:13px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--cream);color:var(--night);font-weight:600;padding:8px 14px;border-radius:999px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1}
+
+/* gossip note pinned after serving */
+.note{position:fixed;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translateX(-50%) rotate(-1.5deg);width:min(360px,calc(100% - 40px));background:#fff4c9;color:#2a1a10;border-radius:4px;padding:12px 14px 10px;z-index:55;box-shadow:0 10px 30px rgba(0,0,0,.5);font-family:var(--f-hand);font-size:22px;line-height:1.15;animation:pin .3s ease-out}
+.note .who{font-family:var(--f-ui);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a5a3a;margin-bottom:4px;display:flex;justify-content:space-between}
+.note .new{color:#c2185b;font-weight:800}
+@keyframes pin{from{transform:translateX(-50%) rotate(-8deg) scale(.8);opacity:0}}
+
+/* overlays */
+.overlay{position:fixed;inset:0;background:rgba(10,5,7,.72);z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.overlay.center{align-items:center}
+.scene{width:min(440px,100%);background:var(--wood-hi);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;gap:12px;cursor:pointer;animation:arrive .25s ease-out}
+.scene .ava{flex:none}
+.scene .say{flex:1;min-width:0}
+.scene .who{font-weight:800;color:var(--amber);font-size:13px;letter-spacing:.04em}
+.scene .line{font-size:17px;line-height:1.4;margin-top:2px;text-wrap:pretty}
+.scene .line.narr{font-style:italic;color:var(--muted)}
+.scene .line.letter{font-family:var(--f-hand);font-size:23px;color:var(--cream)}
+.scene .more{font-size:11px;color:var(--muted);text-align:right;margin-top:6px}
+.card{width:min(440px,100%);max-height:80vh;overflow:auto;background:var(--wood-hi);border:1px solid var(--line);border-radius:16px;padding:16px}
+.card h2{margin:0 0 4px;font-size:20px;text-wrap:balance}
+.card p{margin:4px 0 12px;color:var(--muted);line-height:1.45}
+.card .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.gb-who{display:flex;align-items:center;gap:8px;margin:14px 0 6px;font-weight:800}
+.gb-who .ava{width:30px;height:30px;font-size:17px}
+.gb-who small{color:var(--muted);font-weight:400}
+.gb-line{font-family:var(--f-hand);font-size:20px;line-height:1.2;padding:4px 0 4px 38px;color:var(--cream)}
+.gb-line.locked{font-family:var(--f-ui);font-size:13px;color:var(--muted);opacity:.6}
+.chapter-card{text-align:center}
+.chapter-card .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--neon)}
+.chapter-card h2{font-size:26px;margin:6px 0}
+.reset{font-size:12px;color:var(--muted);text-decoration:underline;padding:4px;align-self:center}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <h1 class="sign" id="sign">Gossip Bar</h1>
+    <div class="stats">
+      <button class="stat energy" id="stEnergy" aria-label="Energy">⚡<span id="vEnergy">100</span><small id="vTimer"></small></button>
+      <div class="stat" aria-label="Coins">🪙<span id="vCoins">0</span></div>
+      <div class="stat" aria-label="Stars">⭐<span id="vStars">0</span></div>
+    </div>
+  </header>
+
+  <section class="counter" id="counter" aria-label="Customers at the bar"></section>
+
+  <section class="story">
+    <div class="txt">
+      <div class="ch" id="chLabel"></div>
+      <div class="task" id="taskLabel"></div>
+    </div>
+    <button class="btn go" id="taskBtn"></button>
+    <button class="book" id="bookBtn" aria-label="Gossip book">📒<span class="dot" id="bookDot" hidden></span></button>
+  </section>
+
+  <section class="board" id="board" aria-label="Bar board"></section>
+
+  <section class="tray" id="tray"></section>
+  <button class="reset" id="resetBtn">Start a new game</button>
+</div>
+<div class="toast" id="toast"></div>
+<div id="layer"></div>
+
+<script>
+(() => {
+'use strict';
+const COLS = 7, ROWS = 8, N = COLS * ROWS;
+const E_MAX = 100, E_REGEN_MS = 20000;
+const SAVE_KEY = 'gossipbar.v1';
+
+/* ---------- content ---------- */
+const CHAINS = {
+  brew:  { gen:['🚰','Beer Tap'],    items:[['🌾','Barley'],['🍺','Half Pint'],['🍻','Two Pints'],['🫗','Jug of Ale'],['🛢️','Keg'],['🏆','Champion Stout']] },
+  fruit: { gen:['🧺','Fruit Crate'], items:[['🍋','Lemon'],['🍊','Orange'],['🍹','Harbour Punch'],['🍸','Martini'],['🍾','Bubbly'],['🥂','Toast of the Town']] },
+  snack: { gen:['🍳','Fryer'],       items:[['🥜','Peanuts'],['🥨','Pretzel'],['🍟','Chips'],['🐟','Fish Supper'],['🍔','Gull Burger'],['🎂','Party Cake']] },
+};
+const MAX_T = 5;
+
+const PEOPLE = {
+  lou:  { name:'Lou', role:'Fisherman', face:'🧔‍♂️', bg:'#2f5670', from:0, gossip:[
+    "The harbourmaster's boat went out at midnight. No nets. No lights.",
+    "Caught a cod with a wedding ring in its belly. Nobody's claimed it. Interesting, that.",
+    "Rosa slipped me a free pint every Friday. Said it was for listening. Never said listening to what.",
+    "Somebody's been measuring the slipway. Twice. With a laser thingy.",
+    "The Mayor can't tie a knot. Never trust a harbour man who can't tie a knot."]},
+  dina: { name:'Dina', role:'Hairdresser', face:'💁‍♀️', bg:'#8e3a64', from:0, gossip:[
+    "Mrs Penrose's new perm? It's a wig. You didn't hear it from me.",
+    "The vicar's taking salsa lessons over in Porthbury. Tuesdays. In sequins.",
+    "The Mayor's wife booked a colour for Saturday. She only goes blonde when she's furious.",
+    "Benny reads the postcards. All of them. He told me himself.",
+    "Rosa had a blow-dry the morning she vanished. Nobody gets a blow-dry to run away."]},
+  edie: { name:'Gran Edie', role:'Retired lollipop lady', face:'👵', bg:'#6b5a2e', from:0, gossip:[
+    "In 1974 this bar had a piano. Then the Mayor's father 'borrowed' it.",
+    "The new café on Quay Street has the same owner as the betting shop. Same shifty eyes.",
+    "I see everything from my window. Everything. Even things I'd rather not.",
+    "That stranger in sunglasses carried my shopping home. Wouldn't take a penny.",
+    "Rosa sent me a postcard. No stamp, no postmark. Just 'Keep the kettle on'."]},
+  benny:{ name:'Benny', role:'Postman', face:'🧑‍🦰', bg:'#8a3a28', from:0, gossip:[
+    "Three letters to the Mayor this week from a property firm. Thick envelopes. Very thick.",
+    "I don't read the postcards. I just... notice them.",
+    "Someone posted a key to this bar. No name. I gave it to the chap in the sunglasses.",
+    "The lighthouse keeper gets a parcel of marmalade every month. From Spain.",
+    "The harbour vote's been moved to a Tuesday morning. Who's free on a Tuesday morning?"]},
+  vic:  { name:'Vic', role:'The stranger', face:'🕵️', bg:'#34344c', from:1, gossip:[
+    "You pour like her. Rosa. Same wrist.",
+    "I'm not a stranger. I'm just someone you haven't met yet.",
+    "Check under the third floorboard by the dartboard. Or don't. Your bar.",
+    "The Mayor orders gin when he's lying. Watch what he drinks.",
+    "She's safe. That's all I can tell you. For now."]},
+  rex:  { name:'Mayor Rex', role:'The Mayor', face:'🤵', bg:'#523866', from:2, gossip:[
+    "Lovely little bar. Shame about the location. And the roof. And the drains.",
+    "I'm a man of the people. Mostly the people with yachts.",
+    "My offer still stands. It's getting smaller, mind.",
+    "Who's been talking to Dina? Everyone's been talking to Dina.",
+    "Fine. One more pint. But I'm not enjoying it."]},
+};
+const ROSA = { name:'Aunt Rosa', face:'👩‍🦳', bg:'#7a4a2a' };
+const YOU = null; // narrator
+
+// scene lines: [speaker key | null for narration | 'letter', text]
+const CHAPTERS = [
+  { title:'Last Orders, First Night',
+    intro:[
+      [null,"Gullhaven. A harbour town with one bar, one Mayor, and no secrets that last past closing time."],
+      [null,"Your Aunt Rosa ran The Gull for twenty years. A month ago she vanished and left it to you."],
+      ['lou',"You'll be the niece, then. Pour us something. The town gets chatty when it's fed."],
+      [null,"Tap a machine to make something. Drag two of the same together to make something better. Serve the regulars and they'll talk."]],
+    tasks:[
+      { name:'Wipe down the bar', cost:1, scene:[
+        ['lou',"Rosa never left a glass unwiped. Twenty years, never missed a Friday."],
+        ['lou',"Then one Friday, nothing. Door locked. Lights off. Like the sea swallowed her."]]},
+      { name:'Fix the flickering sign', cost:2, scene:[
+        [null,"The neon buzzes, coughs, and holds. GOSSIP BAR, it says. Rosa's little joke."],
+        ['dina',"So you're the niece. Word is Rosa owed money to half the harbour."],
+        ['dina',"Word's usually right. Not this time, I reckon. Rosa paid cash for everything."]]},
+      { name:'Restock the cellar', cost:2, scene:[
+        [null,"Behind the crates of tonic there's an envelope with your name on it."],
+        ['letter',"If you're reading this, don't sell. Whatever the Mayor offers. Keep the taps running and listen. The bar talks. — R."]]},
+      { name:'Tune the old jukebox', cost:3, scene:[
+        [null,"The jukebox wheezes into a sea shanty. The door swings open."],
+        ['rex',"Ah! The new owner. Rex. Mayor. I'll be brief: I'd like to buy this place. Generous offer. Tonight only."],
+        [null,"You tell him the bar isn't for sale."],
+        ['rex',"Everything's for sale, love. It's just a question of when."]]},
+      { name:'Prop the front door open', cost:3, scene:[
+        [null,"Fresh air rolls in off the harbour. In the corner booth sits someone you didn't see arrive."],
+        ['vic',"Rosa said you'd be stubborn. Good."],
+        [null,"They slide a brass key across the table and leave before you can ask whose it is."]]},
+    ]},
+  { title:'Whispers on the Pier',
+    intro:[
+      [null,"Word spreads that The Gull is open again. New faces at the bar, including the one in sunglasses."],
+      ['dina',"That stranger's called Vic. Pays in coins. Tips well. Nobody knows where they sleep."]],
+    tasks:[
+      { name:'Polish the brass taps', cost:3, scene:[
+        ['dina',"Edie saw the Mayor on the pier at three in the morning. With surveyors. In hi-vis."],
+        ['dina',"Nobody wears hi-vis at three in the morning for a good reason."]]},
+      { name:"Hang Rosa's old photos", cost:3, scene:[
+        [null,"One photo makes you stop: Rosa on the slipway, arm round a teenager in oversized sunglasses."],
+        ['vic',"Summer of 2009. I'd forgotten that shirt. Wish I still had it."]]},
+      { name:'Unlock the back room', cost:4, scene:[
+        [null,"The brass key fits. Inside: a desk, a kettle, and a ledger in Rosa's handwriting."],
+        [null,"Every page is the same. Harbour fees, paid in cash, for every fishing boat in Gullhaven. For eleven years."],
+        ['lou',"So that's who it was. We all thought the council had gone soft."]]},
+      { name:'Mend the pool table', cost:4, scene:[
+        ['lou',"I've worked it out. Rex wants the harbour for a marina. Yachts. Forty berths."],
+        ['lou',"No room for our boats. And no fishermen means no reason for this bar. That's why he wants it."]]},
+      { name:'Paint the shutters', cost:5, scene:[
+        [null,"It's late. Vic stays behind while you count the till."],
+        ['vic',"Rosa isn't missing. She's hiding. She found out what Rex was paying the harbourmaster, and she wrote it all down."],
+        ['vic',"She needs that ledger at the harbour vote. And she needs a room full of people who'll listen."]]},
+    ]},
+  { title:'The Harbour Vote',
+    intro:[
+      [null,"The vote on the marina is in nine days. The Mayor has moved it to a Tuesday morning."],
+      ['benny',"Leave the Tuesday to me. I know every letterbox in this town."]],
+    tasks:[
+      { name:'String up the fairy lights', cost:4, scene:[
+        ['dina',"I've told twelve clients the vote's on Tuesday. They've each told twelve more. That's how it works."],
+        ['edie',"I've told the WI. That's another forty. And they've got cars."]]},
+      { name:'Build a little stage', cost:5, scene:[
+        [null,"Lou nails the last plank down. The council agrees to hold the vote here: the town hall's roof has a leak."],
+        ['lou',"Funny how that roof started leaking right after I went up there with a crowbar."]]},
+      { name:'Print the posters', cost:5, scene:[
+        ['rex',"I've seen the posters. Very quaint. You do know I own the printers?"],
+        ['rex',"Ten thousand. Final offer. Sign tonight and walk away."],
+        [null,"You pour him a gin. He doesn't notice what he ordered. Vic does."]]},
+      { name:'Lay out a feast', cost:6, scene:[
+        [null,"Tuesday morning. The bar is full before you've unlocked the door."],
+        [null,"Halfway through the Mayor's speech, the back room door opens."],
+        ['rosa',"Sorry I'm late. I brought my bookkeeping."]]},
+      { name:'Raise a toast to the harbour', cost:6, scene:[
+        [null,"The ledger goes round the room. So does a round of Rosa's specials. The vote isn't close."],
+        ['rex',"This isn't over."],
+        ['dina',"It is, love. Your wife's gone blonde."],
+        ['rosa',"I told you the bar talks. You just had to keep it fed."],
+        [null,"The Gull stays open. Pour as long as you like: there's always more gossip."]]},
+    ]},
+];
+
+/* ---------- state ---------- */
+let S;
+function freshState(){
+  const board = Array(N).fill(null);
+  board[51] = {g:'brew'}; board[53] = {g:'fruit'}; board[55] = {g:'snack'};
+  [[44,'brew',0],[45,'brew',0],[46,'fruit',0],[38,'fruit',0],[47,'snack',0],[40,'snack',0]].forEach(([i,c,t])=>board[i]={c,t});
+  return { board, energy:E_MAX, eTs:Date.now(), coins:20, stars:0, served:0,
+    ch:0, task:0, introSeen:{}, patrons:[], heard:{}, bookNew:false, done:false };
+}
+function load(){
+  try { const raw = localStorage.getItem(SAVE_KEY); if (raw) return JSON.parse(raw); } catch(e){}
+  return null;
+}
+function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e){} }
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const rnd = n => Math.floor(Math.random()*n);
+const pick = a => a[rnd(a.length)];
+const itemOf = it => CHAINS[it.c].items[it.t];
+const genOf = it => CHAINS[it.g].gen;
+const speaker = k => k==='rosa' ? ROSA : PEOPLE[k];
+function avatar(p, extra=''){ return `<div class="ava ${extra}" style="background:${p.bg}">${p.face}</div>`; }
+let toastT;
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),1800); }
+
+/* ---------- energy ---------- */
+function tickEnergy(){
+  const now = Date.now();
+  if (S.energy >= E_MAX){ S.eTs = now; return; }
+  const gained = Math.floor((now - S.eTs)/E_REGEN_MS);
+  if (gained > 0){ S.energy = Math.min(E_MAX, S.energy + gained); S.eTs += gained*E_REGEN_MS; if (S.energy>=E_MAX) S.eTs = now; }
+}
+
+/* ---------- patrons & orders ---------- */
+function availablePeople(){
+  const here = new Set(S.patrons.map(p=>p.who));
+  return Object.keys(PEOPLE).filter(k => PEOPLE[k].from <= S.ch && !here.has(k));
+}
+function makeOrder(){
+  const cap = Math.min(MAX_T, 1 + Math.floor(S.served/3));
+  const count = S.served < 3 ? 1 : (Math.random() < .45 ? 2 : 1);
+  const order = [];
+  for (let i=0;i<count;i++){
+    const c = pick(Object.keys(CHAINS));
+    // lean towards the middle of what's reachable
+    const t = Math.max(1, Math.min(cap, 1 + rnd(cap) - (Math.random()<.4 && cap>2 ? 1 : 0)));
+    order.push({c,t});
+  }
+  const val = order.reduce((s,o)=>s + (1<<o.t), 0);
+  return { order, coins: 4 + val*3, stars: val >= 12 ? 2 : 1 };
+}
+function newPatron(){
+  const pool = availablePeople(); if (!pool.length) return null;
+  return { who: pick(pool), ...makeOrder(), fresh:true };
+}
+function fillPatrons(){ while (S.patrons.length < 3){ const p = newPatron(); if(!p) break; S.patrons.push(p); } }
+
+// which board cells would satisfy this order (null if not all present)
+function findCells(order){
+  const used = new Set(), cells = [];
+  for (const o of order){
+    let found = -1;
+    for (let i=0;i<N;i++){ const b=S.board[i]; if (b && !b.g && b.c===o.c && b.t===o.t && !used.has(i)){ found=i; break; } }
+    if (found<0) return null;
+    used.add(found); cells.push(found);
+  }
+  return cells;
+}
+
+/* ---------- rendering ---------- */
+let sel = -1, dragFrom = -1, popAt = -1;
+
+function render(){
+  tickEnergy();
+  $('vEnergy').textContent = S.energy;
+  $('vCoins').textContent = S.coins;
+  $('vStars').textContent = S.stars;
+  renderTimer();
+  $('sign').classList.toggle('flicker', S.ch===0 && S.task<2);
+
+  // counter
+  const wanted = new Set();
+  $('counter').innerHTML = S.patrons.map((p,i)=>{
+    const who = PEOPLE[p.who];
+    const cells = findCells(p.order);
+    const chips = p.order.map(o=>{
+      const ok = S.board.some(b=>b && !b.g && b.c===o.c && b.t===o.t);
+      if (ok) S.board.forEach((b,j)=>{ if(b && !b.g && b.c===o.c && b.t===o.t) wanted.add(j); });
+      const [e,n] = CHAINS[o.c].items[o.t];
+      return `<div class="chip ${ok?'have':''}" title="${n}">${e}</div>`;
+    }).join('');
+    return `<div class="patron ${p.fresh?'arriving':''}" data-i="${i}">
+      ${avatar(who)}<div class="pname">${who.name}</div>
+      <div class="order">${chips}</div>
+      <button class="serve ${cells?'ready':''}" data-serve="${i}" ${cells?'':'aria-disabled="true"'}>${cells?'Serve':'Waiting'}</button>
+      <div class="reward">🪙${p.coins} · ⭐${p.stars}</div></div>`;
+  }).join('');
+  S.patrons.forEach(p=>delete p.fresh);
+
+  // story strip
+  if (S.ch < CHAPTERS.length){
+    const ch = CHAPTERS[S.ch], t = ch.tasks[S.task];
+    $('chLabel').textContent = `Chapter ${S.ch+1} · ${ch.title} · ${S.task+1}/${ch.tasks.length}`;
+    $('taskLabel').textContent = t.name;
+    $('taskBtn').textContent = `⭐ ${t.cost}`;
+    $('taskBtn').disabled = false;
+    $('taskBtn').classList.toggle('go', S.stars >= t.cost);
+  } else {
+    $('chLabel').textContent = 'The Gull is saved';
+    $('taskLabel').textContent = 'Keep pouring. Keep listening.';
+    $('taskBtn').textContent = 'Replay';
+    $('taskBtn').classList.remove('go');
+  }
+  $('bookDot').hidden = !S.bookNew;
+
+  // board
+  const html = [];
+  for (let i=0;i<N;i++){
+    const b = S.board[i];
+    let inner = '', cls = 'cell';
+    if (b && b.g){ cls += ' gen'; inner = `<div class="item">${genOf(b)[0]}</div>`; }
+    else if (b){
+      const pips = '<i></i>'.repeat(b.t+1);
+      inner = `<div class="item ${i===popAt?'pop':''}">${itemOf(b)[0]}<span class="pips">${pips}</span></div>`;
+      if (wanted.has(i)) cls += ' wanted';
+    }
+    if (i===sel) cls += ' sel';
+    html.push(`<div class="${cls}" data-cell="${i}">${inner}</div>`);
+  }
+  $('board').innerHTML = html.join('');
+  popAt = -1;
+  renderTray();
+}
+
+function renderTimer(){
+  if (S.energy >= E_MAX){ $('vTimer').textContent=''; return; }
+  const left = Math.max(0, E_REGEN_MS - (Date.now()-S.eTs));
+  $('vTimer').textContent = `${Math.ceil(left/1000)}s`;
+}
+
+const HINTS = [
+  'Tap a glowing machine to make something. Each tap uses 1 ⚡.',
+  'Drag two matching items together to merge them into something better.',
+  'A green dot means a customer wants that item. Hit Serve.',
+  'Spend ⭐ on the fix-up list to hear what happens next.',
+];
+function renderTray(){
+  const b = sel>=0 ? S.board[sel] : null;
+  if (!b){
+    const hint = HINTS[Math.min(S.served, HINTS.length-1)];
+    $('tray').innerHTML = `<div class="meta"><div class="hint">${hint}</div></div>`;
+    return;
+  }
+  if (b.g){
+    const [e,n] = genOf(b);
+    const ladder = CHAINS[b.g].items.map(x=>`<span style="opacity:1">${x[0]}</span>`).join('');
+    $('tray').innerHTML = `<div class="big">${e}</div><div class="meta"><div class="nm">${n}</div><div class="ladder">${ladder}</div></div>`;
+    return;
+  }
+  const [e,n] = itemOf(b);
+  const ladder = CHAINS[b.c].items.map((x,t)=> t===b.t ? `<b>${x[0]}</b>` : t<b.t ? x[0] : `<span>${x[0]}</span>`).join('');
+  const val = 1<<b.t;
+  $('tray').innerHTML = `<div class="big">${e}</div>
+    <div class="meta"><div class="nm">${n} <span class="hint">· level ${b.t+1}${b.t===MAX_T?' (top)':''}</span></div><div class="ladder">${ladder}</div></div>
+    <button class="btn" id="sellBtn">Sell 🪙${val}</button>`;
+  $('sellBtn').onclick = () => { S.coins += val; S.board[sel]=null; sel=-1; save(); render(); };
+}
+
+/* ---------- actions ---------- */
+function nearestEmpty(from){
+  const fr = Math.floor(from/COLS), fc = from%COLS;
+  let best=-1, bd=1e9;
+  for (let i=0;i<N;i++){
+    if (S.board[i]) continue;
+    const r=Math.floor(i/COLS), c=i%COLS, d=Math.hypot(r-fr,c-fc);
+    if (d<bd){ bd=d; best=i; }
+  }
+  return best;
+}
+function produce(i){
+  const g = S.board[i];
+  tickEnergy();
+  if (S.energy <= 0){ openEnergy(); return; }
+  const to = nearestEmpty(i);
+  if (to < 0){ toast('The board is full. Merge or sell something.'); return; }
+  if (S.energy >= E_MAX) S.eTs = Date.now();
+  S.energy--;
+  S.board[to] = { c:g.g, t: Math.random()<.12 ? 1 : 0 };
+  popAt = to; save(); render();
+}
+function moveOrMerge(from, to){
+  if (from===to) return;
+  const a = S.board[from], b = S.board[to];
+  if (a && b && !a.g && !b.g && a.c===b.c && a.t===b.t && a.t<MAX_T){
+    S.board[to] = { c:a.c, t:a.t+1 }; S.board[from] = null;
+    popAt = to; sel = to;
+    if (a.t+1 === MAX_T) toast(`${itemOf(S.board[to])[1]}! Top of the menu.`);
+  } else {
+    S.board[to] = a; S.board[from] = b; sel = to;
+  }
+  save(); render();
+}
+function serve(i){
+  const p = S.patrons[i];
+  const cells = findCells(p.order);
+  if (!cells){ toast(`${PEOPLE[p.who].name} is still waiting on that.`); return; }
+  cells.forEach(c=>{ S.board[c]=null; if (c===sel) sel=-1; });
+  S.coins += p.coins; S.stars += p.stars; S.served++;
+  S.energy = Math.min(E_MAX + 50, S.energy + 2);
+  // gossip
+  const who = PEOPLE[p.who];
+  const heard = S.heard[p.who] || (S.heard[p.who] = []);
+  const unheard = who.gossip.map((_,k)=>k).filter(k=>!heard.includes(k));
+  const k = unheard.length ? pick(unheard) : rnd(who.gossip.length);
+  const isNew = !heard.includes(k);
+  if (isNew){ heard.push(k); S.bookNew = true; }
+  showNote(who, who.gossip[k], isNew);
+  // leave + replace
+  const el = document.querySelector(`.patron[data-i="${i}"]`);
+  if (el) el.classList.add('leaving');
+  S.patrons.splice(i,1);
+  const np = newPatron(); if (np) S.patrons.splice(i,0,np);
+  save();
+  setTimeout(render, 320);
+}
+let noteT;
+function showNote(who, text, isNew){
+  document.querySelectorAll('.note').forEach(n=>n.remove());
+  const n = document.createElement('div');
+  n.className = 'note';
+  n.innerHTML = `<div class="who"><span>${who.name} leans in…</span>${isNew?'<span class="new">New gossip</span>':''}</div>${text}`;
+  n.onclick = () => n.remove();
+  document.body.appendChild(n);
+  clearTimeout(noteT); noteT = setTimeout(()=>n.remove(), 4200);
+}
+
+/* ---------- overlays ---------- */
+function closeLayer(){ $('layer').innerHTML=''; }
+function playScene(lines, done){
+  let k = 0;
+  const step = () => {
+    if (k >= lines.length){ closeLayer(); done && done(); return; }
+    const [who, text] = lines[k++];
+    let ava = '', name = '', cls = 'line';
+    if (who===null){ cls += ' narr'; }
+    else if (who==='letter'){ ava = avatar({bg:ROSA.bg, face:'✉️'}); name = 'A letter from Rosa'; cls += ' letter'; }
+    else { const s = speaker(who); ava = avatar(s); name = s.name; }
+    $('layer').innerHTML = `<div class="overlay" id="sceneOv"><div class="scene" role="dialog" aria-live="polite" tabindex="0">${ava}
+      <div class="say">${name?`<div class="who">${name}</div>`:''}<div class="${cls}">${text}</div>
+      <div class="more">${k<lines.length?'Tap to continue':'Tap to close'}</div></div></div></div>`;
+    const ov = $('sceneOv'); ov.onclick = step;
+    ov.querySelector('.scene').focus();
+    ov.onkeydown = e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); step(); } };
+  };
+  step();
+}
+function chapterCard(kicker, title, sub, btn, done){
+  $('layer').innerHTML = `<div class="overlay center"><div class="card chapter-card">
+    <div class="k">${kicker}</div><h2>${title}</h2><p>${sub}</p>
+    <div class="row" style="justify-content:center"><button class="btn go" id="ccBtn">${btn}</button></div></div></div>`;
+  $('ccBtn').onclick = () => { closeLayer(); done && done(); };
+  $('ccBtn').focus();
+}
+function maybeIntro(){
+  if (S.ch >= CHAPTERS.length || S.introSeen[S.ch]) return;
+  const ch = CHAPTERS[S.ch];
+  chapterCard(`Chapter ${S.ch+1}`, ch.title, `${ch.tasks.length} fix-ups to go. Earn ⭐ by serving customers.`, 'Open up', () => {
+    playScene(ch.intro, () => { S.introSeen[S.ch]=true; save(); render(); });
+  });
+}
+function doTask(){
+  if (S.ch >= CHAPTERS.length){ // replay the whole story from the book
+    const all = CHAPTERS.flatMap(c=>[[null, `Chapter ${CHAPTERS.indexOf(c)+1}: ${c.title}`], ...c.intro, ...c.tasks.flatMap(t=>t.scene)]);
+    playScene(all); return;
+  }
+  const ch = CHAPTERS[S.ch], t = ch.tasks[S.task];
+  if (S.stars < t.cost){ toast(`You need ${t.cost - S.stars} more ⭐. Serve a customer.`); return; }
+  S.stars -= t.cost; S.task++;
+  const finished = S.task >= ch.tasks.length;
+  save(); render();
+  playScene(t.scene, () => {
+    if (!finished) return;
+    const wasLast = S.ch === CHAPTERS.length-1;
+    S.ch++; S.task = 0; S.coins += 50; S.energy = Math.max(S.energy, E_MAX);
+    fillPatrons(); save(); render();
+    if (wasLast) chapterCard('The end', 'The Gull is saved', 'You finished the story. Customers keep coming, and there is still gossip to collect in the book.', 'Keep pouring');
+    else chapterCard(`Chapter ${S.ch} complete`, CHAPTERS[S.ch-1].title, 'Bonus: 🪙50 and a full tank of ⚡.', 'Next chapter', maybeIntro);
+  });
+}
+function openEnergy(){
+  const cost = 40;
+  $('layer').innerHTML = `<div class="overlay center"><div class="card">
+    <h2>Out of steam?</h2>
+    <p>Energy refills by 1 every ${E_REGEN_MS/1000} seconds, and serving a customer gives back 2. Or put the kettle on now: 50 ⚡ for 🪙${cost}.</p>
+    <div class="row"><button class="btn" id="eNo">Not now</button><button class="btn go" id="eYes" ${S.coins<cost?'disabled':''}>Buy 50 ⚡</button></div></div></div>`;
+  $('eNo').onclick = closeLayer;
+  $('eYes').onclick = () => { if (S.coins<cost) return; S.coins-=cost; S.energy+=50; save(); closeLayer(); render(); };
+}
+function openBook(){
+  S.bookNew = false; save(); render();
+  const total = Object.values(PEOPLE).reduce((s,p)=>s+p.gossip.length,0);
+  const got = Object.values(S.heard).reduce((s,a)=>s+a.length,0);
+  const body = Object.entries(PEOPLE).map(([k,p])=>{
+    const heard = S.heard[k] || [];
+    const lines = p.gossip.map((g,i)=> heard.includes(i) ? `<div class="gb-line">“${g}”</div>` : '').join('');
+    const locked = p.gossip.length - heard.length;
+    const lockTxt = p.from > S.ch ? 'Not in town yet.' : (locked ? `${locked} more to hear. Serve ${p.name} again.` : '');
+    return `<div class="gb-who">${avatar(p)}<span>${p.name} <small>· ${p.role}</small></span></div>${lines}${lockTxt?`<div class="gb-line locked">${lockTxt}</div>`:''}`;
+  }).join('');
+  $('layer').innerHTML = `<div class="overlay center"><div class="card">
+    <h2>The Gossip Book</h2><p>${got} of ${total} rumours heard. Everything said over the bar ends up in here.</p>
+    ${body}
+    <div class="row" style="margin-top:14px"><button class="btn go" id="bkClose">Close</button></div></div></div>`;
+  $('bkClose').onclick = closeLayer;
+}
+function confirmReset(){
+  $('layer').innerHTML = `<div class="overlay center"><div class="card">
+    <h2>Start a new game?</h2><p>Your board, coins, stars, story progress and gossip book will be wiped.</p>
+    <div class="row"><button class="btn" id="rNo">Keep playing</button><button class="btn go" id="rYes">Start again</button></div></div></div>`;
+  $('rNo').onclick = closeLayer;
+  $('rYes').onclick = () => { S = freshState(); fillPatrons(); sel=-1; save(); closeLayer(); render(); maybeIntro(); };
+}
+
+/* ---------- input: tap & drag on the board ---------- */
+let down = null, ghost = null;
+const cellAt = (x,y) => { const el = document.elementFromPoint(x,y); const c = el && el.closest('[data-cell]'); return c ? +c.dataset.cell : -1; };
+$('board').addEventListener('pointerdown', e => {
+  const c = e.target.closest('[data-cell]'); if (!c) return;
+  const i = +c.dataset.cell;
+  down = { i, x:e.clientX, y:e.clientY, dragging:false };
+  if (S.board[i]) $('board').setPointerCapture(e.pointerId);
+});
+$('board').addEventListener('pointermove', e => {
+  if (!down || !S.board[down.i]) return;
+  if (!down.dragging && Math.hypot(e.clientX-down.x, e.clientY-down.y) > 7){
+    down.dragging = true; dragFrom = down.i;
+    const b = S.board[down.i];
+    ghost = document.createElement('div'); ghost.className='ghost';
+    ghost.textContent = b.g ? genOf(b)[0] : itemOf(b)[0];
+    document.body.appendChild(ghost);
+    const it = document.querySelector(`[data-cell="${down.i}"] .item`); if (it) it.classList.add('dragging');
+  }
+  if (down.dragging){
+    ghost.style.left = e.clientX+'px'; ghost.style.top = e.clientY+'px';
+    document.querySelectorAll('.cell.target').forEach(x=>x.classList.remove('target'));
+    const t = cellAt(e.clientX, e.clientY), a = S.board[down.i], b = t>=0 ? S.board[t] : null;
+    if (t>=0 && t!==down.i && a && b && !a.g && !b.g && a.c===b.c && a.t===b.t && a.t<MAX_T)
+      document.querySelector(`[data-cell="${t}"]`).classList.add('target');
+  }
+});
+function endPointer(e, cancelled){
+  if (!down) return;
+  const d = down; down = null;
+  if (ghost){ ghost.remove(); ghost = null; }
+  if (d.dragging){
+    const t = cancelled ? -1 : cellAt(e.clientX, e.clientY);
+    dragFrom = -1;
+    if (t>=0) moveOrMerge(d.i, t); else render();
+    return;
+  }
+  if (cancelled) return;
+  const b = S.board[d.i];
+  if (b && b.g){ sel = d.i; produce(d.i); return; }
+  if (b){ sel = (sel===d.i) ? -1 : d.i; render(); return; }
+  sel = -1; render();
+}
+$('board').addEventListener('pointerup', e => endPointer(e, false));
+$('board').addEventListener('pointercancel', e => endPointer(e, true));
+
+$('counter').addEventListener('click', e => { const b = e.target.closest('[data-serve]'); if (b) serve(+b.dataset.serve); });
+$('taskBtn').onclick = doTask;
+$('bookBtn').onclick = openBook;
+$('stEnergy').onclick = openEnergy;
+$('resetBtn').onclick = confirmReset;
+
+/* ---------- boot ---------- */
+function start(data){
+  S = (data && data.state) || load() || freshState();
+  fillPatrons(); save(); render(); maybeIntro();
+  setInterval(()=>{ const before = S.energy; tickEnergy(); if (S.energy!==before){ $('vEnergy').textContent=S.energy; save(); } renderTimer(); }, 1000);
+}
+window.claude?.hot?.snapshot?.(() => ({ state:S }));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
