@@ -191,6 +191,17 @@
   .tl span{color:var(--dim);font-size:15px}
   @media (max-width:860px){.story-grid{grid-template-columns:1fr}.portrait{position:static}.tl li{grid-template-columns:90px 1fr}}
 
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:44px 0 0}
+  .stats div{background:var(--bg);padding:22px 20px}
+  .stats b{display:block;font:400 clamp(2.2rem,4vw,3.2rem)/1 var(--serif);color:var(--text)}
+  .stats span{display:block;margin-top:8px;font-size:13px;color:var(--dim);line-height:1.4}
+  .presslinks{margin-top:36px;display:flex;flex-direction:column;gap:2px}
+  .presslinks .label{margin-bottom:8px}
+  .presslinks a{padding:12px 0;border-bottom:1px solid var(--line);color:#BDB8B0;font-size:15px;transition:color .3s,padding .4s var(--ease)}
+  .presslinks a i{font-family:var(--serif);font-size:18px;color:var(--text)}
+  .presslinks a:hover{color:var(--accent);padding-left:6px}
+  @media (max-width:560px){.stats div{padding:16px 12px}}
+
   /* talk */
   .talk{background:var(--bg-2);overflow:hidden}
   .talk::before{content:"";position:absolute;width:900px;height:900px;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(224,115,111,.16),transparent 62%);pointer-events:none}
@@ -418,12 +429,12 @@
           <div class="meta"><h4>No More<small>Single</small></h4><span class="yr">2022</span></div>
         </a>
         <a class="rel rv d1" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
-          <div class="cv"><img src="img/the-hills.jpg" alt="The Hills artwork" loading="lazy"></div>
-          <div class="meta"><h4>The Hills<small>Let Me Paint A Picture</small></h4><span class="yr">2021</span></div>
+          <div class="cv"><img src="img/lost.jpg" alt="Lost artwork" loading="lazy"></div>
+          <div class="meta"><h4>Lost<small>For Andy's Man Club</small></h4><span class="yr">2022</span></div>
         </a>
         <a class="rel rv d2" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
-          <div class="cv"><img src="img/lost.jpg" alt="Lost artwork" loading="lazy"></div>
-          <div class="meta"><h4>Lost<small>For Andy's Man Club</small></h4><span class="yr"></span></div>
+          <div class="cv"><img src="img/the-hills.jpg" alt="The Hills artwork" loading="lazy"></div>
+          <div class="meta"><h4>The Hills<small>Let Me Paint A Picture</small></h4><span class="yr">2021</span></div>
         </a>
         <a class="rel rv" href="https://open.spotify.com/artist/6vOsdbb4rH14bBe5vMq69z" target="_blank" rel="noopener">
           <div class="cv"><div class="type-tile tile-illest"><svg class="logo" viewBox="0 0 840 560"><use href="#cw"/></svg><div class="big">ILLEST</div></div></div>
@@ -436,7 +447,7 @@
   <div class="press" aria-label="Press">
     <div class="wrap">
       <span class="label">As featured in</span>
-      <span class="pn">Yorkshire Evening Post</span><span class="pn"><i>ON</i> Magazine</span><span class="pn">Ratings Game Music</span>
+      <span class="pn">Yorkshire Evening Post</span><span class="pn"><i>ON</i> Magazine</span><span class="pn">Yorkshire Live</span><span class="pn">Ratings Game Music</span>
     </div>
   </div>
 
@@ -448,15 +459,30 @@
       </figure>
       <div class="story-copy">
         <p class="label rv"><b>03</b> &nbsp;—&nbsp; The story</p>
-        <p class="lede rv">He started writing during the hardest period of his life. <i>The music is how he got through it.</i></p>
-        <p class="rv">C.Wood is Connor, a rapper and songwriter who grew up in Huddersfield and now lives in Morley, just outside Leeds.</p>
-        <p class="rv">His songs pair hard-hitting, conscious lyricism with catchy hooks and a flow that's all his own. They talk openly about the stuff most people keep to themselves, because that's exactly why they matter.</p>
-        <!-- TODO (Connor): a few lines in your own words -->
+        <p class="lede rv">He started writing at fourteen. <i>The music is how he got through it.</i></p>
+        <p class="rv">C.Wood is Connor Wood, a rapper and songwriter who grew up in Huddersfield and now lives in Morley, just outside Leeds. He was diagnosed with bipolar disorder at twenty, after years of feeling “different”, and before the pandemic he was living in what he describes as a “constant state of depression”, trapped in his own head with thoughts he couldn't switch off.</p>
+        <p class="rv">Writing had always been there. When life hit hardest, it started to mean more. At the start of the pandemic he began recording and releasing his music, and he hasn't stopped since.</p>
+        <p class="rv">His songs pair hard-hitting, conscious verses with catchy, melodic hooks, and they move the way he does: one release upbeat, the next deep and dark, depending on where his head was when he wrote it. That honesty is the point. Listeners have messaged him to say his music got them through hard times, and some have told him it saved their life.</p>
+        <p class="rv">After losing friends to suicide, he wrote <em>Lost</em> and gave every penny it made to Andy's Man Club. His goal is simple: break the stigma around men's mental health, and show young men who feel embarrassed to open up that it's okay not to be okay.</p>
+        <div class="stats rv">
+          <div><b>14</b><span>Age he started writing</span></div>
+          <div><b>2020</b><span>First releases</span></div>
+          <div><b>10+</b><span>Singles, freestyles &amp; an EP</span></div>
+        </div>
+        <div class="presslinks rv">
+          <span class="label">Read more</span>
+          <a href="https://www.yorkshireeveningpost.co.uk/whats-on/arts-and-entertainment/cwood-interview-the-leeds-rapper-on-his-raw-lyrics-mental-health-and-teaming-up-with-andys-man-club-3651639" target="_blank" rel="noopener"><i>Yorkshire Evening Post</i> · On his raw lyrics, mental health and teaming up with Andy's Man Club ↗</a>
+          <a href="https://www.examinerlive.co.uk/news/real-life/huddersfield-man-bipolar-using-rap-24902964" target="_blank" rel="noopener"><i>Yorkshire Live</i> · Using rap to tackle mental health stigma ↗</a>
+          <a href="https://www.on-magazine.co.uk/arts/yorkshire-music/c-wood-interview/" target="_blank" rel="noopener"><i>ON Magazine</i> · Introducing C.Wood ↗</a>
+        </div>
         <ol class="tl rv">
+          <li><time>Age 14</time><div><b>First lyrics</b><span>Starts writing in Huddersfield.</span></div></li>
+          <li><time>2020</time><div><b>First releases</b><span>Starts recording and releasing music at the start of the pandemic.</span></div></li>
           <li><time>Jan 2021</time><div><b>Illest</b><span>The debut EP: his first track and <em>Inner Spirit</em> remastered, plus five new songs.</span></div></li>
           <li><time>Oct 2021</time><div><b>Prepared</b><span>Recorded a year earlier, released on YouTube and SoundCloud.</span></div></li>
           <li><time>Nov 2021</time><div><b>The Hills</b><span>Let Me Paint A Picture, with a push for the download charts.</span></div></li>
-          <li><time>Apr 2022</time><div><b>No More</b><span>New single.</span></div></li>
+          <li><time>Early 2022</time><div><b>Lost</b><span>Written after losing friends to suicide. All proceeds to Andy's Man Club.</span></div></li>
+          <li><time>Apr 2022</time><div><b>No More</b><span>New single, and a feature in the <em>Yorkshire Evening Post</em>.</span></div></li>
           <li><time>Jun 2022</time><div><b>Tunnel Vision</b><span>A freestyle, out on all platforms.</span></div></li>
           <li><time>Jul 2022</time><div><b>Where Do I Go?</b><span>His sound on a drill beat.</span></div></li>
           <li><time>Jan 2023</time><div><b>Nobody Cares</b><span>A song for anyone who's ever felt alone.</span></div></li>
