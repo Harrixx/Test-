@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/mad_gossip/index.html" }
+  ]
+}
