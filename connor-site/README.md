@@ -4,6 +4,8 @@ A one-page site for C.Wood (Connor), a Leeds rapper and songwriter. It's plain s
 
 Preview locally: `python3 -m http.server -d connor-site`
 
+Deploys: Vercel builds production from `claude/connor-music-artist-site-8krqvu` (see `vercel.json`), so every push goes live.
+
 ## Sections
 - **Hero:** the C.Wood logo (redrawn as SVG from the *Illest* artwork) drawing itself in on a ribbed coral background
 - **Music:** the debut EP *Illest* (Jan 2021) and the singles *Lost*, *Inner Spirit* and *Tunnel Vision*
