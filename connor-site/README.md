@@ -19,7 +19,8 @@ Taken from press coverage (Yorkshire Evening Post, ON Magazine, Ratings Game Mus
 
 ## To confirm with Connor (search for `TODO` in index.html)
 - [ ] The full *Illest* track list and his first single's name
-- [ ] Direct Spotify, Apple Music, YouTube and SoundCloud links (the buttons currently open a search)
+- [x] Spotify artist link (added, with an embedded player)
+- [ ] Direct Apple Music, YouTube and SoundCloud links (the buttons currently open a search)
 - [ ] *Tunnel Vision* release date and a short description
 - [ ] The story in his own words, plus gigs, radio plays and press quotes
 - [ ] A bookings email
