@@ -1,6 +1,6 @@
 <title>Mad Gossip</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600&display=swap">
 <style>
@@ -27,6 +27,9 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+/* games get tapped fast: stop the phone treating two taps as double-tap-to-zoom */
+html,body,button,.cell,.item,.stage,.portrait{touch-action:manipulation}
+.board{touch-action:none}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--cream);font-family:var(--f-ui);font-size:15px;font-weight:500;
   background-image:
@@ -1821,6 +1824,10 @@ $('stage').addEventListener('pointerdown', e => { e.preventDefault(); cheer(e); 
 $('stage').addEventListener('keydown', e => { if (e.key===' '||e.key==='Enter'){ e.preventDefault(); cheer({}); } });
 $('stage').tabIndex = 0;
 $('shopList').addEventListener('click', e => { const b = e.target.closest('[data-buy]'); if (b) buy(b.dataset.buy); });
+
+/* ---------- no zooming on phones ---------- */
+document.addEventListener('dblclick', e => e.preventDefault(), { passive:false });
+['gesturestart','gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive:false }));
 
 /* ---------- boot ---------- */
 function start(data){
