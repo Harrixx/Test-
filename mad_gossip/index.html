@@ -1836,7 +1836,12 @@ function start(data){
   S = migrate((data && data.state) || load() || freshState());
   ensureGens(); fillPatrons();
   if (!S.feed.length){ unlockPost(); unlockPost(); }
+  // a link ending in #tutorial always starts the guided tour
+  let wantTour = false;
+  try { wantTour = location.hash.replace('#','').toLowerCase() === 'tutorial'; } catch(e){}
+  if (wantTour){ S.tut = 0; tab = 'bar'; try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} }
   save(); render(); updateBadges(); maybeIntro();
+  if (wantTour && S.introSeen[S.ch]) tutEnter();
   setInterval(()=>{ const before = S.energy; tickEnergy(); if (S.energy!==before){ $('vEnergy').textContent=S.energy; save(); } renderTimer(); }, 1000);
 }
 window.claude?.hot?.snapshot?.(() => ({ state:S }));
