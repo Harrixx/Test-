@@ -252,6 +252,17 @@
   .dock-sp:hover{color:#1ED760}
   @media (max-width:420px){.dock-sp{display:none}}
 
+  /* pulse while music plays */
+  .pulse{position:fixed;left:50%;bottom:-260px;width:900px;height:520px;margin-left:-450px;z-index:54;pointer-events:none;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(224,115,111,.55),rgba(224,115,111,.18) 45%,transparent 72%);
+    opacity:0;transform:scale(.8);transition:opacity 1.2s var(--ease);mix-blend-mode:screen;will-change:transform,opacity}
+  .playing .pulse{opacity:var(--glow,.4)}
+  .dock-bar img{transition:box-shadow .3s}
+  .playing .dock-bar img{box-shadow:0 0 calc(var(--beat,0)*28px) rgba(224,115,111,calc(var(--beat,0)*.9))}
+  .playing .dock-bar{border-color:rgba(224,115,111,calc(.12 + var(--beat,0)*.35))}
+  .playing .eq i{animation:none!important}
+  @media (prefers-reduced-motion:reduce){.pulse{display:none}}
+
   /* reveal */
   .rv{opacity:0;transform:translateY(30px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
   .rv.in{opacity:1;transform:none}
@@ -468,6 +479,7 @@
   </div>
 </footer>
 
+<div class="pulse" id="pulse" aria-hidden="true"></div>
 <div class="dock" id="dock" aria-label="Music player">
   <div class="dock-panel" id="dockPanel"></div>
   <div class="dock-bar">
@@ -500,15 +512,60 @@
   document.querySelectorAll('.rv').forEach(el => io.observe(el));
   // sticky player: loads Spotify only when first opened
   const dock = document.getElementById('dock'), dockBtn = document.getElementById('dockBtn'), panel = document.getElementById('dockPanel');
+  const ARTIST = '6vOsdbb4rH14bBe5vMq69z';
+  let loaded = false, apiOk = false;
   setTimeout(() => dock.classList.add('show'), 1400);
+
+  const plainEmbed = () => {
+    if (panel.querySelector('iframe')) return;
+    panel.innerHTML = '<iframe title="C.Wood on Spotify" src="https://open.spotify.com/embed/artist/' + ARTIST + '?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>';
+  };
+  const loadPlayer = () => {
+    if (loaded) return; loaded = true;
+    const host = document.createElement('div'); panel.appendChild(host);
+    window.onSpotifyIframeApiReady = api => {
+      api.createController(host, { uri: 'spotify:artist:' + ARTIST, width: '100%', height: 152, theme: 'dark' }, ctl => {
+        apiOk = true;
+        ctl.addListener('playback_update', e => setPlaying(!e.data.isPaused));
+      });
+    };
+    const sc = document.createElement('script');
+    sc.src = 'https://open.spotify.com/embed/iframe-api/v1'; sc.async = true;
+    sc.onerror = plainEmbed; document.head.appendChild(sc);
+    setTimeout(() => { if (!apiOk) plainEmbed(); }, 5000);
+  };
   const openDock = open => {
-    if (open && !panel.firstChild) panel.innerHTML = '<iframe title="C.Wood on Spotify" src="https://open.spotify.com/embed/artist/6vOsdbb4rH14bBe5vMq69z?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>';
+    if (open) loadPlayer();
     dock.classList.toggle('open', open);
     dockBtn.setAttribute('aria-expanded', open);
     dockBtn.setAttribute('aria-label', open ? 'Hide player' : 'Open player');
   };
   dockBtn.addEventListener('click', () => openDock(!dock.classList.contains('open')));
   document.querySelectorAll('[data-play]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); dock.classList.add('show'); openDock(true); }));
+
+  // pulse: runs only while Spotify reports music playing
+  const root = document.documentElement, glow = document.getElementById('pulse'), bars = dock.querySelectorAll('.eq i');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const BEAT = 60000 / 90; // ~90 bpm, a typical hip-hop tempo
+  let playing = false, raf = 0, t0 = 0, lastBeat = -1, amp = 1, barAmp = [1, 1, 1];
+  function setPlaying(on) {
+    if (on === playing) return; playing = on;
+    document.body.classList.toggle('playing', on);
+    if (on && !still) { t0 = performance.now(); lastBeat = -1; raf = requestAnimationFrame(tick); }
+    else { cancelAnimationFrame(raf); root.style.setProperty('--beat', 0); glow.style.transform = 'scale(.8)'; bars.forEach(b => b.style.height = '30%'); }
+  }
+  function tick(now) {
+    const pos = (now - t0) / BEAT, n = Math.floor(pos), ph = pos - n;
+    if (n !== lastBeat) { lastBeat = n; amp = (n % 4 === 0 ? 1 : .55 + Math.random() * .35); barAmp = barAmp.map(() => .35 + Math.random() * .65); }
+    const env = Math.exp(-ph * 5.5) * amp;            // sharp hit, smooth decay
+    const sub = Math.exp(-Math.abs(ph - .5) * 9) * .35 * amp; // off-beat swing
+    const v = Math.min(1, env + sub);
+    root.style.setProperty('--beat', v.toFixed(3));
+    glow.style.transform = 'scale(' + (.85 + v * .3).toFixed(3) + ')';
+    glow.style.setProperty('--glow', (.25 + v * .6).toFixed(3));
+    bars.forEach((b, i) => b.style.height = (25 + 75 * Math.min(1, v * barAmp[i] * 1.4)).toFixed(0) + '%');
+    raf = requestAnimationFrame(tick);
+  }
 </script>
 </body>
 </html>
