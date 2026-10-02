@@ -98,12 +98,12 @@
   /* hero */
   .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;isolation:isolate}
   .hero-img{position:absolute;inset:0 0 0 auto;width:min(58%,820px);z-index:-2}
-  .hero-img img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:grayscale(1) contrast(1.1) brightness(.85);transform:scale(1.08);animation:settle 2.6s var(--ease) forwards}
+  .hero-img img{width:100%;height:100%;object-fit:cover;object-position:50% 75%;filter:grayscale(1) contrast(1.05);transform:scale(1.08);animation:settle 2.6s var(--ease) forwards}
   @keyframes settle{to{transform:scale(1)}}
   .hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 0%,rgba(10,10,11,.55) 35%,rgba(10,10,11,.1) 70%),linear-gradient(0deg,var(--bg) 0%,transparent 40%)}
   .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 50% at 20% 60%,rgba(224,115,111,.12),transparent 70%)}
-  .hero-body{padding-top:140px;padding-bottom:56px}
-  .hero h1{font:400 clamp(4rem,12.5vw,11.5rem)/.86 var(--serif);letter-spacing:-.025em;margin:22px 0 0}
+  .hero-body{width:100%;padding-top:140px;padding-bottom:120px}
+  .hero h1{font:400 clamp(4rem,10vw,9.5rem)/.88 var(--serif);letter-spacing:-.025em;margin:22px 0 0}
   .hero h1 i{color:var(--accent)}
   .hero h1 .ln{display:block;overflow:hidden}
   .hero h1 .ln>span{display:block;transform:translateY(105%);animation:rise 1.2s var(--ease) forwards}
@@ -340,7 +340,7 @@
 </nav>
 
 <header class="hero" id="top">
-  <div class="hero-img"><img src="img/connor-portrait.jpg" alt="Black and white portrait of Connor (C.Wood)" fetchpriority="high"></div>
+  <div class="hero-img"><img src="img/connor-hero.jpg" alt="Black and white portrait of Connor (C.Wood)" fetchpriority="high"></div>
   <div class="wrap hero-body">
     <p class="label fade"><b>C.Wood</b> &nbsp;—&nbsp; Rapper &amp; songwriter &nbsp;·&nbsp; Leeds, UK</p>
     <h1><span class="ln"><span>Real life,</span></span><span class="ln"><span><i>put to music.</i></span></span></h1>
