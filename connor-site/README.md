@@ -23,7 +23,8 @@ Taken from press coverage (Yorkshire Evening Post, ON Magazine, Ratings Game Mus
 - [ ] The full *Illest* track list and his first single's name
 - [x] Spotify artist link (added, with an embedded player)
 - [ ] Direct Apple Music, YouTube and SoundCloud links (the buttons currently open a search)
-- [ ] Original artwork files (covers are cropped from Instagram screenshots), plus the *No More* cover
+- [ ] Original artwork files (covers are cropped from screenshots), plus the *No More* and *Illest* covers
+- [ ] Release dates for *In Too Deep*, *In My Head* and *Lost*
 - [ ] The story in his own words, plus gigs, radio plays and press quotes
 - [ ] A bookings email
 - [ ] A few high-res press photos
