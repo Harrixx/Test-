@@ -190,7 +190,7 @@ button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:linear-gradient(135deg,#3a1650,#6d28d9);color:#fff;font-weight:600;padding:9px 16px;border-radius:999px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgba(109,40,217,.35)}
 .toast.on{opacity:1}
 
-/* gossip note after serving */
+/* beef note after serving */
 .note{position:fixed;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translateX(-50%) rotate(-1.5deg);width:min(360px,calc(100% - 40px));background:linear-gradient(135deg,#fff5fb,#ffe3f1);color:var(--cream);border:2px solid #fff;border-radius:18px;padding:12px 14px;z-index:55;box-shadow:0 14px 34px rgba(255,61,154,.3);font-family:var(--f-hand);font-size:22px;line-height:1.15;animation:pin .35s cubic-bezier(.3,1.6,.5,1);display:flex;gap:10px;align-items:flex-start}
 .note .ava{width:46px;height:46px}
 .note .who{font-family:var(--f-ui);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px}
@@ -225,7 +225,7 @@ button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
 .squad .ava{width:40px;height:40px;margin:0 -5px}
 .reset{font-size:12px;color:var(--muted);text-decoration:underline;padding:4px;align-self:center}
 
-/* drawn drinks */
+/* drawn items */
 .drink{display:block;width:92%;height:92%;overflow:visible;filter:drop-shadow(0 2px 2px rgba(58,22,80,.35))}
 .chip .drink{width:26px;height:26px}
 .tray .big .drink{width:40px;height:40px}
@@ -233,7 +233,7 @@ button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
 .ladder span .drink{opacity:.35}
 .ghost .drink{width:48px;height:48px}
 
-/* the tea (feed) */
+/* The Beef (feed) */
 .feedhead{background:linear-gradient(135deg,#ff3d9a,#a855f7);color:#fff;border:2px solid #fff;border-radius:22px;padding:14px 16px;box-shadow:var(--glow)}
 .feedhead h2{margin:0;font-size:24px;font-family:var(--f-sign);font-weight:400}
 .feedhead p{margin:4px 0 0;color:rgba(255,255,255,.92);font-size:13px;line-height:1.4}
@@ -448,7 +448,7 @@ button.bubble{font:inherit;cursor:pointer;width:100%}
 .hrow .lvl{justify-content:center}
 .hrow .btn{padding:3px 9px;font-size:12px}
 
-/* the tea */
+/* The Beef */
 .feedhead{padding:8px 14px}
 .feedhead h2{font-size:20px}
 .feedhead p{font-size:12px}
@@ -940,56 +940,56 @@ const eMax = () => E_BASE + 3*comfort();
 // the cast: nine artists and friends in Northside, portraits from the supplied artwork
 const PEOPLE = {
   imani:{ name:'Imani', role:'DJ, runs the Friday cyphers', from:0, photo:true, gossip:[
-    "I play Rex Royale's 'favourite song' every Friday. He's never noticed it's a diss track about him, slowed down.",
-    "Finn requested a slow jam, then didn't ask anyone to dance. Tragic. I played it twice.",
+    "Rex Royale made me play his artist's new single. The dance floor emptied. I'm not saying it's bad. The floor is saying it's bad.",
+    "Finn requested his own mixtape at my set. Twice. Under a fake name.",
     "Someone leaves red roses on Ro's old studio chair. Every Thursday. Never seen who.",
-    "Leo pays for studio snacks in burnt cookies. I know where he gets them. It's Sofia.",
-    "Zara asked for 'gym music'. I sent her a drill beat. Her class has never squatted faster."]},
+    "Poppy gave my last set two stars. Two. I've framed it. Motivation.",
+    "Zara and Finn's beef is fake. I've seen them share headphones. Allegedly."]},
   poppy:{ name:'Poppy', role:'Music blogger, hosts open mic', from:0, photo:true, gossip:[
-    "Rex Royale has read 'The Art of the Deal' eleven times. Still signs artists to terrible deals.",
-    "Ruby's crew is called 'We Know What You Did'. They've never lost a battle.",
+    "My review of Imani's set: 'loud, proud and two stars'. She hasn't spoken to me since. Worth it.",
+    "Ruby says Rafi stole her snare. Rafi says he 'found' it. On her hard drive.",
     "Someone's been buying every old Northside vinyl from the charity shop. Cash. Big hat.",
-    "Finn rhymed 'wave' with 'wave' three times at open mic. The crowd still went wild.",
+    "Finn rhymed 'wave' with 'wave' three times at open mic. I'm writing a whole article about it.",
     "Ro had a secret blog account. Username: Mrs R. Booth. I knew. I kept quiet."]},
   ruby: { name:'Ruby', role:'Producer, beat lab on Quay Street', from:0, photo:true, gossip:[
-    "Someone ordered a beat 'heavy enough to end a career'. Her words. I'm sure she meant a hit.",
+    "Rafi's new beat uses my snare. MY snare. I'd know it anywhere. I recorded it hitting a bin.",
     "Rex Royale ordered forty 'Royale Records' hoodies. Paid up front. Before he even owns the block.",
     "Ro bought a sample pack off me the week she vanished. Said she needed 'a soundtrack for hiding'.",
-    "Rafi came to my session to 'learn about 808s'. Made a beat. It's mostly cowbell. Terrible beat.",
+    "Lily's label offered me a deal. I read the contract. They wanted my beats AND my dog. I don't have a dog.",
     "Finn ordered a chain that says 'World's Best Freestyler'. For himself. Paid extra for glitter."]},
   finn: { name:'Finn', role:'Skater and freestyler', from:0, photo:true, gossip:[
     "Me and Zara are NOT rivals. She just happens to battle whenever I'm on the mic. Glaring.",
-    "Lily came to my skate session and spent the whole hour photographing buildings. For 'work'.",
+    "Zara says she's undefeated. She's lost to me twice. In my head. Still counts.",
     "Rex has a tour bus by the river that only moves at night. Saw it from the skate park at dawn.",
-    "Imani's mixes are the only reason I can land a kickflip at 6am. Don't tell her.",
+    "Poppy wrote a whole article about me rhyming 'wave' with 'wave'. It's her most-read post ever. You're welcome.",
     "Ro taught me to freestyle. Said the best bars always come out eventually."]},
   zara: { name:'Zara', role:'Battle rapper', from:0, photo:true, gossip:[
     "Finn came to my battle workshop once. Left during warm-up 'to catch a beat'. There was no beat.",
     "Rex Royale asked for 'discreet' battle coaching. Wore a fake moustache. He already has a moustache.",
     "Someone's been spraying lyrics on the bridge at midnight. Good handwriting. Better bars. I'd battle them.",
     "Ro won the Northside battle every year. Last year she won and nobody saw her get on stage.",
-    "Leo walks past the café at 6am every day. He's not going anywhere. He's going to Sofia."]},
-  sofia:{ name:'Sofia', role:'R&B singer, café gigs', from:0, photo:true, gossip:[
-    "Leo buys one iced latte at every gig and stays forty minutes. He hates coffee.",
-    "Rex Royale booked sixty bottles of champagne for an 'investors' party'. On a bus.",
+    "Lily's label wanted to sign me. I told them to sign their own resignation letters."]},
+  sofia:{ name:'Sofia', role:'R&B singer', from:0, photo:true, gossip:[
+    "Royale Records leaked my demo with Rex singing on the chorus. Rex. Singing. My ears are still recovering.",
+    "Leo mixes my vocals for free, then stands front row at every show. Every show. Hmm.",
     "Rafi tried to buy my song lyrics. I said no. He came back in sunglasses and tried again.",
-    "Ro used to come to my 5am rehearsals with two coffees. One for her, one 'for the lookout'.",
-    "Someone's STILL buying two coffees at 5am. Cash. Big hat. Won't make eye contact."]},
+    "Ro used to sit at the back of my 5am rehearsals. Never said a word. Just nodded.",
+    "Someone in a big hat claps at the end of every rehearsal, then disappears. Who IS that?"]},
   rafi: { name:'Rafi', role:'Beatmaker', from:0, photo:true, gossip:[
-    "Someone asked me to make a jingle for 'Royale Riverside Apartments'. Then made me promise not to tell. Oops.",
+    "Ruby says I stole her snare. I sampled it. Respectfully. Without asking. Respectfully.",
     "Someone borrows my beat machine at night and puts it back with new beats on it. Fire beats. Who IS that?",
     "Ro paid for every kid's studio session last winter. Cash. Told me to say it was a 'grant'.",
     "Zara battled me for free studio time. I lost. I'm still recovering.",
-    "Poppy says I owe the library a rhyming dictionary. I don't know what she's talking about. (I do.)"]},
+    "Rex asked me to make a jingle for 'Royale Riverside Apartments'. I made it. It's all cowbell. Petty? Yes."]},
   lily: { name:'Lily', role:'Works at Royale Records', from:0, photo:true, gossip:[
     "I'm not allowed to say who my boss is. He has a moustache. That's all I'll say.",
     "Every artist on the block has had a 'very generous' contract this month. Except this studio. Twice.",
-    "My boss calls Northside 'Royale Riverside'. Nobody here calls it that. Nobody here will.",
+    "My boss leaked Sofia's demo to 'build hype'. It built a lot of hate. Mostly for him.",
     "Ruby found out my boss's name before I did. I don't know how. I'm scared of her.",
     "Honestly? I love it here. I might be on the wrong side of this."]},
   leo:  { name:'Leo', role:'Sound engineer at The Booth', from:0, photo:true, gossip:[
-    "I drove a man in a suit to Rex's tour bus at midnight. Tipped me fifty quid to forget his face. Forgot it. Kept the fifty.",
-    "Sofia gives me the burnt cookies from the café for free. I've started burning them myself.",
+    "I've got everyone's unreleased tracks on one hard drive. I am the most powerful person in Northside.",
+    "Finn's 'freestyles' are written. I've seen the notebook. There are drafts. There are crossings out.",
     "Ro's last session file is called 'DON'T SELL'. It's just a beat. A really, really good beat.",
     "Finn and Zara both asked me to judge a rap battle. Neither turned up. Both claimed victory.",
     "Someone in a big hat comes to the 5am open mic every Thursday. Never performs. Carries roses."]},
@@ -1048,7 +1048,7 @@ const CHAPTERS = [
         [null,"One photo stops you: Ro in the booth with a little girl in a yellow jacket and headphones far too big for her."],
         ['imani',"...that's me. I was seven. She gave me my first decks. I've never told anyone that."]]},
       { name:'Unlock the vault', cost:4, scene:[
-        [null,"The vault opens. Inside: a desk, a kettle, and a ledger in Ro's handwriting."],
+        [null,"The vault opens. Inside: a desk, a dusty drum machine, and a ledger in Ro's handwriting."],
         [null,"Studio time, paid in cash, for every young artist on the block. For eleven years."],
         ['rafi',"And all the gear I make beats on? She paid for it. Told me it was a 'grant'."]]},
       { name:'Fix the vocal booth', cost:4, scene:[
@@ -1064,7 +1064,7 @@ const CHAPTERS = [
   { title:'Battle for the Block',
     intro:[
       [null,"The council vote on Rex's luxury flats is in nine days. He's moved it to a Tuesday morning. Sneaky."],
-      ['sofia',"Leave Tuesday to me. I'm singing at every café on the block. Every set ends with 'Save The Booth'."],
+      ['sofia',"Leave Tuesday to me. I'm singing at every club on the block. Every set ends with 'Save The Booth'."],
       [null,"The merch stand is open. Time to dress the part."]],
     tasks:[
       { name:'Set up the stage lights', cost:4, scene:[
@@ -1103,36 +1103,36 @@ const SHOP = [
 // {by, about, text, replies:[[who, text]], from?: chapter it appears in}
 // {by, about, text, replies:[[who, text]], from?: chapter it appears in}
 const POSTS = [
-  { by:'ruby', about:'leo', text:"Leo has bought eleven iced lattes at Sofia's gigs this week. ELEVEN. He hates coffee.", replies:[['leo',"I'm hydrating."],['zara',"With COFFEE, Leo?"],['sofia',"He's very sweet. So are the lattes."]] },
-  { by:'imani', about:'ruby', text:"Ruby turned up to my set covered head to toe in spray paint. Said it was 'a look'. Honestly? It was.", replies:[['ruby',"Studio to stage. Efficiency."],['zara',"I'm stealing this."]] },
-  { by:'zara', about:'finn', text:"Finn's battle record: one warm-up, half a bar, and a 'sudden family emergency'. His family was in the crowd.", replies:[['finn',"They were VERY distracting."],['leo',"Can confirm. His mum was cheering."]] },
-  { by:'ruby', about:'rafi', text:"Rafi came to my session to 'learn about 808s'. Made a beat. It's 90% cowbell. It's a terrible beat.", replies:[['rafi',"It's a GREAT cowbell though."]] },
-  { by:'poppy', about:'ruby', text:"Open mic results: Ruby's crew won again. Tiebreaker was 'who's beefing with who'. They knew more than the host.", replies:[['ruby',"Research, Poppy."]] },
-  { by:'rafi', about:'imani', text:"Imani played my beat at 1am and told the whole room it was 'for the producer with the sad playlist'.", replies:[['imani',"It was a VERY sad playlist."],['ruby',"Who's he sad about though?"]] },
+  { by:'poppy', about:'ruby', text:"BREAKING: Ruby says Rafi's new beat uses her snare. Rafi says he 'found' it. On her hard drive. 👀", replies:[['rafi',"It was in a public folder."],['ruby',"It was in a folder called PRIVATE, Rafi."]] },
+  { by:'imani', about:'poppy', text:"Poppy gave my set two stars. TWO. I've printed it out and stuck it on my decks. Fuel.", replies:[['poppy',"It was a generous two."],['zara',"Ohhh she's cooking you."]] },
+  { by:'zara', about:'finn', text:"Finn's battle record: one warm-up, half a bar, and a 'sudden family emergency'. His family was in the crowd.", replies:[['finn',"They were VERY distracting."],['leo',"Can confirm. His mum was cheering for Zara."]] },
+  { by:'ruby', about:'rafi', text:"Rafi's latest beat: 90% cowbell, 10% MY snare. Bold choices for a thief.", replies:[['rafi',"The cowbell is mine though."]] },
+  { by:'leo', about:'finn', text:"Finn's 'freestyles' are written. I've seen the notebook. There are DRAFTS. 📓", replies:[['finn',"Leo, we said that was between us."],['zara',"I KNEW IT."]] },
+  { by:'rafi', about:'imani', text:"Imani played my beat at 1am and told the whole room it was 'for the producer with the sad playlist'.", replies:[['imani',"It was a VERY sad playlist."],['ruby',"Sad because it's MY snare."]] },
   { by:'imani', about:'lily', text:"There's a girl in a denim jacket photographing every building on the block. Measuring windows. Smiling far too much.", replies:[['lily',"Hi! I'm Lily! I'm just... admiring the windows!"],['poppy',"Nobody admires windows that much, Lily."]] },
   { by:'finn', about:'zara', text:"Zara rapped a whole diss track about me at the skate park. Rhymed 'Finn' with 'never gonna win' six times.", replies:[['zara',"Seven."],['imani',"It slapped though."]] },
-  { by:'leo', about:'sofia', text:"Sofia's café gigs are the best thing in Northside. Not that I'm at every one. I'm not. Most of them.", replies:[['sofia',"You were at two yesterday."],['ruby',"oh this is a SITUATION"]] },
-  { by:'imani', about:'zara', text:"Zara asked me for 'motivating gym music'. I sent her a drill beat. Her class broke the leg press.", replies:[['zara',"Personal best. Thank you, Imani."]] },
+  { by:'sofia', about:'lily', text:"Royale Records leaked my demo with REX singing the chorus. Lily. Explain.", replies:[['lily',"I tried to stop him. He did harmonies."],['ruby',"Delete it from the internet. All of it."]] },
+  { by:'poppy', about:'finn', text:"Finn rhymed 'wave' with 'wave' three times at open mic. I wrote an article about it. It's my most-read article EVER.", replies:[['finn',"You're welcome."],['poppy',"I hate that."]] },
   { by:'ruby', about:'finn', text:"Finn ordered a custom chain that says 'World's Best Freestyler'. With glitter. For himself.", replies:[['finn',"Self-love."],['zara',"I'm ordering one that says 'Also Fine'."]] },
-  { by:'finn', about:'lily', text:"Lily asked me to post about 'luxury riverside living'. I asked where. She pointed at Leo's van.", replies:[['leo',"It IS luxury. It's got a kettle."],['lily',"Please delete this."]] },
+  { by:'finn', about:'lily', text:"Lily asked me to post about 'luxury riverside living'. I asked where. She pointed at Leo's van.", replies:[['leo',"It's got a subwoofer. That IS luxury."],['lily',"Please delete this."]] },
   { by:'poppy', about:'rafi', text:"Rafi has borrowed every music production book the library owns. Also one poetry book. It's overdue. Who is he writing love songs for?", replies:[['rafi',"Research."],['ruby',"Research into WHO, Rafi?"]] },
   { by:'sofia', about:'rafi', text:"Rafi did NOT wear sunglasses to steal my lyrics. He wore them because it was 'sunny'. Indoors. With a fake beard.", replies:[['rafi',"It was a disguise beard. Totally different thing."]] },
-  { by:'imani', about:'finn', text:"Finn requested a slow jam then didn't ask anyone to dance. I played it twice out of pity.", replies:[['finn',"I was building suspense."],['zara',"For who?"]] },
-  { by:'sofia', about:'leo', text:"Leo left a note on my mic stand: 'You are the beat to my drop.' I've laminated it.", replies:[['leo',"That was meant to be private!!"],['poppy',"Nothing is private in Northside, Leo."]] },
-  { by:'ruby', about:'poppy', text:"Poppy shushed me at my own gig. Then at the open mic. Then at the café. She's everywhere.", replies:[['poppy',"You were doing 'whisper rap' at full volume, Ruby."]] },
-  { by:'zara', about:'leo', text:"Leo walks past Sofia's café at 6am every day. He's not going anywhere. Except Sofia.", replies:[['leo',"Walking is cardio."],['sofia',"👀"]] },
+  { by:'imani', about:'finn', text:"Finn requested his own mixtape at my set. Twice. Under a fake name. The fake name was 'Finn 2'.", replies:[['finn',"Finn 2 is a different person."],['zara',"Finn 2 also flops."]] },
+  { by:'sofia', about:'leo', text:"Leo mixes my vocals for free, then stands front row at every single show. Every. Show.", replies:[['leo',"Quality control."],['poppy',"Nothing is private in Northside, Leo."]] },
+  { by:'ruby', about:'poppy', text:"Poppy shushed me at my own gig. Then at the open mic. Then in the studio. She's everywhere.", replies:[['poppy',"You were doing 'whisper rap' at full volume, Ruby."]] },
+  { by:'zara', about:'lily', text:"Lily's label offered me a deal. I told them to sign their own resignation letters. 💅", replies:[['lily',"To be fair, I did."],['imani',"WE LOVE A LABEL EXIT."]] },
   { by:'leo', about:'finn', text:"Finn and Zara both asked me to judge a rap battle. Neither turned up. Both claimed victory.", replies:[['finn',"I won."],['zara',"I won."]] },
   { by:'lily', about:'ruby', text:"Ruby found out my boss's name before I did. She just looked at me and went 'moustache?'", replies:[['ruby',"I have my ways."]] },
   { by:'finn', about:'rafi', text:"Rafi fixed my headphones for free and stayed to listen to my mixtape. Lovely manners. Brave ears.", replies:[['rafi',"It was... a journey."]] },
-  { by:'poppy', about:'finn', text:"Finn rhymed 'wave' with 'wave' three times at open mic. The crowd went wild. I don't understand music any more.", replies:[['finn',"It's called flow, Poppy."]] },
+  { by:'rafi', about:'zara', text:"Zara battled me for free studio time. I lost. I'm still recovering. Please send help.", replies:[['zara',"No."],['ruby',"I'll send cowbell."]] },
   { from:1, by:'leo', about:'imani', text:"Someone in a big hat comes to the Thursday 5am open mic. Never performs. Carries red roses. Imani, didn't you say...?", replies:[['imani',"...the roses on Ro's chair. EVERY THURSDAY."],['poppy',"Adding this to the evidence board."]] },
-  { from:1, by:'sofia', about:'poppy', text:"Poppy has an 'evidence board' in the blog office now. It's mostly string and my café receipts.", replies:[['poppy',"Your receipts are VERY suspicious, Sofia. Two coffees. 5am. Every day."]] },
+  { from:1, by:'sofia', about:'poppy', text:"Poppy has an 'evidence board' in the blog office now. It's mostly string and blurry photos of a big hat.", replies:[['poppy',"That hat is EVERYWHERE, Sofia. Every Thursday."]] },
   { from:1, by:'lily', about:'zara', text:"Zara asked if I could freestyle. I said no. She said 'then you can't spit for that label either'. Brutal.", replies:[['zara',"Tough love."]] },
   { from:1, by:'rafi', about:'leo', text:"Someone keeps borrowing my beat machine at night and leaving fire beats on it. Leo, you're here till 3am. Spill.", replies:[['leo',"Big hat. Small torch. Plays like a legend."],['zara',"Same person spraying bars on the bridge? Because I'd still battle them."]] },
   { from:2, by:'rafi', about:'lily', text:"Lily just ripped up a Royale Records contract on stage and threw it like confetti. Iconic.", replies:[['lily',"The crowd deserved better content."]] },
   { from:2, by:'poppy', about:'lily', text:"Rex asked me to 'delete' my blog post about the flats. I've pinned it to the top. With a spotlight GIF.", replies:[['lily',"ICONIC."],['imani',"The GIF was my idea."]] },
   { from:2, by:'imani', about:'rafi', text:"Rex wants 'something presidential' to walk on to at the vote. I've queued the diss track about him. Rafi built me a bigger speaker.", replies:[['rafi',"For the bass."]] },
-  { from:2, by:'sofia', about:'zara', text:"Zara's running a 'Save The Booth' block party. Ro's old route. Everyone's coming. Even Finn.", replies:[['finn',"I'm coming for the snacks."],['zara',"There are no snacks, Finn."]] },
+  { from:2, by:'sofia', about:'zara', text:"Zara's running a 'Save The Booth' block party. Ro's old route. Everyone's coming. Even Finn.", replies:[['finn',"I'm coming to battle."],['zara',"You're coming to lose, Finn."]] },
 ];
 POSTS.forEach((p,i) => { p.id = i; p.at ??= i; p.from ??= 0; });
 
@@ -1787,73 +1787,73 @@ function tutPlace(){
 }
 
 /* ---------- rap battles: each opponent spits three bars; you pick the comeback ---------- */
-// options: [comeback, crowd points]; 3 = bars, 1 = mid, -2 = flop. diff = how hard the opponent hits back (1 to 3)
+// options: [comeback, crowd points]; 3 = savage, 1 = mid, -2 = flop. diff = how hard the opponent hits back (1 to 3)
 const BATTLES = {
   zara:{ diff:3, rounds:[
-    ["Step in my cypher, you're shaking already / My bars hit hard and my flow stays steady",
-      [["Steady? Your flow's like a bus that's late / I'm the main event, you're the warm-up act, mate",3],["You talk a lot but I'm still standing here / Your bars are fine, I guess, kind of clear",1],["Um... nice jacket, is it new?",-2]]],
-    ["I've won every battle from here to the sea / There's a hall of fame and it's just full of me",
-      [["A hall full of you? Then it's empty and cold / You've been winning since never, that story's old",3],["Yeah you win a lot but today's my day / So step to the side, I'm here to stay",1],["I forgot my next line, give me a sec",-2]]],
-    ["Last round, last chance, better make it count / You owe me respect, I'm collecting the amount",
-      [["Collect what you're owed? I'll pay you in losses / I don't take orders, I'm one of the bosses",3],["I don't owe you nothing, I came here to win / Count it all up and let the round begin",1],["Can we call it a draw? I'm a bit tired",-2]]]]},
+    ["You stepped in my cypher? That's your first mistake / I eat rappers like you, there's no second take",
+      [["You eat rappers? Then you're starving tonight / I'm the meal you'll never get a single bite",3],["I'm not scared of you, I came here to fight / Talk all you want, I'm winning tonight",1],["Please be nice, it's my first time",-2]]],
+    ["I've ended careers with a single line / Your whole discography's not worth my time",
+      [["Ended careers? Name one, I'll wait / You've been running that line since 2008",3],["My catalogue's small but it's growing fast / You're the present now, but you'll soon be the past",1],["I don't really have a discography yet",-2]]],
+    ["Last round and I'm bored, you're already done / I've beaten better rappers just for fun",
+      [["Bored? That's the crowd, they've heard it before / Same bars, same moves, same snore, same score",3],["If you're that bored, then get off the stage / I'm just getting started, I'm turning the page",1],["Same, honestly. Can we stop?",-2]]]]},
   finn:{ diff:1, rounds:[
-    ["I kickflip bars while you trip on your laces / My wave's so big it's in two different places",
-      [["Two places? Your wave's a puddle on the floor / Your mum's the only fan screaming 'encore'",3],["You skate alright but your rhymes need work / Every time you rap, the whole crowd smirks",1],["I like skateboards too, actually",-2]]],
-    ["Wave, wave, wave, I'm riding the wave / Everybody knows I'm the best on the stage",
-      [["You rhymed wave with wave, that's the fourth time today / Even your skateboard is rolling away",3],["Stage and wave don't rhyme, my guy / I'll rap circles round you, I don't even try",1],["That was pretty good, honestly",-2]]],
-    ["Glitter on my chain says World's Best Freestyler / Every time I drop, the crowd gets wilder",
-      [["You bought that chain yourself, it's a gift to your ego / I'm the real deal, you're a glittery echo",3],["Nice chain, shame the bars don't match / You're a decent skater, that's your only catch",1],["Where did you get that chain? I want one",-2]]]]},
+    ["I kickflip over rappers like you every day / You're so forgettable, they forget what you say",
+      [["Kickflip? You fell off your board and your career / Your mum's the only fan who still turns up here",3],["Your skating's alright but your rhymes are tired / I'll be the reason you're finally retired",1],["I can't skate, so fair play",-2]]],
+    ["Wave, wave, I'm riding the wave / Everyone in Northside knows I own the stage",
+      [["You rhymed wave with wave, and you wrote that down / Leo's seen your notebook, the whole of the town",3],["Stage and wave don't even rhyme, my guy / I'll rap circles round you, I don't even try",1],["That was a good one, to be fair",-2]]],
+    ["'World's Best Freestyler' it says on my chain / You're a rainy Tuesday, I'm a hurricane",
+      [["You bought that chain yourself, with glitter on top / The only thing 'free' in your style is the flop",3],["Nice chain, shame the bars don't match / You're a decent skater, that's your only catch",1],["Where did you get that chain? I want one",-2]]]]},
   imani:{ diff:2, rounds:[
-    ["I run the decks and I run the room / When I drop the beat, the whole block goes boom",
-      [["You run the decks but you can't run a verse / Press play all you want, my bars hit first",3],["Nice beats, but this is a rap fight / Stick to the music, I've got the mic",1],["Can you play my song after this?",-2]]],
-    ["I played your demo and the floor went cold / Your flow's so tired it's a hundred years old",
-      [["Cold? That's the air con you cranked to the max / You hide behind headphones, I'm dropping facts",3],["My demo's fine, you just played it wrong / Next time, press play on the actual song",1],["Oh no, was it really that bad?",-2]]],
-    ["Seven years old with my very first decks / I've been on this since you were learning to text",
-      [["Seven years spinning and you're still at the back / I stepped in tonight and I took the whole track",3],["Respect the history, but tonight is mine / You spin the records, I'll spit the line",1],["Aw, that's actually really sweet",-2]]]]},
+    ["I run the decks and I run this town / One slide of my fader and you're shut down",
+      [["You hide behind decks 'cause you can't spit a verse / Pressing play isn't talent, you're a jukebox, but worse",3],["Nice beats, but this is a rap fight / Stick to the music, I've got the mic",1],["Can you play my song after this?",-2]]],
+    ["I played your demo and the floor went dead / Even the speakers begged me to stop, they said",
+      [["Floor went dead? That's what happens when you play / Poppy's two-star review is still framed on your wall today",3],["My demo's fine, you just played it wrong / Next time, press play on the actual song",1],["Oh no, was it really that bad?",-2]]],
+    ["Seven years old on my very first decks / You were still learning to spell, now you're learning respect",
+      [["Seven years spinning and still stuck at the back / Twenty years from now you'll be playing MY track",3],["Respect the history, but tonight is mine / You spin the records, I'll spit the line",1],["Aw, that's actually really sweet",-2]]]]},
   ruby:{ diff:2, rounds:[
-    ["I make the beats that you wish you could ride / I know all your secrets, there's nowhere to hide",
-      [["Know all my secrets? Then you know this too / I'm winning tonight and there's nothing you can do",3],["Your beats are cool but your bars are thin / Make me a beat and I'll show you a win",1],["Please don't tell anyone my secrets",-2]]],
+    ["I know every secret in this whole town / One word from me and your career's shut down",
+      [["You know every secret but you can't make a hit / Rafi stole your snare and he did more with it",3],["Spill what you want, I've got nothing to hide / My bars are clean and the crowd's on my side",1],["Please don't tell anyone my secrets",-2]]],
     ["Spray paint on my jacket and art in my soul / You're a blank wall and I'm on a roll",
-      [["A blank wall? Perfect, I'll write my name / In letters so big you'll forget your game",3],["Art's your thing, but this is a battle / Put the can down before you rattle",1],["I don't really get art, sorry",-2]]],
+      [["A blank wall? Good, I'll write your defeat / In letters so big they can read it from the street",3],["Art's your thing, but this is a battle / Put the can down before you rattle",1],["I don't really get art, sorry",-2]]],
     ["My crew's never lost, we know what you did / You're stepping to Ruby? You're just a kid",
-      [["Your crew's not here, so it's just you and me / Without your squad you're a lonely MC",3],["I'm not a kid, I'm a problem for you / Your crew can watch while I see this through",1],["What did I do? Who told you?",-2]]]]},
+      [["Your crew's not here, so who's holding your hand? / Without them you're a solo act nobody planned",3],["I'm not a kid, I'm a problem for you / Your crew can watch while I see this through",1],["What did I do? Who told you?",-2]]]]},
   rafi:{ diff:1, rounds:[
-    ["I build the beats that the whole block plays / My drums hit harder than a hundred bad days",
-      [["Your drums are ninety percent cowbell, bro / The whole block's begging you to turn it down low",3],["Your beats are fine but you can't rap them / Leave it to me, I'll come and wrap them",1],["Can I borrow your beat machine later?",-2]]],
-    ["I wear a disguise and nobody knows / Undercover, that's how it goes",
-      [["A fake beard indoors? We all saw you, Rafi / Your disguise game's weaker than decaf coffee",3],["Undercover? I could see you from space / Next time, try covering your actual face",1],["Wait, was that you at the café?",-2]]],
+    ["My beats are the reason this whole block bumps / Without my drums you're just talking to stumps",
+      [["Your beats bump 'cause you stole Ruby's snare / The only thing original is the cowbell in there",3],["Your beats are fine but you can't rap them / Leave it to me, I'll come and wrap them",1],["Can I borrow your beat machine later?",-2]]],
+    ["I'm a ghost in the booth and nobody knows / I write half the hits on the radio shows",
+      [["A ghost? We all saw you in that fake beard / The only thing you ghost is the fans, it's weird",3],["Ghost-writing hits? Then show us your name / Oh wait, you can't. That's the whole game",1],["Wait, you write for the radio? Can you help me?",-2]]],
     ["I write love songs in a poetry book / One verse from me and they're all hooked",
-      [["A poetry book that's three months overdue / Even the library's beefing with you",3],["Love songs are sweet, but this is a war / Put down the poems, I'm settling the score",1],["Who are the love songs for? Asking for a friend",-2]]]]},
+      [["A poetry book that's three months overdue / Even the library's got beef with you",3],["Love songs are sweet, but this is a war / Put down the poems, I'm settling the score",1],["Who are the love songs for? Asking for a friend",-2]]]]},
   sofia:{ diff:2, rounds:[
-    ["I sing like honey, you rap like a drill / I hit one note and the whole room's still",
-      [["Still 'cause they're sleeping, that ballad was long / I wake up the room with a real banger song",3],["Singing is nice but this is a battle / Swap the slow jams for something that'll rattle",1],["Can you sing at my birthday?",-2]]],
-    ["Every café gig is packed to the door / They come for the coffee, then beg me for more",
-      [["They come for the coffee, that part is true / Half of them are Leo, just staring at you",3],["A packed café? I'm filling the block / Your fans drink lattes, mine never stop",1],["I do love the lattes there, to be fair",-2]]],
-    ["I laminated love notes, I'm that kind of star / You're a demo tape stuck in a broken car",
-      [["You laminated a note that Leo wrote / He's got better bars than you, and that's all she wrote",3],["A broken car still gets me to the show / I'm here, I'm hot, and I'm ready to go",1],["Okay, that one hurt a bit",-2]]]]},
+    ["I sing like an angel, you rap like a drill / One note from me and the whole room's still",
+      [["The room went still 'cause they fell asleep / Your ballads so slow that the crowd counts sheep",3],["Singing is nice but this is a battle / Swap the slow jams for something that'll rattle",1],["Can you sing at my birthday?",-2]]],
+    ["Every show I play is packed to the door / They come for one song, then beg me for more",
+      [["Packed to the door? Half of that's Leo / Front row every night, your one-man fan club, yo",3],["Your shows are cool, but I'm filling the block / Your fans sway politely, mine never stop",1],["Your shows are really good though",-2]]],
+    ["Royale tried to sign me, I told them no way / I'm too big for labels, I do it my way",
+      [["Too big for labels? They leaked you for free / With Rex on the chorus, the worst duet in history",3],["Do it your way, but tonight it's mine / I'll take the mic and I'll take my time",1],["That's actually really brave, well done",-2]]]]},
   poppy:{ diff:2, rounds:[
-    ["I blog about rappers who think they're the best / Then I write the review and I ruin the rest",
-      [["Write your review, I'll give you the quote: / 'Best night of my life' is all that you wrote",3],["Bad reviews don't scare me, I'm built different / Write what you want, I'll stay consistent",1],["Please don't write about me",-2]]],
-    ["Shh. Quiet. I'm about to begin / I've got an evidence board and your face is pinned in",
-      [["Pin me up there, I'm the main suspect / Guilty of bars that you'll never forget",3],["Your evidence board is just string and receipts / I've got real bars, not a pile of sheets",1],["Why is my face on your board??",-2]]],
-    ["I've read every rhyme in the dictionary twice / You've read nothing, and that's not nice",
+    ["I review rappers and I tear them apart / Two stars is the most I'd give your art",
+      [["Two stars? That's more than your blog's got readers / Your mum and a bot are your only believers",3],["Bad reviews don't scare me, I'm built different / Write what you want, I'll stay consistent",1],["Please don't write about me",-2]]],
+    ["Shh. Silence. I've got evidence on you / My board's full of string and your face is on it too",
+      [["Your board's full of string and still no clue / The only real mystery is who reads you",3],["Pin me up there, I'm the main suspect / Guilty of bars that you'll never forget",1],["Why is my face on your board??",-2]]],
+    ["I've read every rhyme in the dictionary twice / You've read nothing, and it shows. Not nice",
       [["You read every rhyme but can't use one right / I'm the whole library, you're a bookmark tonight",3],["Reading's cool, but this is a fight / Close the book and battle me right",1],["Can you recommend me a book?",-2]]]]},
   lily:{ diff:1, rounds:[
-    ["I've got a contract with your name on the line / Sign it tonight and you'll do just fine",
-      [["Your boss writes contracts like a trap with a bow / I'm not signing nothing, the answer is no",3],["I read the small print, I'm not that daft / Keep your contract, I'm keeping my craft",1],["Is there a pen? I'll have a look",-2]]],
+    ["I've got a contract with your name on the line / Sign it tonight or your career's out of time",
+      [["Your contracts are traps with a ribbon on top / Your boss leaked a demo with HIM singing. Stop.",3],["I read the small print, I'm not that daft / Keep your contract, I'm keeping my craft",1],["Is there a pen? I'll have a look",-2]]],
     ["I measure the windows on every street / Soon this whole block will be luxury suites",
-      [["Measuring windows like you're planning a crime / This block's not for sale, not now, not this time",3],["Luxury suites? Nobody wants that here / Pack up your tape measure and disappear",1],["Would I get a nice flat though?",-2]]],
+      [["Measuring windows like you're casing the joint / Your career's a tape measure: long, with no point",3],["Luxury suites? Nobody wants that here / Pack up your tape measure and disappear",1],["Would I get a nice flat though?",-2]]],
     ["I switched sides once, so I know how it's done / Watch your back, I could flip on anyone",
-      [["You switched 'cause you knew who was winning the war / You're still on our side, so what's this for?",3],["Flip if you want, I'm not worried at all / Northside's with me, and we'll never fall",1],["Please don't flip, we need you",-2]]]]},
+      [["You switch sides more than a DJ switches tracks / Nobody trusts you, so nobody's got your back",3],["Flip if you want, I'm not worried at all / Northside's with me, and we'll never fall",1],["Please don't flip, we need you",-2]]]]},
   leo:{ diff:1, rounds:[
-    ["I mix every track that comes through these doors / Without me your vocals would sound like snores",
-      [["You mix all day but you're stuck on one tune: / 'Sofia, Sofia', we'll hear it soon",3],["You make it sound good, but I make it hit / Without my verse there's nothing to fit",1],["Can you make my vocals louder?",-2]]],
-    ["I drive the van and I carry the gear / Without my wheels you'd never get here",
-      [["That van's got a kettle and a burnt cookie smell / You're driving to the café, we all know too well",3],["I can take the bus and still get on stage / The bars are mine, you just turn the page",1],["Can I get a lift home after?",-2]]],
-    ["Fifty quid tips and I forget every face / Yours is forgettable, so I'll win this place",
-      [["Forget my face, you'll remember this verse / I'll be in your headphones, the best and the worst",3],["Forget my face, but not my name / After tonight, you'll know my game",1],["Wait, who gave you fifty quid?",-2]]]]},
+    ["I've got everyone's unreleased tracks on one drive / One click from me and your career's not alive",
+      [["Leak my tracks? Go on, that's free promotion / You're a hard drive with legs and zero emotion",3],["My tracks are safe, I back up twice / Threaten me again and I'll roll the dice",1],["Please don't leak my tracks",-2]]],
+    ["I mix every hit that comes out of this place / Without me you'd sound like a phone in a case",
+      [["You mix all day but you're stuck on one song / Front row at Sofia's, you've been there all along",3],["You make it sound good, but I make it hit / Without my verse there's nothing to fit",1],["Can you make my vocals louder?",-2]]],
+    ["I know Finn writes freestyles, I know all the lies / I know what you're hiding behind those eyes",
+      [["You know all our secrets but you've got no bars / You're the one holding coats while we turn into stars",3],["Know what you want, I've got nothing to hide / My bars are real and I'm taking the ride",1],["What am I hiding? Who told you?",-2]]]]},
 };
-const CROWD = { 3:['OHHHH! 🔥','BARS! 🔥','THE CROWD IS GONE 😱','THEY SAID WHAT?! 😭'], 1:['Mid. 😐','Okay... 🤷','Some claps 👏'], '-2':['BOOO 🍅','Awkward... 😬','Tumbleweed 🌵'] };
+const CROWD = { 3:['OHHHH! 🔥','BARS! 🔥',"THEY'RE FINISHED 💀",'CALL AN AMBULANCE 🚑','NO WAY 😱'], 1:['Mid. 😐','Okay... 🤷','Some claps 👏'], '-2':['BOOO 🍅','Awkward... 😬','Tumbleweed 🌵','Get off the stage! 🍅'] };
 
 /* ---------- Fill the Bar: pick the word that rhymes AND makes sense ---------- */
 // [first line, second line with ___, [right answer, wrong, wrong, wrong]]
@@ -1864,8 +1864,8 @@ const FILLS = [
   ["They tried to buy the block with a briefcase of cash","We said no thank you, and gone in a ___",["flash","hurry","minute","bus"]],
   ["I don't need a crown to know I'm the king","Just give me a beat and I'll do my ___",["thing","homework","laundry","dishes"]],
   ["Spray can art on the underpass wall","We came from nothing and we're standing ___",["tall","short","sleepy","sideways"]],
-  ["Late-night studio, coffee gone cold","Every bar I write is worth more than ___",["gold","socks","cheese","Tuesdays"]],
-  ["Mic check one-two, can you hear me now?","The whole block's watching, so I'm taking a ___",["bow","nap","bath","biscuit"]],
+  ["Late-night studio, the beat's on hold","Every bar I write is worth more than ___",["gold","socks","cheese","Tuesdays"]],
+  ["Mic check one-two, can you hear me now?","The whole block's watching, so I'm taking a ___",["bow","nap","bath","selfie"]],
   ["Headphones on and the world goes quiet","One drop of the beat and it starts a ___",["riot","diet","nap","sale"]],
   ["I'm not here to play, I came here to win","Turn up the bass and let the show ___",["begin","end","stop","wait"]],
   ["Rex Royale came with a contract to sign","We ripped it in half 'cause the block is ___",["mine","his","closed","wet"]],
@@ -1873,7 +1873,7 @@ const FILLS = [
   ["Little notebook full of every rhyme","I've been writing bars since the start of ___",["time","lunch","school","Monday"]],
   ["They said I'd never make it out of the ends","Now I'm on the radio with all of my ___",["friends","plants","socks","homework"]],
   ["My flow's like water, it never stops","I'm climbing the charts, heading up to the ___",["top","shop","bottom","sofa"]],
-  ["The beat's so heavy it's shaking the floor","The crowd's going crazy, they're screaming for ___",["more","the door","snacks","less"]],
+  ["The beat's so heavy it's shaking the floor","The crowd's going crazy, they're screaming for ___",["more","the door","a refund","less"]],
   ["Zara's on the mic and she's fire tonight","Every single word lands perfectly ___",["right","wrong","slowly","purple"]],
   ["Imani's on the decks and the needle drops","The bass hits so deep that the whole room ___",["bops","sleeps","cries","sits"]],
   ["Stayed up all night with a pen and a pad","Wrote the best verse that I ever ___",["had","made","wrote","bought"]],
@@ -2006,9 +2006,11 @@ function battlePost(w, l){
   const text = pick([
     `${W} just battled ${L} at The Booth and the crowd went MAD 🔥 ${L} is not okay 😭`,
     `Live from the cypher: ${W} vs ${L}. Not even close. ${W} took it 👑`,
-    `${L} stepped to ${W} tonight. Big mistake. The whole block heard it 📢`]);
+    `${L} stepped to ${W} tonight. Big mistake. The whole block heard it 📢`,
+    `${W} ended ${L}'s whole career tonight. Funeral's on Friday ⚰️ (they're fine)`,
+    `Somebody check on ${L}. ${W} just took them APART in the cypher 💀`]);
   S.feed.unshift({ id:'b' + Date.now(), ts:Date.now(), liked:false, custom:{ by, about:l, text, replies:[
-    [l, pick(['Rematch. Tomorrow. Bring snacks.','I was warming up.','The mic was broken. Allegedly.','My mum said I won.'])],
+    [l, pick(['Rematch. Tomorrow. Bring tissues.','I was warming up.','The mic was broken. Allegedly.','My mum said I won.'])],
     [w, pick(['Any time 🎤',"Bars don't lie.",'Tell them I said hi 👋','Next.'])]] } });
   S.feedUnread++;
 }
