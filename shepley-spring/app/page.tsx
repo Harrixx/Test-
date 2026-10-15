@@ -42,7 +42,7 @@ export default function Home() {
           </div>
 
           <div className="relative lg:col-span-5">
-            <MaskReveal className="relative aspect-[5/7] w-full overflow-hidden rounded-[3px] lg:ml-auto lg:max-w-[26rem]">
+            <MaskReveal className="relative mx-auto aspect-[5/7] w-full max-w-md overflow-hidden rounded-[3px] lg:mr-0 lg:max-w-[26rem]">
               <Image
                 src="/images/heritage/selwyn-borehole.jpg"
                 alt="Founder Selwyn Smith smiling beside the blue pipework of the borehole at Shepley"
@@ -51,7 +51,7 @@ export default function Home() {
                 className="object-cover"
               />
             </MaskReveal>
-            <Reveal delay={0.3} className="mt-4 flex items-baseline justify-between gap-4 text-sm text-slate lg:ml-auto lg:max-w-[26rem]">
+            <Reveal delay={0.3} className="mx-auto mt-4 flex max-w-md items-baseline justify-between gap-4 text-sm text-slate lg:mr-0 lg:max-w-[26rem]">
               <span>Selwyn Smith (1942&ndash;2023), founder</span>
               <span className="tabular-nums">Shepley</span>
             </Reveal>

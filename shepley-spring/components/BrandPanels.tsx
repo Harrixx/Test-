@@ -9,7 +9,7 @@ export function BrandPanels({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3
       {/* Ice Valley: crisp glacial cyan */}
       <Link
         href="/brands/ice-valley"
-        className="group on-dark relative isolate flex min-h-[40rem] flex-col sm:min-h-[34rem] overflow-hidden rounded-[4px] bg-[linear-gradient(160deg,#073e63_0%,#0b5f8f_45%,#0a73ad_100%)] p-8 text-white sm:p-10 lg:min-h-[40rem]"
+        className="group on-dark relative isolate flex min-h-[40rem] flex-col overflow-hidden rounded-[4px] bg-[linear-gradient(160deg,#073e63_0%,#0b5f8f_45%,#0a73ad_100%)] p-8 text-white sm:p-10 lg:min-h-[40rem]"
       >
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(55%_45%_at_80%_62%,rgb(0_169_232/0.75)_0%,transparent_70%)] transition-opacity duration-700 group-hover:opacity-80" />
         <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full border border-white/20 transition-transform duration-[1.6s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-125" />
@@ -37,7 +37,7 @@ export function BrandPanels({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3
       {/* White Rock: deep indigo and gold */}
       <Link
         href="/brands/white-rock"
-        className="group on-dark relative isolate flex min-h-[40rem] flex-col sm:min-h-[34rem] overflow-hidden rounded-[4px] bg-[#202c56] p-8 text-white sm:p-10 lg:min-h-[40rem]"
+        className="group on-dark relative isolate flex min-h-[40rem] flex-col overflow-hidden rounded-[4px] bg-[#202c56] p-8 text-white sm:p-10 lg:min-h-[40rem]"
       >
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(80%_60%_at_80%_100%,rgb(168_210_230/0.28)_0%,transparent_70%)]" />
         <div aria-hidden="true" className="absolute inset-x-8 top-8 -z-10 h-px bg-gradient-to-r from-transparent via-[#c49a4c]/60 to-transparent sm:inset-x-10" />
@@ -48,7 +48,7 @@ export function BrandPanels({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3
             <Image src="/images/brands/white-rock-logo.png" alt="" width={631} height={410} className="h-auto w-full" />
           </span>
         </H>
-        <p className="mt-6 max-w-[16rem] text-lg leading-snug text-white/90 sm:max-w-xs">Drawn from an ancient Triassic aquifer: 250 million years in the making, and available nationally.</p>
+        <p className="mt-6 max-w-[16rem] text-lg leading-snug text-white/90 xl:max-w-xs">Drawn from an ancient Triassic aquifer: 250 million years in the making, and available nationally.</p>
         <div className="relative mt-auto flex items-end justify-between gap-4 pt-10">
           <span className="text-sm text-white/85">Official water of the Huddersfield Giants</span>
           <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#c49a4c] text-[#202c56] transition-transform duration-500 group-hover:rotate-[-45deg]">→</span>
@@ -59,7 +59,7 @@ export function BrandPanels({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3
           width={237}
           height={560}
           sizes="(min-width: 768px) 14vw, 36vw"
-          className="pointer-events-none absolute bottom-24 right-[8%] -z-10 w-[26%] max-w-[11rem] sm:bottom-20 sm:right-[10%] sm:w-[34%] rotate-[8deg] drop-shadow-[0_40px_40px_rgb(0_0_0/0.45)] transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-5 group-hover:rotate-[2deg]"
+          className="pointer-events-none absolute bottom-24 right-[8%] -z-10 w-[26%] max-w-[11rem] sm:w-[22%] md:bottom-14 md:w-[24%] xl:bottom-20 xl:right-[10%] xl:w-[34%] rotate-[8deg] drop-shadow-[0_40px_40px_rgb(0_0_0/0.45)] transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:-translate-y-5 group-hover:rotate-[2deg]"
         />
       </Link>
     </div>
