@@ -1,8 +1,11 @@
 export const site = {
   name: "Shepley Spring",
   legalName: "Shepley Spring Ltd",
-  // The deployed concept's own address. Set NEXT_PUBLIC_SITE_URL on Vercel.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://shepley-spring-concept.vercel.app",
+  // The deployed concept's own address: NEXT_PUBLIC_SITE_URL if set, otherwise the
+  // production URL Vercel provides automatically.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   officialUrl: "https://shepleyspring.co.uk",
   description:
     "Shepley Spring is a family-owned Yorkshire business bottling own label and branded spring water for the UK grocery and FMCG sector since 1996.",

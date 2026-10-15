@@ -60,6 +60,8 @@ for (const vp of [
   { name: "mobile", width: 390, height: 844 },
 ]) {
   const c = await browser.newContext({ viewport: vp, reducedMotion: "reduce" });
+  // Generous: on a cold cache the image optimiser processes every photo on first request.
+  c.setDefaultNavigationTimeout(90_000);
   const p = await c.newPage();
   for (const r of routes) {
     await p.goto(base + r, { waitUntil: "networkidle" });
