@@ -1,0 +1,20 @@
+{%- comment -%}
+  Address form fields.
+  Accepts:
+  - form: {Object} the customer_address form
+  - address_id: {String|Number} unique suffix for ids
+{%- endcomment -%}
+<label><span>{{ 'customer.fields.first_name' | t }}</span><input class="input" type="text" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></label>
+<label><span>{{ 'customer.fields.last_name' | t }}</span><input class="input" type="text" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></label>
+<label><span>{{ 'customer.fields.company' | t }}</span><input class="input" type="text" name="address[company]" value="{{ form.company }}" autocomplete="organization"></label>
+<label><span>{{ 'customer.fields.address1' | t }}</span><input class="input" type="text" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></label>
+<label><span>{{ 'customer.fields.address2' | t }}</span><input class="input" type="text" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2"></label>
+<label><span>{{ 'customer.fields.city' | t }}</span><input class="input" type="text" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></label>
+<label>
+  <span>{{ 'customer.fields.country' | t }}</span>
+  <select class="select" name="address[country]" id="AddressCountry-{{ address_id }}" data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+</label>
+<label><span>{{ 'customer.fields.province' | t }}</span><input class="input" type="text" name="address[province]" value="{{ form.province }}" autocomplete="address-level1"></label>
+<label><span>{{ 'customer.fields.zip' | t }}</span><input class="input" type="text" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></label>
+<label><span>{{ 'customer.fields.phone' | t }}</span><input class="input" type="tel" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></label>
+<label class="checkbox">{{ form.set_as_default_checkbox }} {{ 'customer.addresses.set_default' | t }}</label>

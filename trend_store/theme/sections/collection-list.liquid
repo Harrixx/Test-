@@ -1,0 +1,70 @@
+<section class="section page-width">
+  {%- if section.settings.heading != blank -%}
+    <div class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading | escape }}</h2>
+    </div>
+  {%- endif -%}
+  <ul class="collection-tiles">
+    {%- for block in section.blocks -%}
+      {%- assign c = block.settings.collection -%}
+      <li {{ block.shopify_attributes }}>
+        <a class="collection-tile" href="{% if c != blank %}{{ c.url }}{% else %}{{ routes.collections_url }}{% endif %}" style="--tile-color: {{ block.settings.color }};">
+          <span class="collection-tile__media">
+            {%- liquid
+              assign tile_image = block.settings.image | default: c.featured_image
+              if tile_image != blank
+                echo tile_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '200,300,400,600', sizes: '(min-width: 990px) 16vw, 33vw', class: 'collection-tile__img'
+              else
+                render 'icon', name: block.settings.icon, class: 'collection-tile__icon'
+              endif
+            -%}
+          </span>
+          <span class="collection-tile__title">
+            {%- if block.settings.title != blank -%}{{ block.settings.title | escape }}{%- elsif c != blank -%}{{ c.title | escape }}{%- else -%}{{ 'sections.collection_list.placeholder' | t }}{%- endif -%}
+          </span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
+
+{% schema %}
+{
+  "name": "Category tiles",
+  "class": "section-collection-list",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title override" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Falls back to the collection image, then the icon." },
+        {
+          "type": "select", "id": "icon", "label": "Icon",
+          "options": [
+            { "value": "star", "label": "Star" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "bolt", "label": "Bolt" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "truck", "label": "Truck" }
+          ],
+          "default": "star"
+        },
+        { "type": "color", "id": "color", "label": "Tile color", "default": "#FFE4DC" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category tiles",
+      "blocks": [{ "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" }]
+    }
+  ]
+}
+{% endschema %}

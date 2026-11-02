@@ -1,0 +1,29 @@
+{%- comment -%}
+  Newsletter signup (creates a customer with marketing consent tag).
+  Accepts:
+  - form_id: {String} unique id for this form on the page
+{%- endcomment -%}
+{%- form 'customer', id: form_id, class: 'newsletter-form' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  {%- if form.posted_successfully? -%}
+    <p class="form-message form-message--success" role="status">{{ 'newsletter.success' | t }}</p>
+  {%- else -%}
+    <div class="newsletter-form__row">
+      <label class="visually-hidden" for="{{ form_id }}-email">{{ 'newsletter.label' | t }}</label>
+      <input
+        id="{{ form_id }}-email"
+        type="email"
+        name="contact[email]"
+        class="input"
+        value="{{ form.email }}"
+        placeholder="{{ 'newsletter.label' | t }}"
+        autocomplete="email"
+        required
+      >
+      <button type="submit" class="button">{{ 'newsletter.button' | t }}</button>
+    </div>
+    {%- if form.errors -%}
+      <p class="form-message form-message--error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endform -%}

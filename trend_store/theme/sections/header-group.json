@@ -1,0 +1,21 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "msg-1": { "type": "announcement", "settings": { "text": "Free shipping on orders over $50", "link": "" } },
+        "msg-2": { "type": "announcement", "settings": { "text": "30-day hassle-free returns", "link": "" } },
+        "msg-3": { "type": "announcement", "settings": { "text": "New viral finds added every week", "link": "shopify://collections/trending" } }
+      },
+      "block_order": ["msg-1", "msg-2", "msg-3"],
+      "settings": { "interval": 4 }
+    },
+    "header": {
+      "type": "header",
+      "settings": { "menu": "main-menu", "sticky": true, "logo_width": 130 }
+    }
+  },
+  "order": ["announcement", "header"]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "about": { "type": "text", "settings": { "heading": "About us", "text": "<p>We hunt down the products everyone is talking about, test them, and ship them fast.</p>" } },
+        "shop": { "type": "link_list", "settings": { "heading": "Shop", "menu": "main-menu" } },
+        "help": { "type": "link_list", "settings": { "heading": "Help", "menu": "footer" } },
+        "newsletter": { "type": "newsletter", "settings": { "heading": "Get first dibs", "text": "<p>New drops and restocks, straight to your inbox.</p>" } }
+      },
+      "block_order": ["about", "shop", "help", "newsletter"],
+      "settings": { "show_payment_icons": true, "show_policies": true }
+    }
+  },
+  "order": ["footer"]
+}

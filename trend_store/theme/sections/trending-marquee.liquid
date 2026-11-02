@@ -1,0 +1,44 @@
+{%- if section.blocks.size > 0 -%}
+  <div class="marquee" style="--marquee-speed: {{ section.settings.speed }}s;" aria-label="{{ section.settings.label | escape }}">
+    <div class="marquee__track">
+      {%- for i in (1..2) -%}
+        <ul class="marquee__list"{% if i == 2 %} aria-hidden="true"{% endif %}>
+          {%- for block in section.blocks -%}
+            <li class="marquee__item" {% if i == 1 %}{{ block.shopify_attributes }}{% endif %}>
+              {% render 'icon', name: 'bolt', class: 'icon--sm' %}
+              {{- block.settings.text | escape -}}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Scrolling ticker",
+  "class": "section-marquee",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Accessible label", "default": "Trending categories" },
+    { "type": "range", "id": "speed", "label": "Loop duration", "min": 10, "max": 60, "step": 5, "unit": "s", "default": 30 }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "As seen on TikTok" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling ticker",
+      "blocks": [
+        { "type": "item", "settings": { "text": "As seen on TikTok" } },
+        { "type": "item", "settings": { "text": "Ships in 24h" } },
+        { "type": "item", "settings": { "text": "30-day returns" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

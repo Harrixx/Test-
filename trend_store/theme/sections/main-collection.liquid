@@ -1,0 +1,44 @@
+{%- paginate collection.products by section.settings.products_per_page -%}
+  <section class="section page-width">
+    <header class="collection-hero">
+      <h1 class="page-title">{{ collection.title | escape }}</h1>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="rte collection-hero__text">{{ collection.description }}</div>
+      {%- endif -%}
+      <p class="collection-hero__count">{{ 'products.facets.product_count' | t: count: collection.products_count }}</p>
+    </header>
+
+    {%- if section.settings.enable_filtering -%}
+      {% render 'facets', results: collection, url: collection.url %}
+    {%- endif -%}
+
+    {%- if collection.products.size > 0 -%}
+      <ul class="grid grid--{{ section.settings.columns_desktop }}-col">
+        {%- for product in collection.products -%}
+          {%- if forloop.index <= 4 -%}{%- assign card_loading = 'eager' -%}{%- else -%}{%- assign card_loading = 'lazy' -%}{%- endif -%}
+          <li>{% render 'product-card', card_product: product, loading: card_loading %}</li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <div class="empty-state">
+        <p>{{ 'products.facets.no_results' | t }}</p>
+        <a class="button" href="{{ collection.url }}">{{ 'products.facets.clear_all' | t }}</a>
+      </div>
+    {%- endif -%}
+
+    {% render 'pagination', paginate: paginate %}
+  </section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection products",
+  "class": "section-main-collection",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns_desktop", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": true },
+    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering and sorting", "default": true, "info": "Customize filters with the Search & Discovery app." }
+  ]
+}
+{% endschema %}

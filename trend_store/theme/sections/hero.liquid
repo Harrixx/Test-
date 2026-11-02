@@ -1,0 +1,75 @@
+<section class="hero hero--{{ section.settings.height }} hero--align-{{ section.settings.alignment }}{% if section.settings.image == blank %} hero--no-image{% endif %}" style="--overlay: {{ section.settings.overlay | divided_by: 100.0 }};">
+  {%- if section.settings.image != blank -%}
+    <div class="hero__media">
+      {{
+        section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          widths: '750,1100,1500,1920,2400',
+          sizes: '100vw',
+          class: 'hero__img'
+      }}
+    </div>
+  {%- endif -%}
+  <div class="page-width hero__content">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="hero__eyebrow">{% render 'icon', name: 'bolt', class: 'icon--xs' %}{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hero__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <div class="hero__text rte">{{ section.settings.text }}</div>
+    {%- endif -%}
+    <div class="hero__buttons">
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="button button--large">
+          {{ section.settings.button_label | escape }}{% render 'icon', name: 'arrow', class: 'icon--sm' %}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.button_label_2 != blank -%}
+        <a href="{{ section.settings.button_link_2 | default: routes.collections_url }}" class="button button--large button--ghost">
+          {{ section.settings.button_label_2 | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "class": "section-hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image", "info": "Leave empty for a bold gradient background." },
+    { "type": "range", "id": "overlay", "label": "Image overlay darkness", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 35 },
+    {
+      "type": "select", "id": "height", "label": "Height",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select", "id": "alignment", "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Trending this week" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The internet's favorite finds, all in one place" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Viral gadgets, glow-up beauty and cozy home upgrades — hand-picked, tested, and shipped fast.</p>" },
+    { "type": "text", "id": "button_label", "label": "Primary button label", "default": "Shop trending" },
+    { "type": "url", "id": "button_link", "label": "Primary button link" },
+    { "type": "text", "id": "button_label_2", "label": "Secondary button label", "default": "Browse categories" },
+    { "type": "url", "id": "button_link_2", "label": "Secondary button link" }
+  ],
+  "presets": [{ "name": "Hero banner" }]
+}
+{% endschema %}

@@ -1,0 +1,39 @@
+<div class="drawer" id="CartDrawer" data-cart-drawer aria-hidden="true">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" tabindex="-1">
+    <div id="CartDrawerContent" class="drawer__content" data-cart-count-value="{{ cart.item_count }}">
+      <header class="drawer__header">
+        <h2 id="CartDrawerTitle" class="drawer__title">
+          {{ 'sections.cart.title' | t }}
+          {%- if cart.item_count > 0 %} <span class="drawer__count">({{ cart.item_count }})</span>{% endif -%}
+        </h2>
+        <button type="button" class="icon-button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon', name: 'close' %}</button>
+      </header>
+
+      {%- if cart.item_count > 0 -%}
+        <div class="drawer__body">
+          {% render 'free-shipping-bar' %}
+          <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm" novalidate>
+            {% render 'cart-items', context: 'drawer' %}
+          </form>
+        </div>
+        <footer class="drawer__footer">
+          {% render 'cart-summary', form_id: 'CartDrawerForm' %}
+          <a href="{{ routes.cart_url }}" class="link drawer__view-cart">{{ 'sections.cart.view_cart' | t }}</a>
+        </footer>
+      {%- else -%}
+        <div class="drawer__body empty-state">
+          <p>{{ 'sections.cart.empty' | t }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button">{{ 'general.continue_shopping' | t }}</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </aside>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "class": "section-cart-drawer"
+}
+{% endschema %}

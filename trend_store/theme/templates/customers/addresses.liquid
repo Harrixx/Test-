@@ -1,0 +1,31 @@
+<section class="section page-width page-width--narrow">
+  <p><a class="link" href="{{ routes.account_url }}">&larr; {{ 'customer.account.title' | t }}</a></p>
+  <h1 class="page-title">{{ 'customer.addresses.title' | t }}</h1>
+
+  {%- paginate customer.addresses by 10 -%}
+    {%- for address in customer.addresses -%}
+      <div class="address-card">
+        {%- if address == customer.default_address -%}<p class="eyebrow">{{ 'customer.addresses.default' | t }}</p>{%- endif -%}
+        {{ address | format_address }}
+        <details>
+          <summary class="link">{{ 'customer.addresses.edit' | t }}</summary>
+          {%- form 'customer_address', address, class: 'stack-form' -%}
+            {% render 'address-fields', form: form, address_id: address.id %}
+            <button type="submit" class="button">{{ 'customer.addresses.update' | t }}</button>
+          {%- endform -%}
+        </details>
+        <form method="post" action="{{ address.url }}">
+          <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="link" onclick="return confirm({{ 'customer.addresses.delete_confirm' | t | json | escape }});">{{ 'customer.addresses.delete' | t }}</button>
+        </form>
+      </div>
+    {%- endfor -%}
+    {% render 'pagination', paginate: paginate %}
+  {%- endpaginate -%}
+
+  <h2 class="section__heading">{{ 'customer.addresses.add_new' | t }}</h2>
+  {%- form 'customer_address', customer.new_address, class: 'stack-form' -%}
+    {% render 'address-fields', form: form, address_id: 'new' %}
+    <button type="submit" class="button">{{ 'customer.addresses.add' | t }}</button>
+  {%- endform -%}
+</section>

@@ -1,0 +1,27 @@
+<section
+  class="section page-width"
+  data-recommendations
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading | escape }}</h2>
+    </div>
+    <ul class="grid grid--4-col">
+      {%- for recommendation in recommendations.products -%}
+        <li>{% render 'product-card', card_product: recommendation %}</li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "class": "section-recommendations",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You might also love" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 }
+  ]
+}
+{% endschema %}

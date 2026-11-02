@@ -1,0 +1,105 @@
+{%- comment -%}
+  Product card used in grids.
+  Accepts:
+  - card_product: {Object} product
+  - placeholder_index: {Number} used when card_product is blank (theme editor preview)
+  - loading: {String} 'lazy' (default) or 'eager'
+{%- endcomment -%}
+{%- if card_product != blank -%}
+  {%- liquid
+    assign trending_tag = settings.card_trending_tag | default: 'trending' | downcase
+    assign is_trending = false
+    for tag in card_product.tags
+      assign t = tag | downcase
+      if t == trending_tag
+        assign is_trending = true
+        break
+      endif
+    endfor
+
+    assign on_sale = false
+    if card_product.compare_at_price > card_product.price
+      assign on_sale = true
+      assign savings = card_product.compare_at_price | minus: card_product.price | times: 100 | divided_by: card_product.compare_at_price
+    endif
+
+    assign image_loading = loading | default: 'lazy'
+    assign first_variant = card_product.selected_or_first_available_variant
+    assign card_alt = card_product.featured_media.alt | default: card_product.title
+  -%}
+  <article class="card">
+    <a class="card__media" href="{{ card_product.url }}" tabindex="-1" aria-hidden="true">
+      {%- if card_product.featured_media -%}
+        {{
+          card_product.featured_media.preview_image
+          | image_url: width: 900
+          | image_tag:
+            loading: image_loading,
+            widths: '300,450,600,900',
+            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+            class: 'card__img',
+            alt: card_alt
+        }}
+        {%- if settings.card_show_secondary_image and card_product.media[1] != blank -%}
+          {{
+            card_product.media[1].preview_image
+            | image_url: width: 900
+            | image_tag:
+              loading: 'lazy',
+              widths: '300,450,600,900',
+              sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+              class: 'card__img card__img--secondary',
+              alt: ''
+          }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'card__img placeholder-svg' }}
+      {%- endif -%}
+    </a>
+
+    <div class="card__badges">
+      {%- if card_product.available == false -%}
+        <span class="badge badge--muted">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif on_sale -%}
+        <span class="badge badge--sale">-{{ savings }}%</span>
+      {%- endif -%}
+      {%- if is_trending -%}
+        <span class="badge badge--trending">{% render 'icon', name: 'bolt', class: 'icon--xs' %}{{ 'products.product.trending' | t }}</span>
+      {%- endif -%}
+    </div>
+
+    <div class="card__info">
+      <h3 class="card__title">
+        <a href="{{ card_product.url }}" class="card__link">{{ card_product.title | escape }}</a>
+      </h3>
+      {% render 'price', product: card_product %}
+    </div>
+
+    {%- if settings.card_show_quick_add and card_product.available -%}
+      {%- if card_product.has_only_default_variant -%}
+        {%- form 'product', card_product, class: 'card__quick-add', data-product-form: '' -%}
+          <input type="hidden" name="id" value="{{ first_variant.id }}">
+          <button type="submit" name="add" class="button button--small button--full">
+            {%- render 'icon', name: 'plus', class: 'icon--xs' -%}
+            <span>{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        {%- endform -%}
+      {%- else -%}
+        <a class="button button--small button--secondary button--full card__quick-add" href="{{ card_product.url }}">
+          {{ 'products.product.choose_options' | t }}
+        </a>
+      {%- endif -%}
+    {%- endif -%}
+  </article>
+{%- else -%}
+  {%- assign ph = placeholder_index | default: 1 | modulo: 6 | plus: 1 -%}
+  <article class="card card--placeholder">
+    <div class="card__media">
+      {{ 'product-' | append: ph | placeholder_svg_tag: 'card__img placeholder-svg' }}
+    </div>
+    <div class="card__info">
+      <h3 class="card__title">{{ 'products.product.placeholder_title' | t }}</h3>
+      <div class="price"><span class="price__current">{{ 1999 | money }}</span></div>
+    </div>
+  </article>
+{%- endif -%}

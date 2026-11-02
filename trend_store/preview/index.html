@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Trendloop Store Preview</title>
+  <meta name="description" content="Static design preview of the Trendloop Shopify theme with the trending products catalog.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-heading: Assistant, system-ui, sans-serif; --font-heading-weight: 800;
+      --font-body: Assistant, system-ui, sans-serif; --font-body-weight: 400;
+      --color-bg: #FAFAF7; --color-surface: #FFFFFF; --color-text: #141414; --color-text-rgb: 20, 20, 20;
+      --color-accent: #FF4D2E; --color-accent-contrast: #FFFFFF; --color-sale: #D9262F;
+      --radius: 14px; --page-width: 1280px;
+    }
+    .preview-note { margin: 0; background: #FFF3C9; color: #5c4700; text-align: center; font-size: .85rem; padding: 8px 16px; }
+    .preview-note code { background: rgba(0,0,0,.06); padding: 1px 6px; border-radius: 6px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .chip[aria-pressed="true"] { background: var(--color-text); color: var(--color-bg); border-color: var(--color-text); }
+    .art { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(3rem, 9vw, 5.5rem); transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+    .card:hover .art { transform: scale(1.06) rotate(-3deg); }
+    .card { cursor: pointer; }
+    .modal { position: fixed; inset: 0; z-index: 90; display: none; place-items: center; padding: 16px; }
+    .modal.is-open { display: grid; }
+    .modal__overlay { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+    .modal__panel { position: relative; width: min(960px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: var(--color-bg); border-radius: 20px; padding: 20px; }
+    .modal__close { position: absolute; top: 10px; right: 10px; z-index: 2; background: var(--color-surface); }
+    .modal .product__grid { gap: 24px; }
+    @media (min-width: 990px) { .modal .product__info { position: static; } }
+    .modal .gallery__main { display: grid; place-items: center; font-size: 8rem; }
+    .cart-item__media { display: grid; place-items: center; font-size: 2.2rem; }
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--color-text); color: var(--color-bg); padding: 12px 18px; border-radius: 999px; font-weight: 700; transition: transform .3s, opacity .3s; z-index: 120; opacity: 0; pointer-events: none; }
+    .toast.is-visible { transform: translate(-50%, 0); opacity: 1; }
+  </style>
+  <link rel="stylesheet" href="../theme/assets/base.css">
+</head>
+<body>
+  <p class="preview-note">Design preview of the Shopify theme in <code>trend_store/theme</code>. Cart is simulated; real checkout runs on Shopify.</p>
+
+  <div class="announcement" data-rotator>
+    <div class="page-width announcement__inner">
+      <p class="announcement__item is-active">Free shipping on orders over $50</p>
+      <p class="announcement__item">30-day hassle-free returns</p>
+      <p class="announcement__item">New viral finds added every week</p>
+    </div>
+  </div>
+
+  <header class="header header--sticky">
+    <div class="page-width header__inner">
+      <span class="header__drawer" aria-hidden="true"></span>
+      <div class="header__heading"><a href="#" class="header__logo"><span class="header__logo-text">Trendloop</span></a></div>
+      <nav class="header__nav" aria-label="Menu">
+        <ul class="header__menu">
+          <li><a class="header__menu-link is-active" href="#trending">Trending</a></li>
+          <li><a class="header__menu-link" href="#shop" data-jump="beauty">Beauty</a></li>
+          <li><a class="header__menu-link" href="#shop" data-jump="home">Home</a></li>
+          <li><a class="header__menu-link" href="#shop" data-jump="tech">Tech</a></li>
+          <li><a class="header__menu-link" href="#shop" data-jump="fitness">Fitness</a></li>
+          <li><a class="header__menu-link" href="#shop" data-jump="pets">Pets</a></li>
+        </ul>
+      </nav>
+      <div class="header__icons">
+        <button class="icon-button" type="button" data-cart-toggle aria-label="Cart">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          <span class="cart-count is-empty" data-cart-count>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="MainContent" class="main">
+    <section class="hero hero--large hero--align-left hero--no-image">
+      <div class="page-width hero__content">
+        <p class="hero__eyebrow">⚡ Trending this week</p>
+        <h1 class="hero__heading">The internet's favorite finds, all in one place</h1>
+        <div class="hero__text rte"><p>Viral gadgets, glow-up beauty and cozy home upgrades — hand-picked, tested, and shipped fast.</p></div>
+        <div class="hero__buttons">
+          <a href="#trending" class="button button--large">Shop trending →</a>
+          <a href="#categories" class="button button--large button--ghost">Browse categories</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" style="--marquee-speed: 30s;" aria-label="Store highlights">
+      <div class="marquee__track">
+        <ul class="marquee__list"><li class="marquee__item">⚡ As seen on TikTok</li><li class="marquee__item">⚡ Ships in 24h</li><li class="marquee__item">⚡ 30-day returns</li><li class="marquee__item">⚡ New drops weekly</li><li class="marquee__item">⚡ Secure checkout</li></ul>
+        <ul class="marquee__list" aria-hidden="true"><li class="marquee__item">⚡ As seen on TikTok</li><li class="marquee__item">⚡ Ships in 24h</li><li class="marquee__item">⚡ 30-day returns</li><li class="marquee__item">⚡ New drops weekly</li><li class="marquee__item">⚡ Secure checkout</li></ul>
+      </div>
+    </div>
+
+    <section class="section page-width" id="trending">
+      <div class="section__header">
+        <div><p class="eyebrow">Hot right now</p><h2 class="section__heading">Trending products</h2></div>
+        <a href="#shop" class="link-arrow">View all →</a>
+      </div>
+      <ul class="grid grid--4-col" data-grid="trending"></ul>
+    </section>
+
+    <section class="section page-width" id="categories">
+      <div class="section__header"><h2 class="section__heading">Shop by category</h2></div>
+      <ul class="collection-tiles" data-tiles></ul>
+    </section>
+
+    <section class="section page-width" id="shop">
+      <div class="section__header">
+        <div><p class="eyebrow">The full drop</p><h2 class="section__heading">All products</h2></div>
+      </div>
+      <div class="chips" data-chips></div>
+      <ul class="grid grid--4-col" data-grid="all"></ul>
+    </section>
+
+    <section class="section page-width">
+      <ul class="trust">
+        <li class="trust__item"><span class="trust__icon">🚚</span><div><h3 class="trust__heading">Fast shipping</h3><p class="trust__text">Orders leave our warehouse within 24 hours.</p></div></li>
+        <li class="trust__item"><span class="trust__icon">↩︎</span><div><h3 class="trust__heading">30-day returns</h3><p class="trust__text">Not obsessed? Send it back, no questions asked.</p></div></li>
+        <li class="trust__item"><span class="trust__icon">🔒</span><div><h3 class="trust__heading">Secure checkout</h3><p class="trust__text">Encrypted payments powered by Shopify.</p></div></li>
+        <li class="trust__item"><span class="trust__icon">💬</span><div><h3 class="trust__heading">Real humans</h3><p class="trust__text">Questions? Our team replies within a day.</p></div></li>
+      </ul>
+    </section>
+
+    <section class="section page-width">
+      <div class="newsletter-banner">
+        <h2 class="section__heading">Be first to the next viral drop</h2>
+        <div class="rte"><p>Join the list for restock alerts and subscriber-only deals.</p></div>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); toast('Preview only: signup goes to Shopify Customers.');">
+          <div class="newsletter-form__row"><input type="email" class="input" placeholder="Email address" required aria-label="Email address"><button class="button">Subscribe</button></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="page-width">
+      <div class="footer__blocks">
+        <div><h2 class="footer__heading">About us</h2><div class="rte"><p>We hunt down the products everyone is talking about, test them, and ship them fast.</p></div></div>
+        <div><h2 class="footer__heading">Shop</h2><ul class="footer__links"><li><a href="#trending">Trending</a></li><li><a href="#shop">All products</a></li><li><a href="#categories">Categories</a></li></ul></div>
+        <div><h2 class="footer__heading">Help</h2><ul class="footer__links"><li><a href="#">Shipping</a></li><li><a href="#">Returns</a></li><li><a href="#">Contact</a></li></ul></div>
+      </div>
+      <div class="footer__bottom"><p class="footer__copyright">© 2026 Trendloop · Powered by Shopify</p></div>
+    </div>
+  </footer>
+
+  <!-- Product quick view -->
+  <div class="modal" data-modal aria-hidden="true">
+    <div class="modal__overlay" data-modal-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Product">
+      <button class="icon-button modal__close" type="button" data-modal-close aria-label="Close">✕</button>
+      <div data-modal-body></div>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
+  <div class="drawer" data-cart-drawer aria-hidden="true">
+    <div class="drawer__overlay" data-drawer-close></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Cart" tabindex="-1">
+      <div class="drawer__content" data-drawer-content></div>
+    </aside>
+  </div>
+
+  <div class="toast" data-toast role="status"></div>
+
+  <script src="products.js"></script>
+  <script>
+  (function () {
+    var STORE = window.STORE;
+    var products = STORE.products;
+    var FREE_SHIP = 50;
+    var CATS = [
+      { key: 'beauty', label: 'Beauty', color: '#FFE4DC', icon: '💄' },
+      { key: 'home', label: 'Home', color: '#E3F1E4', icon: '🏡' },
+      { key: 'tech', label: 'Tech', color: '#E2E8FF', icon: '🔌' },
+      { key: 'fitness', label: 'Fitness', color: '#FFF3C9', icon: '🏃' },
+      { key: 'pets', label: 'Pets', color: '#F3E3FF', icon: '🐾' },
+      { key: 'kitchen', label: 'Kitchen', color: '#DDF4F6', icon: '🍳' }
+    ];
+    var money = function (n) { return '$' + n.toFixed(2); };
+    var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+    var byHandle = {}; products.forEach(function (p) { byHandle[p.handle] = p; });
+    var hasCat = function (p, key) { return p.category === key || p.tags.indexOf(key) !== -1; };
+
+    var cart = [];
+    try { cart = JSON.parse(localStorage.getItem('trendloop-cart') || '[]'); } catch (e) { cart = []; }
+    function saveCart() { try { localStorage.setItem('trendloop-cart', JSON.stringify(cart)); } catch (e) {} }
+
+    function art(p) { return '<div class="art" style="background:linear-gradient(135deg,' + p.colors[0] + ',' + p.colors[1] + ')">' + p.emoji + '</div>'; }
+
+    function priceHTML(p, badge) {
+      var sale = p.compare_at && p.compare_at > p.price;
+      var pct = sale ? Math.round((p.compare_at - p.price) * 100 / p.compare_at) : 0;
+      return '<div class="price' + (sale ? ' price--on-sale' : '') + '"><span class="price__current">' + money(p.price) + '</span>' +
+        (sale ? '<s class="price__compare">' + money(p.compare_at) + '</s>' : '') +
+        (sale && badge ? '<span class="price__badge">Save ' + pct + '%</span>' : '') + '</div>';
+    }
+
+    function card(p) {
+      var sale = p.compare_at && p.compare_at > p.price;
+      var pct = sale ? Math.round((p.compare_at - p.price) * 100 / p.compare_at) : 0;
+      var simple = Object.keys(p.options).length === 0;
+      return '<li><article class="card" data-open="' + p.handle + '">' +
+        '<div class="card__media">' + art(p) + '</div>' +
+        '<div class="card__badges">' + (sale ? '<span class="badge badge--sale">-' + pct + '%</span>' : '') +
+        (p.tags.indexOf('trending') !== -1 ? '<span class="badge badge--trending">⚡ Trending</span>' : '') + '</div>' +
+        '<div class="card__info"><h3 class="card__title">' + esc(p.title) + '</h3>' + priceHTML(p) + '</div>' +
+        (simple
+          ? '<button type="button" class="button button--small button--full card__quick-add" data-quick-add="' + p.handle + '">+ Add to cart</button>'
+          : '<button type="button" class="button button--small button--secondary button--full card__quick-add" data-open="' + p.handle + '">Choose options</button>') +
+        '</article></li>';
+    }
+
+    var filter = 'all';
+    function renderGrids() {
+      document.querySelector('[data-grid="trending"]').innerHTML =
+        products.filter(function (p) { return p.tags.indexOf('trending') !== -1; }).slice(0, 8).map(card).join('');
+      document.querySelector('[data-grid="all"]').innerHTML =
+        products.filter(function (p) { return filter === 'all' || hasCat(p, filter); }).map(card).join('');
+      document.querySelector('[data-chips]').innerHTML = [{ key: 'all', label: 'All' }].concat(CATS).map(function (c) {
+        return '<button type="button" class="pill chip" data-chip="' + c.key + '" aria-pressed="' + (filter === c.key) + '">' + c.label + '</button>';
+      }).join('');
+    }
+
+    document.querySelector('[data-tiles]').innerHTML = CATS.map(function (c) {
+      return '<li><a class="collection-tile" href="#shop" data-jump="' + c.key + '" style="--tile-color:' + c.color + '">' +
+        '<span class="collection-tile__media" style="font-size:2.4rem">' + c.icon + '</span>' +
+        '<span class="collection-tile__title">' + c.label + '</span></a></li>';
+    }).join('');
+
+    /* Quick view */
+    var modal = document.querySelector('[data-modal]');
+    function openProduct(handle) {
+      var p = byHandle[handle];
+      var opts = Object.keys(p.options);
+      var picker = opts.map(function (name, i) {
+        return '<fieldset class="variant-picker__option"><legend class="variant-picker__label">' + esc(name) + ': <span data-opt-label="' + i + '">' + esc(p.options[name][0]) + '</span></legend><div class="variant-picker__values">' +
+          p.options[name].map(function (v, j) {
+            var id = 'opt-' + i + '-' + j;
+            return '<input class="visually-hidden" type="radio" name="opt-' + i + '" id="' + id + '" value="' + esc(v) + '"' + (j === 0 ? ' checked' : '') + '><label class="pill" for="' + id + '">' + esc(v) + '</label>';
+          }).join('') + '</div></fieldset>';
+      }).join('');
+      document.querySelector('[data-modal-body]').innerHTML =
+        '<div class="product__grid"><div class="product__media"><div class="gallery__main" style="background:linear-gradient(135deg,' + p.colors[0] + ',' + p.colors[1] + ')">' + p.emoji + '</div></div>' +
+        '<form class="product__info" data-modal-form data-handle="' + p.handle + '">' +
+        (p.tags.indexOf('trending') !== -1 ? '<p class="product__text product__text--eyebrow">Trending now</p>' : '') +
+        '<h2 class="product__title">' + esc(p.title) + '</h2><div class="product__price">' + priceHTML(p, true) + '</div>' +
+        (picker ? '<div class="variant-picker">' + picker + '</div>' : '') +
+        '<div class="product-form__row"><div class="qty"><button type="button" class="qty__btn" data-step="-1" aria-label="Decrease quantity">−</button><input class="qty__input" type="number" name="qty" value="1" min="1" aria-label="Quantity"><button type="button" class="qty__btn" data-step="1" aria-label="Increase quantity">+</button></div>' +
+        '<button type="submit" class="button button--large product-form__submit">Add to cart</button></div>' +
+        '<ul class="product__perks"><li>🚚 Free shipping over $50</li><li>↩︎ 30-day returns</li><li>🔒 Secure checkout</li></ul>' +
+        '<div class="product__description rte"><p>' + esc(p.intro) + '</p><ul>' + p.bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul></div>' +
+        '</form></div>';
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('drawer-open');
+    }
+    function closeModal() { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('drawer-open'); }
+
+    /* Cart */
+    var drawer = document.querySelector('[data-cart-drawer]');
+    function addToCart(handle, variant, qty) {
+      var line = cart.find(function (l) { return l.handle === handle && l.variant === variant; });
+      if (line) line.qty += qty; else cart.push({ handle: handle, variant: variant, qty: qty });
+      saveCart(); renderCart(true); openCart();
+    }
+    function openCart() { drawer.classList.add('is-open'); drawer.setAttribute('aria-hidden', 'false'); document.body.classList.add('drawer-open'); }
+    function closeCart() { drawer.classList.remove('is-open'); drawer.setAttribute('aria-hidden', 'true'); document.body.classList.remove('drawer-open'); }
+    function renderCart(bump) {
+      var count = cart.reduce(function (n, l) { return n + l.qty; }, 0);
+      var total = cart.reduce(function (n, l) { return n + l.qty * byHandle[l.handle].price; }, 0);
+      var badge = document.querySelector('[data-cart-count]');
+      badge.textContent = count; badge.classList.toggle('is-empty', count === 0);
+      if (bump) { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
+      var html = '<header class="drawer__header"><h2 class="drawer__title">Your cart' + (count ? ' <span class="drawer__count">(' + count + ')</span>' : '') + '</h2><button type="button" class="icon-button" data-drawer-close aria-label="Close">✕</button></header>';
+      if (!count) {
+        html += '<div class="drawer__body empty-state"><p>Your cart is empty.</p><button type="button" class="button" data-drawer-close>Continue shopping</button></div>';
+      } else {
+        var remaining = FREE_SHIP - total, pct = Math.min(100, total * 100 / FREE_SHIP);
+        html += '<div class="drawer__body"><div class="ship-bar"><p class="ship-bar__text">' +
+          (remaining > 0 ? 'You\'re <strong>' + money(remaining) + '</strong> away from free shipping' : 'You\'ve unlocked free shipping!') +
+          '</p><div class="ship-bar__track"><span class="ship-bar__fill" style="width:' + pct + '%"></span></div></div><ul class="cart-items">' +
+          cart.map(function (l, i) {
+            var p = byHandle[l.handle];
+            return '<li class="cart-item"><div class="cart-item__media" style="background:linear-gradient(135deg,' + p.colors[0] + ',' + p.colors[1] + ')">' + p.emoji + '</div>' +
+              '<div class="cart-item__details"><span class="cart-item__title">' + esc(p.title) + '</span>' + (l.variant ? '<p class="cart-item__variant">' + esc(l.variant) + '</p>' : '') +
+              '<div class="cart-item__row"><div class="qty qty--small"><button type="button" class="qty__btn" data-line="' + i + '" data-delta="-1" aria-label="Decrease quantity">−</button><input class="qty__input" value="' + l.qty + '" readonly aria-label="Quantity"><button type="button" class="qty__btn" data-line="' + i + '" data-delta="1" aria-label="Increase quantity">+</button></div>' +
+              '<button type="button" class="link cart-item__remove" data-line="' + i + '" data-delta="-999">Remove</button></div></div>' +
+              '<div class="cart-item__price">' + money(p.price * l.qty) + '</div></li>';
+          }).join('') + '</ul></div>' +
+          '<footer class="drawer__footer"><div class="cart-summary"><p class="cart-summary__row cart-summary__total"><span>Subtotal</span><span>' + money(total) + ' USD</span></p>' +
+          '<p class="cart-summary__note">Taxes, discounts and shipping calculated at checkout.</p>' +
+          '<button type="button" class="button button--large button--full" data-checkout>🔒 Check out</button></div></footer>';
+      }
+      document.querySelector('[data-drawer-content]').innerHTML = html;
+    }
+
+    var toastEl = document.querySelector('[data-toast]'), toastTimer;
+    window.toast = function (msg) { toastEl.textContent = msg; toastEl.classList.add('is-visible'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('is-visible'); }, 2600); };
+
+    /* Events */
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      var quick = t.closest('[data-quick-add]');
+      if (quick) { e.stopPropagation(); addToCart(quick.dataset.quickAdd, '', 1); return; }
+      var open = t.closest('[data-open]');
+      if (open) { openProduct(open.dataset.open); return; }
+      if (t.closest('[data-modal-close]')) { closeModal(); return; }
+      if (t.closest('[data-cart-toggle]')) { openCart(); return; }
+      if (t.closest('[data-drawer-close]')) { closeCart(); return; }
+      if (t.closest('[data-checkout]')) { toast('Preview only: this hands off to Shopify Checkout.'); return; }
+      var chip = t.closest('[data-chip]');
+      if (chip) { filter = chip.dataset.chip; renderGrids(); return; }
+      var jump = t.closest('[data-jump]');
+      if (jump) { filter = jump.dataset.jump; renderGrids(); }
+      var step = t.closest('[data-step]');
+      if (step) { var q = step.parentNode.querySelector('input'); q.value = Math.max(1, (parseInt(q.value, 10) || 1) + parseInt(step.dataset.step, 10)); return; }
+      var line = t.closest('[data-delta]');
+      if (line) {
+        var l = cart[+line.dataset.line];
+        l.qty += parseInt(line.dataset.delta, 10);
+        if (l.qty <= 0) cart.splice(+line.dataset.line, 1);
+        saveCart(); renderCart(true);
+      }
+    });
+    document.addEventListener('change', function (e) {
+      var r = e.target;
+      if (r.type === 'radio' && r.name.indexOf('opt-') === 0) {
+        var lbl = document.querySelector('[data-opt-label="' + r.name.slice(4) + '"]');
+        if (lbl) lbl.textContent = r.value;
+      }
+    });
+    document.addEventListener('submit', function (e) {
+      var f = e.target.closest('[data-modal-form]');
+      if (!f) return;
+      e.preventDefault();
+      var variant = Array.prototype.map.call(f.querySelectorAll('input[type=radio]:checked'), function (r) { return r.value; }).join(' / ');
+      closeModal();
+      addToCart(f.dataset.handle, variant, Math.max(1, parseInt(f.qty.value, 10) || 1));
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeCart(); } });
+
+    var items = document.querySelectorAll('.announcement__item'), ai = 0;
+    setInterval(function () { items[ai].classList.remove('is-active'); ai = (ai + 1) % items.length; items[ai].classList.add('is-active'); }, 4000);
+
+    renderGrids();
+    renderCart(false);
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{%- comment -%}
+  Storefront filtering + sorting toolbar for collection and search pages.
+  Accepts:
+  - results: {Object} collection or search object
+  - url: {String} base url used for "clear all"
+  - terms: {String} search terms (search page only)
+{%- endcomment -%}
+{%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+<form class="facets" data-facets-form>
+  {%- if terms -%}<input type="hidden" name="q" value="{{ terms | escape }}">{%- endif -%}
+  {%- if terms -%}<input type="hidden" name="options[prefix]" value="last">{%- endif -%}
+
+  <div class="facets__filters">
+    {%- for filter in results.filters -%}
+      {%- case filter.type -%}
+        {%- when 'list', 'boolean' -%}
+          <details class="facet">
+            <summary class="pill pill--summary">
+              {{ filter.label | escape }}
+              {%- if filter.active_values.size > 0 %} ({{ filter.active_values.size }}){% endif -%}
+              {% render 'icon', name: 'chevron', class: 'icon--xs' %}
+            </summary>
+            <ul class="facet__panel">
+              {%- for value in filter.values -%}
+                <li>
+                  <label class="facet__check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                    <input
+                      type="checkbox"
+                      name="{{ value.param_name }}"
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                    >
+                    {{ value.label | escape }} <span class="facet__count">({{ value.count }})</span>
+                  </label>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </details>
+        {%- when 'price_range' -%}
+          <details class="facet">
+            <summary class="pill pill--summary">{{ filter.label | escape }} {% render 'icon', name: 'chevron', class: 'icon--xs' %}</summary>
+            <div class="facet__panel facet__price">
+              <label>
+                <span class="visually-hidden">{{ 'products.facets.from' | t }}</span>
+                <input
+                  class="input"
+                  type="number"
+                  name="{{ filter.min_value.param_name }}"
+                  {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                  placeholder="0"
+                  min="0"
+                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                >
+              </label>
+              <span>&ndash;</span>
+              <label>
+                <span class="visually-hidden">{{ 'products.facets.to' | t }}</span>
+                <input
+                  class="input"
+                  type="number"
+                  name="{{ filter.max_value.param_name }}"
+                  {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                  placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  min="0"
+                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                >
+              </label>
+            </div>
+          </details>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <label class="facets__sort">
+    <span>{{ 'products.facets.sort_by' | t }}</span>
+    <select name="sort_by" class="select">
+      {%- for option in results.sort_options -%}
+        <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name | escape }}</option>
+      {%- endfor -%}
+    </select>
+  </label>
+</form>
+
+{%- capture active_pills -%}
+  {%- for filter in results.filters -%}
+    {%- for value in filter.active_values -%}
+      <a class="pill pill--active" href="{{ value.url_to_remove }}">{{ filter.label | escape }}: {{ value.label | escape }} {% render 'icon', name: 'close', class: 'icon--xs' %}</a>
+    {%- endfor -%}
+    {%- if filter.type == 'price_range' -%}
+      {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+        <a class="pill pill--active" href="{{ filter.url_to_remove }}">
+          {{- filter.min_value.value | default: 0 | money }} &ndash; {{ filter.max_value.value | default: filter.range_max | money }}
+          {% render 'icon', name: 'close', class: 'icon--xs' %}
+        </a>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- if active_pills != blank -%}
+  <div class="facets__active">
+    {{ active_pills }}
+    <a class="link" href="{{ url }}{% if terms %}?q={{ terms | url_encode }}{% endif %}">{{ 'products.facets.clear_all' | t }}</a>
+  </div>
+{%- endif -%}

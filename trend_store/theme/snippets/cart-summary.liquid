@@ -1,0 +1,28 @@
+{%- comment -%}
+  Subtotal, discounts and checkout button.
+  Accepts:
+  - form_id: {String} id of the cart form the checkout button submits
+{%- endcomment -%}
+<div class="cart-summary">
+  {%- for discount in cart.cart_level_discount_applications -%}
+    <p class="cart-summary__row cart-summary__discount">
+      <span>{{ discount.title | escape }}</span>
+      <span>-{{ discount.total_allocated_amount | money }}</span>
+    </p>
+  {%- endfor -%}
+  <p class="cart-summary__row cart-summary__total">
+    <span>{{ 'sections.cart.subtotal' | t }}</span>
+    <span>{{ cart.total_price | money_with_currency }}</span>
+  </p>
+  <p class="cart-summary__note">
+    {%- if cart.taxes_included -%}
+      {{ 'sections.cart.taxes_included_shipping_at_checkout' | t }}
+    {%- else -%}
+      {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+    {%- endif -%}
+  </p>
+  <button type="submit" name="checkout" form="{{ form_id }}" class="button button--large button--full">
+    {% render 'icon', name: 'lock', class: 'icon--sm' %}
+    {{ 'sections.cart.checkout' | t }}
+  </button>
+</div>

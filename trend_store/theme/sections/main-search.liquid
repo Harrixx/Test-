@@ -1,0 +1,49 @@
+{%- paginate search.results by 24 -%}
+  <section class="section page-width">
+    <h1 class="page-title">{{ 'general.search.title' | t }}</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form search-form--page">
+      <input type="search" name="q" class="input" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" aria-label="{{ 'general.search.search' | t }}">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" class="button">{{ 'general.search.submit' | t }}</button>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="collection-hero__count">{{ 'general.search.results_count' | t: count: search.results_count, terms: search.terms }}</p>
+
+      {%- if search.filters != empty -%}
+        {% render 'facets', results: search, url: routes.search_url, terms: search.terms %}
+      {%- endif -%}
+
+      {%- if search.results_count > 0 -%}
+        <ul class="grid grid--4-col">
+          {%- for item in search.results -%}
+            <li>
+              {%- case item.object_type -%}
+                {%- when 'product' -%}
+                  {% render 'product-card', card_product: item %}
+                {%- when 'article' -%}
+                  <a class="search-result" href="{{ item.url }}"><small>{{ 'general.search.article' | t }}</small><strong>{{ item.title | escape }}</strong></a>
+                {%- when 'page' -%}
+                  <a class="search-result" href="{{ item.url }}"><small>{{ 'general.search.page' | t }}</small><strong>{{ item.title | escape }}</strong></a>
+              {%- endcase -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <div class="empty-state">
+          <p>{{ 'general.search.no_results' | t: terms: search.terms }}</p>
+          <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
+        </div>
+      {%- endif -%}
+
+      {% render 'pagination', paginate: paginate %}
+    {%- endif -%}
+  </section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Search results",
+  "class": "section-main-search"
+}
+{% endschema %}

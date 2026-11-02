@@ -1,0 +1,15 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "color_background": "#FAFAF7",
+      "color_surface": "#FFFFFF",
+      "color_text": "#141414",
+      "color_accent": "#FF4D2E",
+      "color_accent_contrast": "#FFFFFF",
+      "color_sale": "#D9262F",
+      "cart_type": "drawer",
+      "free_shipping_threshold": 50
+    }
+  }
+}

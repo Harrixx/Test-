@@ -1,0 +1,42 @@
+<section class="section page-width cart-page" data-cart-page>
+  <h1 class="page-title">{{ 'sections.cart.title' | t }}</h1>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-page__grid">
+      <div>
+        {% render 'free-shipping-bar' %}
+        <form action="{{ routes.cart_url }}" method="post" id="CartPageForm" novalidate>
+          {% render 'cart-items', context: 'page' %}
+          {%- if section.settings.show_note -%}
+            <label class="cart-note">
+              <span>{{ 'sections.cart.note' | t }}</span>
+              <textarea name="note" class="input" rows="3">{{ cart.note }}</textarea>
+            </label>
+          {%- endif -%}
+          <noscript><button type="submit" name="update" class="button button--secondary">{{ 'sections.cart.update' | t }}</button></noscript>
+        </form>
+      </div>
+      <aside>
+        {% render 'cart-summary', form_id: 'CartPageForm' %}
+        {%- if additional_checkout_buttons -%}
+          <div class="cart-page__dynamic">{{ content_for_additional_checkout_buttons }}</div>
+        {%- endif -%}
+      </aside>
+    </div>
+  {%- else -%}
+    <div class="empty-state">
+      <p>{{ 'sections.cart.empty' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button">{{ 'general.continue_shopping' | t }}</a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "section-main-cart",
+  "settings": [
+    { "type": "checkbox", "id": "show_note", "label": "Enable order notes", "default": true }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,50 @@
+{%- comment -%}
+  Only publish quotes from real customers. The defaults are placeholders.
+{%- endcomment -%}
+{%- if section.blocks.size > 0 -%}
+  <section class="section page-width">
+    {%- if section.settings.heading != blank -%}
+      <div class="section__header"><h2 class="section__heading">{{ section.settings.heading | escape }}</h2></div>
+    {%- endif -%}
+    <ul class="testimonials">
+      {%- for block in section.blocks -%}
+        <li class="testimonial" {{ block.shopify_attributes }}>
+          <blockquote>
+            <div class="rte">{{ block.settings.quote }}</div>
+          </blockquote>
+          {%- if block.settings.author != blank -%}
+            <p class="testimonial__author">{{ block.settings.author | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.product != blank -%}
+            <a class="testimonial__product" href="{{ block.settings.product.url }}">{{ block.settings.product.title | escape }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Customer quotes",
+  "class": "section-testimonials",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What customers are saying" }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": "Quote",
+      "settings": [
+        { "type": "richtext", "id": "quote", "label": "Quote", "default": "<p>Paste a real customer review here.</p>", "info": "Only use genuine reviews from real customers." },
+        { "type": "text", "id": "author", "label": "Customer name", "default": "Customer name" },
+        { "type": "product", "id": "product", "label": "Product reviewed" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Customer quotes", "blocks": [{ "type": "quote" }, { "type": "quote" }, { "type": "quote" }] }
+  ]
+}
+{% endschema %}
