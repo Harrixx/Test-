@@ -127,7 +127,8 @@ def build_csv(vendor: str, products: list[dict]) -> int:
 
 def build_sourcing(products: list[dict]) -> int:
     cols = ["Handle", "Title", "Our Price", "Supplier Rank", "Listing Title", "Supplier",
-            "Unit Price (USD)", "MOQ", "Est. Margin at High Unit Price", "Listing Type", "URL", "Specs / Notes"]
+            "Unit Price (USD)", "MOQ", "Est. Gross Margin (before shipping)", "Listing Type", "URL",
+            "Specs From Listing", "Confirm With Supplier"]
     n = 0
     with SOURCING_OUT.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
@@ -138,7 +139,8 @@ def build_sourcing(products: list[dict]) -> int:
                 margin = f"{(p['price'] - r[1]) / p['price']:.0%}" if r else ""
                 w.writerow([p["handle"], p["title"], f"{p['price']:.2f}", rank, s.get("title", ""),
                             s.get("supplier") or "", s.get("price_usd") or "", s.get("moq") or "", margin,
-                            s.get("type", ""), s["url"], s.get("specs") or ""])
+                            s.get("type", ""), s["url"], s.get("specs") or "",
+                            p.get("confirm", "") if rank == 1 else ""])
                 n += 1
     return n
 

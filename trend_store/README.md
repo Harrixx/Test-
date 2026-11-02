@@ -1,7 +1,7 @@
 # Trendloop: a Shopify store for trending products
 
 A ready-to-upload Shopify store: an Online Store 2.0 theme plus a catalog of 18
-trending products (45 variants) as a Shopify import CSV.
+trending products (44 variants), each linked to real Alibaba suppliers, as a Shopify import CSV.
 
 ![Preview](preview/screenshot.png)
 
@@ -10,7 +10,8 @@ trending products (45 variants) as a Shopify import CSV.
 | Path | What it is |
 | --- | --- |
 | `theme/` | Shopify OS 2.0 theme (Liquid). Upload it as-is. |
-| `products.csv` | Product import file: 18 products, 45 variants, prices, compare-at prices, SKUs, tags, SEO fields. |
+| `products.csv` | Product import file: 18 products, 44 variants, prices, compare-at prices, cost per item, SKUs, tags, SEO fields. |
+| `sourcing.csv` | Supplier sheet: 2 Alibaba listings per product with price, MOQ, margin and what to confirm. |
 | `data/products.json` | Source of truth for the catalog. Edit this, then rebuild. |
 | `scripts/build_catalog.py` | Regenerates `products.csv` and `preview/products.js` from the JSON. |
 | `preview/index.html` | Static design preview with a simulated cart. Open it in a browser; no store needed. |
@@ -106,16 +107,50 @@ In **Online Store → Navigation**:
   contains placeholder text. Only turn it on once you have real reviews (or use a reviews app
   such as Judge.me, which adds its own app blocks to the product page).
 
-## Sourcing the products
+## Sourcing the products (Alibaba)
 
-These are categories that have stayed popular in social commerce: LED beauty devices, sunset
-lamps, portable blenders, pillow slides, magnetic car mounts, mini projectors, heatless curlers,
-smart bottles, weighted knit blankets, pet enrichment toys, and similar.
+`sourcing.csv` lists **two real Alibaba listings per product** (36 in total): the URL, listing title,
+supplier, unit price, MOQ, estimated gross margin, and a **"Confirm With Supplier"** checklist.
+The same data lives under `sourcing` in `data/products.json`. Shopify's **Cost per item** is filled
+from the primary supplier's highest listed price wherever one was found, so the admin's profit
+reports work from day one.
 
-To fulfil orders without holding stock, connect a dropshipping app (for example DSers, CJdropshipping,
-Spocket or Zendrop), find the matching item, and link it to the imported product. Before listing,
-check landed cost (item plus shipping) against the price: the default prices assume roughly a
-2.5–3× markup.
+| Product | Our price | Unit cost seen | Est. margin* | Primary supplier |
+| --- | ---: | ---: | ---: | --- |
+| Sunset Halo Projection Lamp | $29.99 | $7.58 | 75% | Guangzhou Canmei Lighting |
+| BlendGo Portable Blender | $34.99 | $9.10 | 74% | Shenzhen Denorgin Tech |
+| ChillRoll Ice Face Roller | $16.99 | $7.99 | 53% | Guangzhou Baiyun Tuying |
+| MagSnap Magnetic Car Mount | $27.99 | $1.10 | 96% | Shenzhen Natek Technology |
+| PocketCine Mini Projector | $119.99 | $44 | 63% | Shenzhen Shengxinze Technology |
+| AlignPro Posture Corrector | $22.99 | $3.35–3.98 | 83% | Hebei Youjie Medical Devices |
+| GlowStrip Motion Sensor Lights | $26.99 | $1.84 | 93% | Guangzhou Houde Lighting |
+| CozyWeight Knit Blanket | $79.99 | $13.40–44.80 | 44% | Ningbo Jemo Textile Tech |
+| FlexBand Resistance Bands | $24.99 | $0.95–3.50 | 86% | Shenzhen Shenzhouxing |
+| SpinScrub Electric Brush | $39.99 | $11 | 72% | Zhejiang Easy Housewares |
+
+\*Margin at the high end of the unit price, **before shipping, duties, payment fees and ads**.
+The other 8 products have supplier links but no price shown in search results; ask for a quote.
+
+**How this was gathered, and what to check.** The listings were found through web search of
+alibaba.com. Every URL came straight from search results, but prices, MOQs and some supplier names
+came from search summaries, not the live page, so treat them as leads. For each product:
+
+1. Open both links and message the supplier with the "Confirm With Supplier" points.
+2. Get a quote including shipping to your country (or to your dropship agent), and the MOQ.
+3. **Order a sample** before listing anything, and photograph it yourself (or get photo rights).
+4. For electronics, beauty devices and anything worn on the body, ask for test reports
+   (CE/FCC/RoHS, and battery UN38.3 for anything with a lithium battery) before you sell.
+5. Avoid listings for branded items (for example Phomemo printers) unless you're an authorized
+   reseller, and don't use another brand's name in your product titles.
+
+Descriptions were adjusted to match the listings: the projector is 720p native (plays 1080p video),
+the earbuds no longer claim transparency mode, and the motion lights are a 2-pack. Specs no
+listing confirmed, such as battery-life numbers, were removed. If your supplier confirms more,
+add it back in `data/products.json`.
+
+Alibaba suppliers usually sell in bulk. If you'd rather not hold stock, ask the supplier whether
+they dropship, or use a dropshipping app (DSers, CJdropshipping, Spocket, Zendrop) and search for
+the same items there.
 
 ## Editing the catalog
 

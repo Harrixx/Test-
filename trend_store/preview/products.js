@@ -19,12 +19,11 @@ window.STORE = {
         "#FFD6E0",
         "#FF8FAB"
       ],
-      "intro": "Spa-style red and blue light sessions from your couch. A flexible silicone mask with seven light modes and an auto-off timer.",
+      "intro": "Spa-style LED light sessions from your couch. A flexible silicone mask with seven light colors and a cordless, rechargeable design.",
       "bullets": [
-        "7 light modes including red (630nm) and blue (415nm)",
+        "7 light colors including red and blue",
         "Soft, flexible silicone fits most face shapes",
-        "10-minute auto-off timer, USB-C rechargeable",
-        "Includes eye shields and travel pouch"
+        "Wireless and rechargeable, so no cords during sessions"
       ],
       "options": {
         "Color": [
@@ -83,10 +82,9 @@ window.STORE = {
       ],
       "intro": "Smoothies, shakes and protein drinks anywhere. Six stainless blades and a rechargeable battery that lasts around 15 blends per charge.",
       "bullets": [
-        "380ml BPA-free bottle doubles as a travel cup",
+        "380ml bottle doubles as a travel cup",
         "6 stainless steel blades",
-        "USB-C charging, ~15 blends per charge",
-        "Safety lock: only runs when the lid is attached"
+        "USB-C rechargeable 2000mAh battery"
       ],
       "options": {
         "Color": [
@@ -115,7 +113,7 @@ window.STORE = {
       ],
       "intro": "The squishy, thick-sole slides everyone is wearing. Soft EVA foam that feels like walking on a cushion, indoors or out.",
       "bullets": [
-        "1.7\" thick cushioned EVA sole",
+        "Extra-thick cushioned EVA sole",
         "Waterproof and quick-drying",
         "Anti-slip textured bottom"
       ],
@@ -150,9 +148,9 @@ window.STORE = {
         "#D6F5FF",
         "#7FD4F5"
       ],
-      "intro": "A wake-up call for puffy mornings. Freeze, roll, glow. The stainless-steel head stays cold for up to 20 minutes.",
+      "intro": "A wake-up call for puffy mornings. Freeze, roll, glow.",
       "bullets": [
-        "Stainless steel roller head stays cold",
+        "Stainless steel roller head holds the cold",
         "Ergonomic non-slip handle",
         "Store in the freezer, use in seconds"
       ],
@@ -178,8 +176,8 @@ window.STORE = {
       "intro": "Snap on, drive off. A strong N52 magnet array holds your phone steady on bumpy roads, and it's compatible with magnetic phone cases.",
       "bullets": [
         "Works with magnetic phones and cases",
-        "360° adjustable ball joint",
-        "Dashboard and vent clips included"
+        "360° adjustable rotation",
+        "Choose a vent clip or dashboard mount"
       ],
       "options": {
         "Mount": [
@@ -205,12 +203,12 @@ window.STORE = {
         "#1F2937",
         "#6366F1"
       ],
-      "intro": "Movie night on any wall, ceiling or tent. Native 1080p, built-in streaming apps and a speaker that actually sounds good.",
+      "intro": "Movie night on any wall, ceiling or tent. Plays 1080p video, has streaming apps built in, and flips 180° to project straight up.",
       "bullets": [
-        "Native 1080p, up to 120\" image",
-        "Built-in Wi-Fi and Bluetooth",
-        "Auto keystone and focus",
-        "Rotating stand for ceiling projection"
+        "720p native, supports 1080p video, up to 120\" image",
+        "Built-in Wi-Fi, Bluetooth and Android apps",
+        "Auto keystone correction",
+        "180° flip stand for ceiling projection"
       ],
       "options": {}
     },
@@ -233,8 +231,8 @@ window.STORE = {
       ],
       "intro": "A gentle reminder to sit tall. Breathable, adjustable straps that are discreet enough to wear under a shirt.",
       "bullets": [
-        "Breathable, latex-free fabric",
-        "Adjustable figure-8 strap design",
+        "Breathable, adjustable straps",
+        "Upper-back support that's easy to put on",
         "Wear under or over clothing"
       ],
       "options": {
@@ -263,8 +261,8 @@ window.STORE = {
       ],
       "intro": "Sleep in it, wake up with bouncy curls. No heat damage, no tools, just a satin rod plus scrunchies.",
       "bullets": [
-        "Soft satin-wrapped foam rod",
-        "Includes 2 scrunchies and a claw clip",
+        "Soft satin-covered plush rod",
+        "Includes matching scrunchies",
         "Works on damp or dry hair"
       ],
       "options": {
@@ -317,11 +315,11 @@ window.STORE = {
         "#CFFAFE",
         "#22D3EE"
       ],
-      "intro": "Hit your water goal without thinking about it. The glowing cap reminds you to sip and shows your progress through the day.",
+      "intro": "Hit your water goal without thinking about it. The glowing smart cap reminds you when it's time to sip.",
       "bullets": [
-        "LED reminder glow on a schedule you set",
-        "Double-wall insulated stainless steel, 600ml",
-        "Leak-proof flip lid, USB-C rechargeable cap"
+        "Smart LED drink reminders",
+        "Double-wall vacuum-insulated stainless steel",
+        "Keeps drinks cold or hot for hours"
       ],
       "options": {
         "Color": [
@@ -333,7 +331,7 @@ window.STORE = {
     },
     {
       "handle": "glowstrip-motion-sensor-lights",
-      "title": "GlowStrip Motion Sensor Lights (3-Pack)",
+      "title": "GlowStrip Motion Sensor Lights (2-Pack)",
       "category": "home",
       "tags": [
         "home",
@@ -352,14 +350,9 @@ window.STORE = {
       "bullets": [
         "Motion and light sensor, auto-on in the dark",
         "Magnetic mount with adhesive strip",
-        "Rechargeable, up to 3 months per charge"
+        "USB rechargeable, dimmable 40-LED bar"
       ],
-      "options": {
-        "Length": [
-          "8 in",
-          "12 in"
-        ]
-      }
+      "options": {}
     },
     {
       "handle": "quietpods-anc-earbuds",
@@ -378,12 +371,11 @@ window.STORE = {
         "#E0E7FF",
         "#818CF8"
       ],
-      "intro": "Active noise cancelling for your commute, flights and focus time, plus a transparency mode for when you need to hear the world.",
+      "intro": "Active noise cancelling for your commute, flights and focus time, in a pocket-size charging case.",
       "bullets": [
-        "Active noise cancelling + transparency mode",
-        "Up to 30 hours with the charging case",
-        "IPX5 sweat and splash resistant",
-        "Touch controls and low-latency game mode"
+        "Active noise cancelling (ANC)",
+        "Bluetooth 5.3 with touch controls",
+        "Sweat and water resistant for workouts"
       ],
       "options": {
         "Color": [
@@ -411,9 +403,9 @@ window.STORE = {
       ],
       "intro": "The calming hug of a weighted blanket in a breathable chunky knit, so you stay cozy without overheating.",
       "bullets": [
-        "Hand-knit, no beads or fillers",
+        "Hand-knit chunky chenille yarn, no glass beads",
         "Breathable open-weave design",
-        "Machine washable on gentle"
+        "Choose the weight that feels right"
       ],
       "options": {
         "Weight": [
@@ -440,11 +432,11 @@ window.STORE = {
         "#DCFCE7",
         "#4ADE80"
       ],
-      "intro": "Brain games for bored pets. Hide treats under spinning lids and sliders, and watch them work for their snacks.",
+      "intro": "Brain games for bored pets. Hide treats in the compartments and watch them work for their snacks.",
       "bullets": [
-        "Multiple difficulty levels",
-        "Non-slip base, food-safe materials",
-        "Dishwasher safe"
+        "Hidden compartments for treats or kibble",
+        "Non-slip base, PP/ABS plastic",
+        "Great for slow feeding and training"
       ],
       "options": {}
     },
@@ -469,7 +461,7 @@ window.STORE = {
       "bullets": [
         "3 resistance levels: light, medium, heavy",
         "Non-slip fabric with grip lining",
-        "Carry bag and workout guide included"
+        "Fabric bands that stay put"
       ],
       "options": {}
     },
@@ -492,7 +484,7 @@ window.STORE = {
       "intro": "The organizing gadget that labels your pantry, cables and craft room. Print from your phone with no ink, ever.",
       "bullets": [
         "Inkless thermal printing",
-        "Bluetooth app with fonts, icons and templates",
+        "Prints from your phone over Bluetooth",
         "Includes one roll of labels"
       ],
       "options": {
@@ -520,9 +512,9 @@ window.STORE = {
       ],
       "intro": "Let the brush do the scrubbing. Grout, tubs, sinks and stovetops come clean with less elbow grease.",
       "bullets": [
-        "Two speeds, waterproof body",
-        "4 interchangeable brush heads",
-        "Telescoping handle extends to 50\""
+        "Cordless and rechargeable",
+        "7 interchangeable brush heads",
+        "Extendable stainless steel handle"
       ],
       "options": {}
     }
