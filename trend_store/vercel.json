@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "redirects": [
+    { "source": "/", "destination": "/preview/", "permanent": false }
+  ]
+}

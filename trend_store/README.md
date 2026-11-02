@@ -165,6 +165,19 @@ The script generates every variant combination with unique SKUs.
 
 ## Preview
 
+### Deploy the preview to Vercel
+
+`vercel.json` in this folder deploys it as a static site, the same way `mad_gossip` and
+`bars_and_beef` are set up:
+
+1. vercel.com → **Add New… → Project** → import the `Test-` repo.
+2. Set **Root Directory** to `trend_store`. Leave Framework as "Other", with no build command.
+3. Deploy. The site root redirects to `/preview/`.
+
+Vercel redeploys on every push. Pushes to non-production branches get their own preview URL.
+
+### Open locally
+
 Open `preview/index.html` in a browser. It uses the theme's real stylesheet and the generated
 catalog data, so it matches what the theme looks like with products loaded. It uses emoji
 artwork in place of product photos, and the cart is simulated in the browser.
