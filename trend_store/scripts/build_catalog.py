@@ -7,6 +7,7 @@ Usage:
 
 Outputs:
     trend_store/products.csv        -> Shopify admin > Products > Import
+    trend_store/sourcing.csv        -> supplier sheet: Alibaba listings, unit cost, margin
     trend_store/preview/products.js -> data for the static preview page
 """
 from __future__ import annotations
@@ -15,12 +16,14 @@ import csv
 import html
 import itertools
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "data" / "products.json"
 CSV_OUT = ROOT / "products.csv"
 PREVIEW_OUT = ROOT / "preview" / "products.js"
+SOURCING_OUT = ROOT / "sourcing.csv"
 
 # Starting stock per variant. Adjust in Shopify after import.
 DEFAULT_INVENTORY = 50
@@ -32,8 +35,28 @@ COLUMNS = [
     "Variant Inventory Policy", "Variant Fulfillment Service", "Variant Price", "Variant Compare At Price",
     "Variant Requires Shipping", "Variant Taxable", "Variant Barcode",
     "Image Src", "Image Position", "Image Alt Text", "Gift Card",
-    "SEO Title", "SEO Description", "Variant Weight Unit", "Status",
+    "SEO Title", "SEO Description", "Variant Weight Unit", "Cost per item", "Status",
 ]
+
+
+def price_range(text: str | None) -> tuple[float, float] | None:
+    """Parse '3.20-4.50' / '$12' style supplier prices into (low, high)."""
+    if not text:
+        return None
+    nums = [float(n) for n in re.findall(r"\d+(?:\.\d+)?", text.replace(",", ""))]
+    if not nums:
+        return None
+    return min(nums), max(nums)
+
+
+def unit_cost(p: dict) -> float | None:
+    """Conservative unit cost: the HIGH end of the primary supplier's price
+    range (low ends usually need large order quantities). Excludes shipping."""
+    for s in p.get("sourcing", []):
+        r = price_range(s.get("price_usd"))
+        if r:
+            return r[1]
+    return None
 
 
 def body_html(p: dict) -> str:
@@ -78,6 +101,7 @@ def build_csv(vendor: str, products: list[dict]) -> int:
                     "Variant Requires Shipping": "TRUE",
                     "Variant Taxable": "TRUE",
                     "Variant Weight Unit": "g",
+                    "Cost per item": f"{unit_cost(p):.2f}" if unit_cost(p) is not None else "",
                 })
                 for n, (name, value) in enumerate(zip(names, values), start=1):
                     row[f"Option{n} Value"] = value
@@ -99,6 +123,24 @@ def build_csv(vendor: str, products: list[dict]) -> int:
                 w.writerow(row)
                 rows += 1
     return rows
+
+
+def build_sourcing(products: list[dict]) -> int:
+    cols = ["Handle", "Title", "Our Price", "Supplier Rank", "Listing Title", "Supplier",
+            "Unit Price (USD)", "MOQ", "Est. Margin at High Unit Price", "Listing Type", "URL", "Specs / Notes"]
+    n = 0
+    with SOURCING_OUT.open("w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(cols)
+        for p in products:
+            for rank, s in enumerate(p.get("sourcing", []), start=1):
+                r = price_range(s.get("price_usd"))
+                margin = f"{(p['price'] - r[1]) / p['price']:.0%}" if r else ""
+                w.writerow([p["handle"], p["title"], f"{p['price']:.2f}", rank, s.get("title", ""),
+                            s.get("supplier") or "", s.get("price_usd") or "", s.get("moq") or "", margin,
+                            s.get("type", ""), s["url"], s.get("specs") or ""])
+                n += 1
+    return n
 
 
 def build_preview(vendor: str, products: list[dict]) -> None:
@@ -129,8 +171,10 @@ def main() -> None:
     src = json.loads(SRC.read_text(encoding="utf-8"))
     rows = build_csv(src["vendor"], src["products"])
     build_preview(src["vendor"], src["products"])
+    sourced = build_sourcing(src["products"])
     print(f"{len(src['products'])} products, {rows} CSV rows -> {CSV_OUT.relative_to(ROOT.parent)}")
     print(f"preview data -> {PREVIEW_OUT.relative_to(ROOT.parent)}")
+    print(f"{sourced} supplier listings -> {SOURCING_OUT.relative_to(ROOT.parent)}")
 
 
 if __name__ == "__main__":
