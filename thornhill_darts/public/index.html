@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thornhill Village Darts League</title>
+<meta name="description" content="Thornhill Village Darts League, West Yorkshire — standings, fixtures and teams.">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <img class="logo" src="/logo.svg" alt="">
+    <div>
+      <h1 data-league-name>Thornhill Village Darts League</h1>
+      <div class="region" data-league-region>Thornhill, West Yorkshire, England</div>
+    </div>
+    <div class="spacer"></div>
+    <select id="leagueSelect" aria-label="League" hidden></select>
+    <select id="seasonSelect" aria-label="Season"></select>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="error" class="notice err" hidden></div>
+
+  <section class="card" id="historical" hidden>
+    <h2>Final standings <span class="badge hist">Published</span></h2>
+    <p class="sub" id="historicalSub"></p>
+    <div id="historicalNotice" class="notice" hidden></div>
+    <div class="divisions" id="historicalTables"></div>
+  </section>
+
+  <section class="card" id="live" hidden>
+    <h2>Live table <span class="badge live">Calculated</span></h2>
+    <p class="sub" id="liveSub"></p>
+    <div id="liveNotice" class="notice" hidden></div>
+    <div class="divisions" id="liveTables"></div>
+  </section>
+
+  <section class="card" id="fixtures" hidden>
+    <h2>Fixtures &amp; results</h2>
+    <p class="sub">As entered by the league administrators.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th class="l">Date</th><th class="l">Division</th><th class="l">Home</th><th></th><th class="l">Away</th><th class="l">Status</th></tr></thead>
+      <tbody id="fixtureRows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card" id="empty" hidden>
+    <h2>Nothing to show yet</h2>
+    <p class="sub">No standings or fixtures have been entered for this season.</p>
+  </section>
+
+  <section class="card">
+    <h2>Clubs &amp; teams</h2>
+    <p class="sub">A club can enter more than one team; A and B teams may play in different divisions.</p>
+    <div class="clubs" id="clubs"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span data-league-name>Thornhill Village Darts League</span> · <a href="/admin">League administration</a>
+</footer>
+
+<script src="/common.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
