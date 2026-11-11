@@ -21,7 +21,7 @@
 <header class="appbar">
   <div class="wrap">
     <a class="brandmark" href="#table" aria-label="Home">
-      <img src="/logo.svg" alt="">
+      <span class="mark" id="brandMark"><img src="/logo.svg" alt=""></span>
       <span><b data-league-name>Thornhill Village Darts League</b></span>
     </a>
     <div class="spacer"></div>
@@ -41,7 +41,7 @@
   <!-- TABLE -->
   <div class="view" data-view="table">
     <section class="hero">
-      <svg class="board" viewBox="0 0 200 200" fill="none" stroke="#fff" aria-hidden="true">
+      <div class="board" aria-hidden="true"><svg viewBox="0 0 200 200" fill="none" stroke="#fff">
         <g transform="rotate(-9 100 100)">
           <circle cx="100" cy="100" r="52" stroke-width="76" stroke-opacity=".5" stroke-dasharray="0.5 15.836"/>
           <circle cx="100" cy="100" r="86" stroke-width="8" stroke-opacity=".2" stroke-dasharray="27.018 27.018"/>
@@ -51,7 +51,7 @@
           <circle cx="100" cy="100" r="98"/><circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="82"/>
           <circle cx="100" cy="100" r="57"/><circle cx="100" cy="100" r="51"/><circle cx="100" cy="100" r="14"/><circle cx="100" cy="100" r="6"/>
         </g>
-      </svg>
+      </svg></div>
       <span class="eyebrow" data-league-region>Thornhill, West Yorkshire, England</span>
       <h1 data-league-name>Thornhill Village Darts League</h1>
       <div class="hero-row">
@@ -114,12 +114,16 @@
 </footer>
 
 <nav class="tabbar" aria-label="Sections">
-  <a href="#table" data-nav="table" data-icon="table">Table</a>
   <a href="#fixtures" data-nav="fixtures" data-icon="calendar">Fixtures</a>
+  <a href="#table" data-nav="table" class="bull">
+    <span class="bull-board" id="bullBoard"><span class="bull-face"><img src="/logo.svg" alt=""></span></span>
+    Table
+  </a>
   <a href="#clubs" data-nav="clubs" data-icon="shield">Clubs</a>
 </nav>
 
 <script src="/common.js"></script>
+<script src="/darts.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

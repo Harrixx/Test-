@@ -91,6 +91,12 @@ No fixtures, match results, players or scoring rules are seeded.
 - On phones, one division is shown at a time with a switcher, and each team's
   figures sit on a line under its name so nothing scrolls sideways.
 - Each club gets its own badge colour, shared by its A and B teams.
+- The middle tab on phones is a raised bullseye that opens the table; tapping
+  it throws a dart into the board. The dartboard in the header panel can be
+  played too: tap or click it to throw, with a score for each dart and a
+  three-dart total. This is decoration only (`public/darts.js`) and never
+  reads or writes league data. It is switched off for people who have asked
+  their device to reduce motion.
 - Installable to a phone home screen (`manifest.webmanifest`, icons in
   `public/icons/`). There is no offline mode.
 - Fonts (Inter, Bricolage Grotesque) are self-hosted under the SIL Open Font

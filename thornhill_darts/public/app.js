@@ -27,6 +27,25 @@
   addEventListener('hashchange', showView);
   showView();
 
+  // ---------- darts ----------
+  // The bullseye tab (phones) and the Table link (larger screens) throw a dart at their target.
+  document.querySelector('.tabbar .bull').addEventListener('click', () => Darts.hit($('bullBoard')));
+  document.querySelectorAll('.topnav [data-nav="table"], .brandmark').forEach((a) =>
+    a.addEventListener('click', () => Darts.hit($('brandMark'), { size: 40, linger: 900, spread: 2 })));
+  Darts.initBoard(document.querySelector('.hero'));
+
+  // Numbers tick up when they change.
+  function countUp(el, to) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !to) { el.textContent = to; return; }
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / 550);
+      el.textContent = Math.round(to * (1 - (1 - t) ** 3));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
   const callout = (el, name, text) => { el.hidden = !text; el.innerHTML = text ? `${icon(name)}<div>${esc(text)}</div>` : ''; };
   const val = (v, signed) => (v === null || v === undefined ? null : signed && v > 0 ? `+${v}` : String(v));
 
@@ -118,8 +137,10 @@
     const teams = inSeason.length || clubs.reduce((n, c) => n + c.teams.length, 0);
     const clubCount = inSeason.length ? new Set(inSeason.map((t) => t.club)).size : clubs.length;
     const divisions = new Set(inSeason.map((t) => t.m.division)).size;
-    $('stats').innerHTML = [[teams, 'Teams'], [divisions, 'Divisions'], [clubCount, 'Clubs']]
-      .map(([n, label]) => `<div class="stat"><b>${n}</b><span>${label}</span></div>`).join('');
+    $('stats').innerHTML = [[teams, 'Team'], [divisions, 'Division'], [clubCount, 'Club']]
+      .map(([n, one]) => [n, n === 1 ? one : `${one}s`])
+      .map(([n, label]) => `<div class="stat"><b data-to="${n}">${n}</b><span>${label}</span></div>`).join('');
+    $('stats').querySelectorAll('b').forEach((b) => countUp(b, Number(b.dataset.to)));
   }
 
   // ---------- loading ----------
