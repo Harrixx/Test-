@@ -10,7 +10,8 @@ const importers = require('./importers');
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.csv': 'text/csv; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.json': 'application/json' };
+  '.csv': 'text/csv; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.json': 'application/json',
+  '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
 const MAX_BODY = 5 * 1024 * 1024;
 
 class HttpError extends Error {
@@ -49,6 +50,7 @@ function serveFile(res, dir, rel) {
     if (err) return send(res, 404, 'Not found');
     const headers = { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'X-Content-Type-Options': 'nosniff' };
     if (dir === TEMPLATES_DIR) headers['Content-Disposition'] = `attachment; filename="${path.basename(file)}"`;
+    if (path.extname(file) === '.woff2') headers['Cache-Control'] = 'public, max-age=31536000, immutable';
     res.writeHead(200, headers);
     res.end(buf);
   });

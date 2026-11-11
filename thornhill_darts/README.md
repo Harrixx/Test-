@@ -82,6 +82,22 @@ No fixtures, match results, players or scoring rules are seeded.
   at `/?league=<slug>`. The league switcher only appears once there is more
   than one.
 
+## Front end
+
+- App-style interface with Table, Fixtures and Clubs views: a bottom tab bar
+  on phones, a top bar on larger screens.
+- Light and dark themes. It follows the device setting and the toggle in the
+  header remembers a manual choice.
+- On phones, one division is shown at a time with a switcher, and each team's
+  figures sit on a line under its name so nothing scrolls sideways.
+- Each club gets its own badge colour, shared by its A and B teams.
+- Installable to a phone home screen (`manifest.webmanifest`, icons in
+  `public/icons/`). There is no offline mode.
+- Fonts (Inter, Bricolage Grotesque) are self-hosted under the SIL Open Font
+  License in `public/fonts/`, so the site makes no third-party requests.
+- A league's main colour, set under Admin → League & branding, drives the
+  header panel, buttons and highlights.
+
 ## Layout
 
 ```

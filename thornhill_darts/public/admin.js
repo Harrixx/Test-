@@ -1,12 +1,13 @@
 'use strict';
 (() => {
-  const { esc, cell, api, applyBranding, STATUS } = window.League;
+  const { esc, cell, api, icon, applyBranding, initChrome, STATUS } = window.League;
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   let slug = null;
   let token = sessionStorage.getItem('adminToken') || '';
   let league = null;
   let pending = null; // last successfully previewed import payload
+  initChrome();
 
   const admin = (path, method = 'GET', body) => api(path, {
     method,
@@ -17,8 +18,8 @@
 
   function flash(msg, isError = false) {
     const el = $('flash');
-    el.className = `notice ${isError ? 'err' : 'ok'}`;
-    el.textContent = msg;
+    el.className = `callout ${isError ? 'err' : 'ok'}`;
+    el.innerHTML = `${icon(isError ? 'alert' : 'check')}<div>${esc(msg)}</div>`;
     el.hidden = false;
     el.scrollIntoView({ block: 'nearest' });
   }
@@ -31,7 +32,7 @@
   };
   const list = (el, title, items) => {
     el.hidden = !items.length;
-    el.innerHTML = items.length ? `<strong>${esc(title)}</strong><ul>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : '';
+    el.innerHTML = items.length ? `${icon(el.classList.contains('err') ? 'alert' : 'info')}<div><strong>${esc(title)}</strong><ul>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div>` : '';
   };
 
   // ---------- sign in ----------
@@ -41,7 +42,7 @@
     $('panel').hidden = true;
     $('login').hidden = false;
     $('loginError').hidden = !msg;
-    $('loginError').textContent = msg || '';
+    $('loginError').innerHTML = msg ? `${icon('alert')}<div>${esc(msg)}</div>` : '';
   }
   $('signOut').onclick = () => signOut();
   $('loginForm').onsubmit = async (e) => {
@@ -57,9 +58,10 @@
 
   // ---------- tabs ----------
   $('tabs').addEventListener('click', (e) => {
-    const tab = e.target.dataset?.tab;
-    if (!tab) return;
-    document.querySelectorAll('#tabs [data-tab]').forEach((b) => b.classList.toggle('on', b === e.target));
+    const btn = e.target.closest('[data-tab]');
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('#tabs [data-tab]').forEach((b) => b.classList.toggle('on', b === btn));
     document.querySelectorAll('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab; });
     $('flash').hidden = true;
   });
@@ -94,7 +96,7 @@
     // Seasons
     $('seasonRows').innerHTML = league.seasons.map((s) =>
       `<tr><td class="l team">${esc(s.name)}<div class="muted" style="font-weight:400;font-size:.85rem">${esc(s.notes || '')}</div></td>` +
-      `<td class="l"><select data-season="${s.id}">${Object.entries(STATUS).map(([v, t]) => `<option value="${v}"${v === s.status ? ' selected' : ''}>${t}</option>`).join('')}</select></td>` +
+      `<td class="l"><select class="inp" data-season="${s.id}">${Object.entries(STATUS).map(([v, t]) => `<option value="${v}"${v === s.status ? ' selected' : ''}>${t}</option>`).join('')}</select></td>` +
       `<td>${s.historical_rows}</td><td>${s.fixture_count}</td></tr>`).join('');
 
     // Points
@@ -112,9 +114,9 @@
     $('teamRows').innerHTML = clubs.flatMap((c) => c.teams.map((t) =>
       `<tr data-team="${t.id}"><td class="l"><input data-f="name" value="${esc(t.name)}" aria-label="Team name"></td>` +
       `<td class="l"><input data-f="club" value="${esc(c.name)}" list="clubList" aria-label="Club"></td>` +
-      `<td class="l muted">${esc(t.divisions[0] ? `${t.divisions[0].division} (${t.divisions[0].season})` : '—')}</td>` +
+      `<td class="l muted wrap">${esc(t.divisions[0] ? `${t.divisions[0].division} (${t.divisions[0].season})` : '—')}</td>` +
       `<td class="l"><input type="checkbox" data-f="active"${t.active ? ' checked' : ''} aria-label="Active"></td>` +
-      `<td><button data-save>Save</button></td></tr>`)).join('');
+      `<td><button class="btn sm" data-save>Save</button></td></tr>`)).join('');
 
     // History
     const KIND = { historical_standings: 'Historical standings', fixtures: 'Fixtures', seed: 'Initial data' };
@@ -122,7 +124,7 @@
     $('historyRows').innerHTML = imports.map((b) =>
       `<tr><td class="l">${esc(b.created_at)}</td><td class="l">${esc(KIND[b.kind] || b.kind)}</td><td class="l">${esc(b.season || '')}</td>` +
       `<td class="l">${esc(b.filename || '—')}</td><td>${b.row_count}</td>` +
-      `<td class="l" style="white-space:normal">${esc([b.source_note, ...b.warnings].filter(Boolean).join(' · '))}</td></tr>`).join('');
+      `<td class="l wrap">${esc([b.source_note, ...b.warnings].filter(Boolean).join(' · '))}</td></tr>`).join('');
   }
 
   // ---------- import ----------
@@ -143,10 +145,24 @@
     $('impHelp').innerHTML = help;
     invalidate();
   }
-  function invalidate() { pending = null; $('impCommit').disabled = true; }
+  function invalidate() { pending = null; $('impCommit').disabled = true; $('impCommit').classList.remove('primary'); }
+  function showFile() {
+    const f = $('impFile').files[0];
+    $('dropzone').classList.toggle('has-file', !!f);
+    $('dropTitle').textContent = f ? f.name : 'Choose a spreadsheet or drop it here';
+    $('dropSub').textContent = f ? `${Math.max(1, Math.round(f.size / 1024))} KB · click to choose a different file` : '.csv or .xlsx';
+  }
+  $('impFile').addEventListener('change', showFile);
+  ['dragenter', 'dragover'].forEach((t) => $('dropzone').addEventListener(t, (e) => { e.preventDefault(); $('dropzone').classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((t) => $('dropzone').addEventListener(t, (e) => { e.preventDefault(); $('dropzone').classList.remove('over'); }));
+  $('dropzone').addEventListener('drop', (e) => {
+    if (!e.dataTransfer?.files.length) return;
+    $('impFile').files = e.dataTransfer.files;
+    showFile(); invalidate();
+  });
   function resetImport() {
     invalidate();
-    $('impFile').value = ''; $('impText').value = ''; $('impNote').value = '';
+    $('impFile').value = ''; $('impText').value = ''; $('impNote').value = ''; showFile();
     $('impErrors').hidden = true; $('impWarnings').hidden = true; $('impTable').innerHTML = '';
   }
   ['impKind', 'impSeason'].forEach((id) => { $(id).onchange = onImportOptions; });
@@ -191,7 +207,7 @@
     list($('impErrors'), 'Fix these before the file can be saved:', p.errors);
     list($('impWarnings'), 'Please check:', p.warnings);
     $('impTable').innerHTML = previewTable(p);
-    if (p.ok) { pending = payload; $('impCommit').disabled = false; }
+    if (p.ok) { pending = payload; $('impCommit').disabled = false; $('impCommit').classList.add('primary'); }
   });
 
   $('impCommit').onclick = guard(async () => {
