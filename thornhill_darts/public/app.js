@@ -33,6 +33,18 @@
   document.querySelectorAll('.topnav [data-nav="table"], .brandmark').forEach((a) =>
     a.addEventListener('click', () => Darts.hit($('brandMark'), { size: 40, linger: 900, spread: 2 })));
   Darts.initBoard(document.querySelector('.hero'));
+  // The stamp and whoever finished top hand out confetti.
+  $('stamp').addEventListener('click', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.classList.remove('whirl'); void e.currentTarget.offsetWidth; e.currentTarget.classList.add('whirl');
+    Darts.confetti(r.left + r.width / 2, r.top + r.height / 2, 40);
+  });
+  document.querySelector('[data-view="table"]').addEventListener('click', (e) => {
+    const badge = e.target.closest('li.first')?.querySelector('.avatar');
+    if (!badge) return;
+    const r = badge.getBoundingClientRect();
+    Darts.confetti(r.left + r.width / 2, r.top, 26);
+  });
 
   // Numbers tick up when they change.
   function countUp(el, to) {
@@ -98,8 +110,8 @@
   function renderFixtures(fixtures, season) {
     $('fixturesSub').textContent = season.name;
     if (!fixtures.length) {
-      $('fixtureList').innerHTML = `<div class="card empty"><div class="ring">${icon('calendar')}</div><h3>No fixtures yet</h3>` +
-        '<p>No fixtures or results have been entered for this season.</p></div>';
+      $('fixtureList').innerHTML = `<div class="card empty"><div class="ring">${icon('calendar')}</div><h3>Nothing on the board yet</h3>` +
+        '<p>No fixtures or results have been entered for this season. They will show here as soon as the league adds them.</p></div>';
       return;
     }
     const days = new Map();
@@ -182,6 +194,19 @@
     setClubs(clubs);
     applyBranding(league);
     document.title = league.name;
+    // Hero title: the last two words get the pop colour.
+    const words = league.name.trim().split(/\s+/);
+    const cut = Math.max(1, words.length - 2);
+    document.querySelector('.hero h1').innerHTML = words.length > 1
+      ? `${esc(words.slice(0, cut).join(' '))} <em>${esc(words.slice(cut).join(' '))}</em>` : esc(league.name);
+    // Ticker of club names, repeated so the loop is seamless.
+    let names = clubs.map((c) => c.name);
+    $('ticker').hidden = !names.length;
+    if (names.length) {
+      while (names.length < 12) names = names.concat(clubs.map((c) => c.name));
+      const run = names.map((n) => `<span>${esc(n)}</span><i>✦</i>`).join('');
+      $('ticker').innerHTML = `<div class="ticker-track">${run}${run}</div>`;
+    }
     const sel = $('seasonSelect');
     sel.innerHTML = league.seasons.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
     sel.closest('.hero-row').hidden = !league.seasons.length;

@@ -91,6 +91,9 @@ No fixtures, match results, players or scoring rules are seeded.
 - On phones, one division is shown at a time with a switcher, and each team's
   figures sit on a line under its name so nothing scrolls sideways.
 - Each club gets its own badge colour, shared by its A and B teams.
+- Playful touches: a lime highlight colour, a scrolling ticker of club names,
+  a spinning stamp that throws confetti, a crown on whoever finished top,
+  and darts slang for three-dart scores ("Ton 40", "Bed & breakfast").
 - The middle tab on phones is a raised bullseye that opens the table; tapping
   it throws a dart into the board. The dartboard in the header panel can be
   played too: tap or click it to throw, with a score for each dart and a

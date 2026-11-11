@@ -81,6 +81,22 @@ window.Darts = (() => {
     el.classList.add(cls);
   }
 
+  // A burst of confetti from viewport point (x, y).
+  function confetti(x, y, count = 28) {
+    if (reduced()) return;
+    getLayer();
+    const colours = ['#c8ff3d', '#e5383b', '#ffffff', '#f7c948', '#2fa866', '#ff8fd0'];
+    for (let i = 0; i < count; i++) {
+      const c = document.createElement('span');
+      c.className = `confetti${i % 3 === 0 ? ' round' : ''}`;
+      const spread = rand(-1, 1);
+      c.style.cssText = `--x:${x}px;--y:${y}px;--c:${colours[i % colours.length]};--dx:${spread * rand(60, 190)}px;` +
+        `--up:${-rand(70, 190)}px;--dy:${rand(90, 260)}px;--r:${rand(-720, 720)}deg;--t:${rand(0.9, 1.5)}s`;
+      layer.append(c);
+      setTimeout(() => c.remove(), 1700);
+    }
+  }
+
   function fadeOut(el) {
     el.classList.add('gone');
     setTimeout(() => el.remove(), 320);
@@ -109,11 +125,21 @@ window.Darts = (() => {
   function score(u, deg) {
     if (u <= 6) return { label: 'BULL', value: 50 };
     if (u <= 14) return { label: '25', value: 25 };
-    if (u > 90) return { label: 'Miss', value: 0 };
+    if (u > 90) return { label: 'Wide!', value: 0 };
     const n = NUMBERS[Math.floor((((deg + 9) % 360) + 360) % 360 / 18)];
     if (u >= 82) return { label: `D${n}`, value: n * 2 };
     if (u >= 51 && u <= 57) return { label: `T${n}`, value: n * 3 };
     return { label: String(n), value: n };
+  }
+
+  // What the caller would say about a three-dart score, in darts slang.
+  function callOut(sum) {
+    if (sum === 180) return 'One hundred and eighty!';
+    if (sum > 100) return `Ton ${sum - 100}`;
+    if (sum === 100) return 'Ton!';
+    if (sum === 26) return 'Bed & breakfast';
+    if (sum === 0) return 'Not your night';
+    return 'Three darts';
   }
 
   function initBoard(hero) {
@@ -181,14 +207,19 @@ window.Darts = (() => {
       const s = score(u, deg);
       thrown.push({ el, value: s.value, demo });
       if (!demo) {
-        pop(s.label, x, y, s.value >= 50 ? 'big' : '');
+        pop(s.label, x, y, s.value >= 50 ? 'big' : s.value === 0 ? 'wide' : '');
+        if (s.value >= 50) confetti(x, y, 22);
         if (thrown.length === 3) {
           const sum = thrown.reduce((n, d) => n + d.value, 0);
           total = document.createElement('div');
-          total.className = 'throw-total';
-          total.innerHTML = sum === 180 ? '<b>180!</b><span>One hundred and eighty</span>' : `<b>${sum}</b><span>Three darts</span>`;
+          total.className = `throw-total${sum >= 100 ? ' cheer' : ''}`;
+          total.innerHTML = `<b>${sum === 180 ? '180!' : sum}</b><span>${callOut(sum)}</span>`;
           hero.append(total);
-          if (sum === 180) buzz(60);
+          if (sum >= 100) {
+            const t = total.getBoundingClientRect();
+            confetti(t.left + t.width / 2, t.bottom, sum === 180 ? 70 : 36);
+            buzz(sum === 180 ? 60 : 25);
+          }
         }
       }
       busy = false;
@@ -212,5 +243,5 @@ window.Darts = (() => {
     }
   }
 
-  return { hit, initBoard, score };
+  return { hit, initBoard, score, confetti, callOut };
 })();

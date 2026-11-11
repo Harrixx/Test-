@@ -41,7 +41,7 @@
   <!-- TABLE -->
   <div class="view" data-view="table">
     <section class="hero">
-      <div class="board" aria-hidden="true"><svg viewBox="0 0 200 200" fill="none" stroke="#fff">
+      <div class="hero-clip" aria-hidden="true"><div class="board"><svg viewBox="0 0 200 200" fill="none" stroke="#fff">
         <g transform="rotate(-9 100 100)">
           <circle cx="100" cy="100" r="52" stroke-width="76" stroke-opacity=".5" stroke-dasharray="0.5 15.836"/>
           <circle cx="100" cy="100" r="86" stroke-width="8" stroke-opacity=".2" stroke-dasharray="27.018 27.018"/>
@@ -51,7 +51,7 @@
           <circle cx="100" cy="100" r="98"/><circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="82"/>
           <circle cx="100" cy="100" r="57"/><circle cx="100" cy="100" r="51"/><circle cx="100" cy="100" r="14"/><circle cx="100" cy="100" r="6"/>
         </g>
-      </svg></div>
+      </svg></div></div>
       <span class="eyebrow" data-league-region>Thornhill, West Yorkshire, England</span>
       <h1 data-league-name>Thornhill Village Darts League</h1>
       <div class="hero-row">
@@ -63,9 +63,18 @@
         <span class="status-chip" id="seasonStatus"></span>
       </div>
       <div class="stats" id="stats"></div>
+      <button class="stamp" id="stamp" aria-label="Celebrate">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <path id="stampArc" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0" fill="none"/>
+          <text><textPath href="#stampArc" textLength="278">STEP UP TO THE OCHE ✦ GAME ON ✦</textPath></text>
+          <circle cx="60" cy="60" r="24" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="60" cy="60" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="60" cy="60" r="4.5" fill="currentColor"/>
+        </svg>
+      </button>
     </section>
 
-    <div style="height:30px"></div>
+    <div class="ticker" id="ticker" aria-hidden="true"></div>
     <div id="tableSkeleton" class="divisions"><div class="skel"></div><div class="skel"></div></div>
 
     <section class="section" id="historical" hidden>
