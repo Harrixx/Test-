@@ -5,7 +5,7 @@
   "description": "Darts league platform — initial deployment for Thornhill Village Darts League, West Yorkshire",
   "main": "server.js",
   "engines": {
-    "node": ">=22.5"
+    "node": "22.x"
   },
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning server.js",

@@ -14,7 +14,7 @@
     headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
     body: body ? JSON.stringify(body) : undefined,
   });
-  const base = () => `/api/admin/leagues/${slug}`;
+  const base = () => `api/admin/leagues/${slug}`;
 
   function flash(msg, isError = false) {
     const el = $('flash');
@@ -49,7 +49,7 @@
     e.preventDefault();
     token = $('token').value.trim();
     try {
-      await admin('/api/admin/check');
+      await admin('api/admin/check');
       sessionStorage.setItem('adminToken', token);
       $('token').value = '';
       await start();
@@ -68,7 +68,7 @@
 
   // ---------- loading ----------
   async function start() {
-    const [config, leagues] = await Promise.all([api('/api/config'), api('/api/leagues')]);
+    const [config, leagues] = await Promise.all([api('api/config'), api('api/leagues')]);
     slug = slug || params.get('league') || config.defaultLeague;
     if (!leagues.some((l) => l.slug === slug)) slug = leagues[0].slug;
     const ls = $('leagueSelect');
@@ -82,7 +82,7 @@
   }
 
   async function refresh() {
-    league = await api(`/api/leagues/${slug}`);
+    league = await api(`api/leagues/${slug}`);
     applyBranding(league);
     document.title = `League administration — ${league.name}`;
 
@@ -109,7 +109,7 @@
     $('brPrimary').value = league.branding.primaryColour; $('brAccent').value = league.branding.accentColour;
 
     // Teams
-    const clubs = await api(`/api/leagues/${slug}/clubs`);
+    const clubs = await api(`api/leagues/${slug}/clubs`);
     $('clubList').innerHTML = clubs.map((c) => `<option value="${esc(c.name)}">`).join('');
     $('teamRows').innerHTML = clubs.flatMap((c) => c.teams.map((t) =>
       `<tr data-team="${t.id}"><td class="l"><input data-f="name" value="${esc(t.name)}" aria-label="Team name"></td>` +
@@ -130,9 +130,9 @@
   // ---------- import ----------
   const HELP = {
     historical_standings: 'Columns: Division, Pos, Team, Played, Won, Lost, Legs For, Legs Against, Leg Difference, Points. Figures are stored exactly as in the file and are never recalculated; blank cells stay blank. Each division in the file replaces that division\'s stored table. ' +
-      'Templates: <a href="/templates/standings-template.csv">blank</a>',
+      'Templates: <a href="templates/standings-template.csv">blank</a>',
     fixtures: 'Columns: Division, Date, Home, Away, Home Legs, Away Legs, Status (optional). Leave legs blank for matches not yet played. Re-uploading a fixture with the same date and teams updates its result. ' +
-      'Template: <a href="/templates/fixtures-template.csv">blank</a>',
+      'Template: <a href="templates/fixtures-template.csv">blank</a>',
   };
   function onImportOptions() {
     const isNew = $('impSeason').value === 'new';
@@ -140,7 +140,7 @@
     $('newSeasonStatusBox').hidden = !isNew;
     let help = HELP[$('impKind').value];
     if ($('impKind').value === 'historical_standings' && slug === 'thornhill') {
-      help += ' · <a href="/templates/thornhill-final-standings-2026.csv">Thornhill final standings 2026 (teams pre-filled)</a>';
+      help += ' · <a href="templates/thornhill-final-standings-2026.csv">Thornhill final standings 2026 (teams pre-filled)</a>';
     }
     $('impHelp').innerHTML = help;
     invalidate();
@@ -259,13 +259,28 @@
     flash('Branding saved.');
   });
   $('leagueForm').onsubmit = guard(async () => {
-    const l = await admin('/api/admin/leagues', 'POST', { name: $('lgName').value, slug: $('lgSlug').value, region: $('lgRegion').value });
+    const l = await admin('api/admin/leagues', 'POST', { name: $('lgName').value, slug: $('lgSlug').value, region: $('lgRegion').value });
     $('leagueForm').reset();
     slug = l.slug;
     resetImport();
     await start();
     flash(`${l.name} created. You are now managing it.`);
   });
+
+  // Tell the administrator plainly if the site has not been fully set up on its host.
+  api('api/config').then((config) => {
+    if (!config.adminConfigured) {
+      $('loginForm').hidden = true;
+      $('setupNotice').hidden = false;
+      $('setupNotice').innerHTML = `${icon('info')}<div><strong>Administration is switched off.</strong> No admin token has been set for this site. ` +
+        'Add an environment variable called <code>ADMIN_TOKEN</code> (any long, hard-to-guess phrase) in the hosting settings, then redeploy.</div>';
+    }
+    if (!config.writable) {
+      $('storageNotice').hidden = false;
+      $('storageNotice').innerHTML = `${icon('alert')}<div><strong>Changes can't be saved yet.</strong> This site has no database storage connected, so imports and edits are refused. ` +
+        'The public pages still work and show the starting data. To switch saving on, connect an Upstash Redis database to the Vercel project (Storage tab), then redeploy.</div>';
+    }
+  }).catch(() => { /* the sign-in form reports connection problems */ });
 
   if (token) start().catch((err) => signOut(err.status === 401 ? '' : err.message));
 })();

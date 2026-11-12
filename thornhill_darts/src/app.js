@@ -8,7 +8,6 @@ const { getPointsSystem, setPointsSystem, historicalStandings, liveStandings } =
 const importers = require('./importers');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.csv': 'text/csv; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.json': 'application/json',
   '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
@@ -26,6 +25,17 @@ function send(res, status, body, headers = {}) {
 }
 
 function readBody(req) {
+  // Some hosts (Vercel) have already read and parsed the body before the handler runs.
+  let pre;
+  try { pre = req.body; } catch { return Promise.reject(new HttpError(400, 'Request body must be JSON')); }
+  if (pre !== undefined && pre !== null) {
+    if (Buffer.isBuffer(pre) || typeof pre === 'string') {
+      const text = pre.toString();
+      if (!text) return Promise.resolve({});
+      try { return Promise.resolve(JSON.parse(text)); } catch { return Promise.reject(new HttpError(400, 'Request body must be JSON')); }
+    }
+    return Promise.resolve(pre);
+  }
   return new Promise((resolve, reject) => {
     let size = 0;
     const chunks = [];
@@ -49,7 +59,7 @@ function serveFile(res, dir, rel) {
   fs.readFile(file, (err, buf) => {
     if (err) return send(res, 404, 'Not found');
     const headers = { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'X-Content-Type-Options': 'nosniff' };
-    if (dir === TEMPLATES_DIR) headers['Content-Disposition'] = `attachment; filename="${path.basename(file)}"`;
+    if (path.dirname(file) === path.join(dir, 'templates')) headers['Content-Disposition'] = `attachment; filename="${path.basename(file)}"`;
     if (path.extname(file) === '.woff2') headers['Cache-Control'] = 'public, max-age=31536000, immutable';
     res.writeHead(200, headers);
     res.end(buf);
@@ -63,13 +73,18 @@ function leagueSummary(db, league) {
   };
 }
 
-function createApp(db, { adminToken, defaultLeague = 'thornhill' } = {}) {
-  if (!adminToken) throw new Error('adminToken is required');
-  const tokenBuf = Buffer.from(adminToken);
+// Options:
+//   adminToken  token administrators sign in with; null leaves the admin API switched off
+//   basePath    URL prefix when the app is mounted under a sub-path (e.g. "/thornhill")
+//   storage     { kind, writable } — reported to the admin tool; writes are refused when not writable
+//   commit      async hook called after a request has changed the database, before the reply is sent
+function createApp(db, { adminToken, defaultLeague = 'thornhill', basePath = '', storage = { kind: 'file', writable: true }, commit = null } = {}) {
+  const tokenBuf = adminToken ? Buffer.from(adminToken) : null;
+  const totalChanges = () => db.prepare('SELECT total_changes() AS n').get().n;
 
   const isAdmin = (req) => {
     const m = String(req.headers.authorization || '').match(/^Bearer (.+)$/);
-    if (!m) return false;
+    if (!m || !tokenBuf) return false;
     const given = Buffer.from(m[1]);
     return given.length === tokenBuf.length && crypto.timingSafeEqual(given, tokenBuf);
   };
@@ -93,7 +108,7 @@ function createApp(db, { adminToken, defaultLeague = 'thornhill' } = {}) {
 
   const routes = [
     // ---------- public ----------
-    ['GET', /^\/api\/config$/, () => ({ defaultLeague })],
+    ['GET', /^\/api\/config$/, () => ({ defaultLeague, adminConfigured: !!tokenBuf, storage: storage.kind, writable: !!storage.writable })],
     ['GET', /^\/api\/leagues$/, () => db.prepare('SELECT * FROM leagues ORDER BY name').all().map((l) => leagueSummary(db, l))],
     ['GET', /^\/api\/leagues\/([\w-]+)$/, (m) => {
       const l = league(m[1]);
@@ -190,21 +205,30 @@ function createApp(db, { adminToken, defaultLeague = 'thornhill' } = {}) {
 
   return async function handle(req, res) {
     const url = new URL(req.url, 'http://localhost');
-    const p = url.pathname;
+    // A host that rewrites requests to this handler can pass the app-relative path as ?__path=.
+    let p = url.searchParams.get('__path') || url.pathname;
+    if (basePath && (p === basePath || p.startsWith(`${basePath}/`))) p = p.slice(basePath.length) || '/';
     try {
       if (p.startsWith('/api/')) {
         for (const [method, re, fn, admin] of routes) {
           const m = p.match(re);
           if (!m) continue;
           if (req.method !== method) continue;
+          if (admin && !tokenBuf) throw new HttpError(503, 'Administration is not set up yet: the ADMIN_TOKEN setting is missing on the server.');
           if (admin && !isAdmin(req)) throw new HttpError(401, 'Administrator token required');
+          const changesData = method !== 'GET' && !p.endsWith('/import/preview');
+          if (changesData && !storage.writable) {
+            throw new HttpError(503, 'Changes cannot be saved yet: no database storage is connected to this site.');
+          }
           const body = ['POST', 'PUT', 'PATCH'].includes(method) ? await readBody(req) : {};
-          return send(res, 200, fn(m, body));
+          const before = commit ? totalChanges() : 0;
+          const out = fn(m, body);
+          if (commit && totalChanges() !== before) await commit(); // may throw 409 if someone else saved first
+          return send(res, 200, out);
         }
         throw new HttpError(404, 'Not found');
       }
       if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
-      if (p.startsWith('/templates/')) return serveFile(res, TEMPLATES_DIR, decodeURIComponent(p.slice('/templates/'.length)));
       if (p === '/' || p === '/index.html') return serveFile(res, PUBLIC_DIR, 'index.html');
       if (p === '/admin' || p === '/admin/') return serveFile(res, PUBLIC_DIR, 'admin.html');
       return serveFile(res, PUBLIC_DIR, decodeURIComponent(p.slice(1)));

@@ -6,29 +6,30 @@
 <title>League administration — Thornhill Village Darts League</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#080a09">
-<link rel="icon" href="/logo.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<script>if(/\/$/.test(location.pathname))location.replace(location.pathname.replace(/\/+$/,'')+location.search+location.hash);</script>
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')})()</script>
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="appbar">
   <div class="wrap">
-    <a class="brandmark" href="/admin" aria-label="Administration home">
-      <img src="/logo.svg" alt="">
+    <a class="brandmark" href="admin" aria-label="Administration home">
+      <img src="logo.svg" alt="">
       <span><b data-league-name>Thornhill Village Darts League</b><small>Administration</small></span>
     </a>
     <div class="spacer"></div>
     <select id="leagueSelect" class="inp" aria-label="League" style="width:auto;max-width:36vw" hidden></select>
-    <a class="iconbtn" href="/" aria-label="View league site" title="View league site" data-icon="external"></a>
+    <a class="iconbtn" href="./" aria-label="View league site" title="View league site" data-icon="external"></a>
     <button class="iconbtn" id="themeToggle" aria-label="Switch between light and dark"></button>
   </div>
 </header>
 
 <main class="wrap admin">
   <section class="card login" id="login">
-    <img src="/logo.svg" alt="">
+    <img src="logo.svg" alt="">
     <h2>Administrator sign-in</h2>
     <p class="muted">Enter the administrator token for this league site.</p>
     <form id="loginForm">
@@ -36,6 +37,7 @@
       <button class="btn primary">Sign in</button>
       <div id="loginError" class="callout err" hidden style="margin:0"></div>
     </form>
+    <div id="setupNotice" class="callout" hidden style="margin:16px 0 0;text-align:left"></div>
   </section>
 
   <div id="panel" class="admin-shell" hidden>
@@ -51,6 +53,7 @@
     </nav>
 
     <div>
+      <div id="storageNotice" class="callout" hidden></div>
       <div id="flash" class="callout ok" hidden></div>
 
       <!-- IMPORT -->
@@ -193,8 +196,8 @@
   </div>
 </main>
 
-<script src="/common.js"></script>
-<script src="/xlsx-lite.js"></script>
-<script src="/admin.js"></script>
+<script src="common.js"></script>
+<script src="xlsx-lite.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>

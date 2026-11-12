@@ -6,7 +6,7 @@
 // won, lost, legs for/against, leg difference, points) were NOT supplied with
 // them, so they are stored as NULL ("not entered") — never guessed or derived.
 // Enter them with the admin import tool (Admin -> Import), using
-// templates/thornhill-final-standings-2026.csv, which is pre-filled with
+// public/templates/thornhill-final-standings-2026.csv, which is pre-filled with
 // these teams in this order.
 //
 // No fixtures, results, players or scoring rules are seeded.

@@ -118,7 +118,7 @@ test('fixtures produce a live table separate from the historical snapshot; point
 
 test('bundled Thornhill template validates against the seeded season', () => {
   const { db, season } = fresh();
-  const csv = fs.readFileSync(path.join(__dirname, '..', 'templates', 'thornhill-final-standings-2026.csv'), 'utf8');
+  const csv = fs.readFileSync(path.join(__dirname, '..', 'public', 'templates', 'thornhill-final-standings-2026.csv'), 'utf8');
   const p = importers.preview(db, 'thornhill', { kind: 'historical_standings', csv, seasonId: season.id });
   assert.equal(p.ok, true, p.errors.join('; '));
   assert.equal(p.rows.length, 13);

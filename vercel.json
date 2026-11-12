@@ -1,5 +1,12 @@
 {
+  "redirects": [
+    { "source": "/thornhill", "destination": "/thornhill/", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/", "destination": "/mad_gossip/index.html" }
+    { "source": "/", "destination": "/mad_gossip/index.html" },
+    { "source": "/thornhill/api/:path(.*)", "destination": "/api/thornhill?__path=/api/:path" },
+    { "source": "/thornhill/", "destination": "/thornhill_darts/public/index.html" },
+    { "source": "/thornhill/admin", "destination": "/thornhill_darts/public/admin.html" },
+    { "source": "/thornhill/:path(.*)", "destination": "/thornhill_darts/public/:path" }
   ]
 }

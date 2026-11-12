@@ -22,9 +22,42 @@ npm test
 | `DB_FILE` | `data/league.db` | SQLite database file |
 | `DEFAULT_LEAGUE` | `thornhill` | League shown at `/` |
 
-The database is a file, so deploy to a host with a persistent disk (a VPS,
-Render, Fly.io, Railway…). Serverless hosts with a throw-away filesystem, such
-as Vercel, will lose the data.
+Run this way, the database is a file on disk, so the host needs a persistent
+disk (a VPS, Render, Fly.io, Railway…). Vercel has no persistent disk and is
+handled separately: see below.
+
+## Deploying to Vercel
+
+On Vercel the pages in `public/` are served as static files and `/api/*` is
+answered by a function. Because a function has no lasting disk, the database
+is kept in an **Upstash Redis** store: the SQLite file lives in the function's
+temp folder and a compressed copy is saved to Redis after every change
+(`src/store.js`). A save only goes through if nobody else has saved since that
+copy was loaded, so two administrators cannot overwrite each other.
+
+Two ways to host it, both configured in this repository:
+
+| | Address | Config |
+| --- | --- | --- |
+| Inside the repository's existing root project | `https://<project>.vercel.app/thornhill/` | `../vercel.json`, `../api/thornhill.js` |
+| As its own Vercel project (Root Directory `thornhill_darts`) | `https://<project>.vercel.app/` | `vercel.json`, `api/index.js` |
+
+Settings to add in the Vercel project, then redeploy:
+
+1. **Storage → Create Database → Upstash (Redis)** and connect it to the
+   project. This adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
+   (`UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` also work.)
+2. **Settings → Environment Variables → `ADMIN_TOKEN`**: a long, hard-to-guess
+   phrase. Administrators sign in with it at `/admin`.
+3. Node.js version 22.x or newer (Settings → Build and Deployment).
+
+Until step 1 is done the public pages work and show the starting data, but
+the admin tool refuses changes and says why. Until step 2 is done the admin
+tool is switched off. Nothing is ever accepted and then lost.
+
+The storage copy is the whole database, which suits a league this size (the
+starting data is about 5 KB compressed). If it ever grew to several megabytes,
+moving to a hosted SQL database would be the next step.
 
 ## Initial data
 
@@ -45,12 +78,12 @@ final positions published following 9 September 2026:
 positions were supplied, so played / won / lost / legs for / legs against /
 leg difference / points are stored as "not entered" and shown as "—". Nothing
 is guessed or derived. To add them, fill in
-`templates/thornhill-final-standings-2026.csv` (teams already listed in order)
+`public/templates/thornhill-final-standings-2026.csv` (teams already listed in order)
 from the published table and upload it under **Admin → Import**, or run:
 
 ```bash
-npm run import -- standings templates/thornhill-final-standings-2026.csv --season "Season ending September 2026"            # check only
-npm run import -- standings templates/thornhill-final-standings-2026.csv --season "Season ending September 2026" --commit   # save
+npm run import -- standings public/templates/thornhill-final-standings-2026.csv --season "Season ending September 2026"            # check only
+npm run import -- standings public/templates/thornhill-final-standings-2026.csv --season "Season ending September 2026" --commit   # save
 ```
 
 No fixtures, match results, players or scoring rules are seeded.
@@ -67,7 +100,7 @@ No fixtures, match results, players or scoring rules are seeded.
   and a team in two divisions block the save; figures that do not add up
   (e.g. legs for − against ≠ leg difference) are flagged but kept exactly as
   given. Imports are logged under Import history. Blank templates are in
-  `templates/`.
+  `public/templates/`.
 - **Clubs and teams.** A team belongs to a club (its pub or venue) and a club
   can have any number of teams. Division membership is per season, so
   Flatt Top A and Flatt Top B sit in different divisions. The club is worked
@@ -117,8 +150,11 @@ src/importers.js     spreadsheet validation + import
 src/standings.js     historical read, live calculation, points system
 src/teams.js         clubs and teams
 src/app.js           HTTP API + static files
-public/              league site and admin tool
-templates/           CSV templates
+src/store.js         where the database lives (local file, or Redis copy on Vercel)
+src/vercel.js        Vercel function handler
+api/index.js         Vercel function entry point
+vercel.json          Vercel routing for a standalone project
+public/              league site, admin tool and CSV templates
 scripts/import.js    command-line import
 test/                node:test suite
 ```

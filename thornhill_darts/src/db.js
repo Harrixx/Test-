@@ -125,11 +125,13 @@ CREATE TABLE IF NOT EXISTS points_systems (
 );
 `;
 
-function openDb(file) {
+// wal: false keeps everything in the one database file, for hosts where the
+// file is copied elsewhere after each change.
+function openDb(file, { wal = true } = {}) {
   if (file !== ':memory:') fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec('PRAGMA foreign_keys = ON;');
-  if (file !== ':memory:') db.exec('PRAGMA journal_mode = WAL;');
+  if (file !== ':memory:') db.exec(`PRAGMA journal_mode = ${wal ? 'WAL' : 'DELETE'};`);
   db.exec(SCHEMA);
   return db;
 }

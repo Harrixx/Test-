@@ -1,6 +1,6 @@
 /* ---------- fonts (self-hosted, SIL OFL — see /fonts/LICENSE-*.txt) ---------- */
-@font-face { font-family: "Inter Var"; src: url("/fonts/inter.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: "Bricolage Var"; src: url("/fonts/bricolage.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Inter Var"; src: url("fonts/inter.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Bricolage Var"; src: url("fonts/bricolage.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
 
 /* ---------- tokens ---------- */
 :root {

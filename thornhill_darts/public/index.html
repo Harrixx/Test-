@@ -9,19 +9,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Thornhill Darts">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<script>if(!/\/$|\.html$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash);</script>
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')})()</script>
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body class="has-tabbar">
 <header class="appbar">
   <div class="wrap">
     <a class="brandmark" href="#table" aria-label="Home">
-      <span class="mark" id="brandMark"><img src="/logo.svg" alt=""></span>
+      <span class="mark" id="brandMark"><img src="logo.svg" alt=""></span>
       <span><b data-league-name>Thornhill Village Darts League</b></span>
     </a>
     <div class="spacer"></div>
@@ -119,20 +120,20 @@
 
 <footer class="wrap">
   <span data-league-name>Thornhill Village Darts League</span>
-  <a href="/admin">League administration</a>
+  <a href="admin">League administration</a>
 </footer>
 
 <nav class="tabbar" aria-label="Sections">
   <a href="#fixtures" data-nav="fixtures" data-icon="calendar">Fixtures</a>
   <a href="#table" data-nav="table" class="bull">
-    <span class="bull-board" id="bullBoard"><span class="bull-face"><img src="/logo.svg" alt=""></span></span>
+    <span class="bull-board" id="bullBoard"><span class="bull-face"><img src="logo.svg" alt=""></span></span>
     Table
   </a>
   <a href="#clubs" data-nav="clubs" data-icon="shield">Clubs</a>
 </nav>
 
-<script src="/common.js"></script>
-<script src="/darts.js"></script>
-<script src="/app.js"></script>
+<script src="common.js"></script>
+<script src="darts.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

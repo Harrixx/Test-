@@ -159,8 +159,8 @@
   async function loadSeason(seasonId) {
     seasonId = Number(seasonId);
     const [st, fixtures] = await Promise.all([
-      api(`/api/leagues/${slug}/seasons/${seasonId}/standings`),
-      api(`/api/leagues/${slug}/seasons/${seasonId}/fixtures`),
+      api(`api/leagues/${slug}/seasons/${seasonId}/standings`),
+      api(`api/leagues/${slug}/seasons/${seasonId}/fixtures`),
     ]);
     const { historical: h, live, season } = st;
     $('tableSkeleton').hidden = true;
@@ -190,7 +190,7 @@
   }
 
   async function loadLeague() {
-    [league, clubs] = await Promise.all([api(`/api/leagues/${slug}`), api(`/api/leagues/${slug}/clubs`)]);
+    [league, clubs] = await Promise.all([api(`api/leagues/${slug}`), api(`api/leagues/${slug}/clubs`)]);
     setClubs(clubs);
     applyBranding(league);
     document.title = league.name;
@@ -220,7 +220,7 @@
   function showError(e) { $('tableSkeleton').hidden = true; callout($('error'), 'alert', e.message); }
 
   try {
-    const [config, leagues] = await Promise.all([api('/api/config'), api('/api/leagues')]);
+    const [config, leagues] = await Promise.all([api('api/config'), api('api/leagues')]);
     slug = params.get('league') || config.defaultLeague;
     if (!leagues.some((l) => l.slug === slug)) slug = leagues[0]?.slug;
     const ls = $('leagueSelect');
