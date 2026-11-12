@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-GB" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thornhill Village Darts League</title>
+<meta name="description" content="Thornhill Village Darts League, West Yorkshire — standings, fixtures and teams.">
+<meta name="theme-color" content="#080a09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thornhill Darts">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<script>if(!/\/$|\.html$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash);</script>
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')})()</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="has-tabbar">
+<header class="appbar">
+  <div class="wrap">
+    <a class="brandmark" href="#table" aria-label="Home">
+      <span class="mark" id="brandMark"><img src="logo.svg" alt=""></span>
+      <span><b data-league-name>Thornhill Village Darts League</b></span>
+    </a>
+    <div class="spacer"></div>
+    <nav class="topnav" aria-label="Sections">
+      <a href="#table" data-nav="table" data-icon="table">Table</a>
+      <a href="#fixtures" data-nav="fixtures" data-icon="calendar">Fixtures</a>
+      <a href="#clubs" data-nav="clubs" data-icon="shield">Clubs</a>
+    </nav>
+    <select id="leagueSelect" class="inp" aria-label="League" style="width:auto;max-width:42vw" hidden></select>
+    <button class="iconbtn" id="themeToggle" aria-label="Switch between light and dark"></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="error" class="callout err" hidden></div>
+
+  <!-- TABLE -->
+  <div class="view" data-view="table">
+    <section class="hero">
+      <div class="hero-clip" aria-hidden="true"><div class="board"><svg viewBox="0 0 200 200" fill="none" stroke="#fff">
+        <g transform="rotate(-9 100 100)">
+          <circle cx="100" cy="100" r="52" stroke-width="76" stroke-opacity=".5" stroke-dasharray="0.5 15.836"/>
+          <circle cx="100" cy="100" r="86" stroke-width="8" stroke-opacity=".2" stroke-dasharray="27.018 27.018"/>
+          <circle cx="100" cy="100" r="54" stroke-width="6" stroke-opacity=".2" stroke-dasharray="16.965 16.965"/>
+        </g>
+        <g stroke-opacity=".45" stroke-width=".6">
+          <circle cx="100" cy="100" r="98"/><circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="82"/>
+          <circle cx="100" cy="100" r="57"/><circle cx="100" cy="100" r="51"/><circle cx="100" cy="100" r="14"/><circle cx="100" cy="100" r="6"/>
+        </g>
+      </svg></div></div>
+      <span class="eyebrow" data-league-region>Thornhill, West Yorkshire, England</span>
+      <h1 data-league-name>Thornhill Village Darts League</h1>
+      <div class="hero-row">
+        <label class="season-pick">
+          <span class="dot" id="seasonDot"></span>
+          <select id="seasonSelect" aria-label="Season"></select>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </label>
+        <span class="status-chip" id="seasonStatus"></span>
+      </div>
+      <div class="stats" id="stats"></div>
+      <button class="stamp" id="stamp" aria-label="Celebrate">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <path id="stampArc" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0" fill="none"/>
+          <text><textPath href="#stampArc" textLength="278">STEP UP TO THE OCHE ✦ GAME ON ✦</textPath></text>
+          <circle cx="60" cy="60" r="24" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="60" cy="60" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="60" cy="60" r="4.5" fill="currentColor"/>
+        </svg>
+      </button>
+    </section>
+
+    <div class="ticker" id="ticker" aria-hidden="true"></div>
+    <div id="tableSkeleton" class="divisions"><div class="skel"></div><div class="skel"></div></div>
+
+    <section class="section" id="historical" hidden>
+      <div class="section-head"><h2>Final standings</h2><span class="badge hist">Published</span></div>
+      <p class="section-sub" id="historicalSub"></p>
+      <div id="historicalNotice" class="callout" hidden></div>
+      <div id="historicalTables"></div>
+    </section>
+
+    <section class="section" id="live" hidden>
+      <div class="section-head"><h2>Live table</h2><span class="badge live">Calculated</span></div>
+      <p class="section-sub" id="liveSub"></p>
+      <div id="liveNotice" class="callout" hidden></div>
+      <div id="liveTables"></div>
+    </section>
+
+    <section class="card empty" id="empty" hidden>
+      <div class="ring" data-icon="table"></div>
+      <h3>No table yet</h3>
+      <p>No standings or fixtures have been entered for this season.</p>
+    </section>
+  </div>
+
+  <!-- FIXTURES -->
+  <div class="view" data-view="fixtures" hidden>
+    <section class="section">
+      <div class="section-head"><h2>Fixtures &amp; results</h2></div>
+      <p class="section-sub" id="fixturesSub"></p>
+      <div id="fixtureList"></div>
+    </section>
+  </div>
+
+  <!-- CLUBS -->
+  <div class="view" data-view="clubs" hidden>
+    <section class="section">
+      <div class="section-head"><h2>Clubs &amp; teams</h2></div>
+      <p class="section-sub">A club can enter more than one team. A and B teams may play in different divisions.</p>
+      <div class="clubs" id="clubs"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="wrap">
+  <span data-league-name>Thornhill Village Darts League</span>
+  <a href="admin">League administration</a>
+</footer>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="#fixtures" data-nav="fixtures" data-icon="calendar">Fixtures</a>
+  <a href="#table" data-nav="table" class="bull">
+    <span class="bull-board" id="bullBoard"><span class="bull-face"><img src="logo.svg" alt=""></span></span>
+    Table
+  </a>
+  <a href="#clubs" data-nav="clubs" data-icon="shield">Clubs</a>
+</nav>
+
+<script src="common.js"></script>
+<script src="darts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

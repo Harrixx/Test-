@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en-GB" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>League administration — Thornhill Village Darts League</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#080a09">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<script>if(/\/$/.test(location.pathname))location.replace(location.pathname.replace(/\/+$/,'')+location.search+location.hash);</script>
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')})()</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="appbar">
+  <div class="wrap">
+    <a class="brandmark" href="admin" aria-label="Administration home">
+      <img src="logo.svg" alt="">
+      <span><b data-league-name>Thornhill Village Darts League</b><small>Administration</small></span>
+    </a>
+    <div class="spacer"></div>
+    <select id="leagueSelect" class="inp" aria-label="League" style="width:auto;max-width:36vw" hidden></select>
+    <a class="iconbtn" href="./" aria-label="View league site" title="View league site" data-icon="external"></a>
+    <button class="iconbtn" id="themeToggle" aria-label="Switch between light and dark"></button>
+  </div>
+</header>
+
+<main class="wrap admin">
+  <section class="card login" id="login">
+    <img src="logo.svg" alt="">
+    <h2>Administrator sign-in</h2>
+    <p class="muted">Enter the administrator token for this league site.</p>
+    <form id="loginForm">
+      <div class="field"><label for="token">Admin token</label><input id="token" type="password" autocomplete="current-password" required></div>
+      <button class="btn primary">Sign in</button>
+      <div id="loginError" class="callout err" hidden style="margin:0"></div>
+    </form>
+    <div id="setupNotice" class="callout" hidden style="margin:16px 0 0;text-align:left"></div>
+  </section>
+
+  <div id="panel" class="admin-shell" hidden>
+    <nav class="sidenav" id="tabs" aria-label="Administration">
+      <button data-tab="import" data-icon="upload" class="on">Import</button>
+      <button data-tab="teams" data-icon="users">Teams</button>
+      <button data-tab="points" data-icon="target">Points system</button>
+      <button data-tab="seasons" data-icon="layers">Seasons</button>
+      <button data-tab="league" data-icon="palette">League &amp; branding</button>
+      <button data-tab="history" data-icon="history">Import history</button>
+      <span class="sep"></span>
+      <button id="signOut" data-icon="logout">Sign out</button>
+    </nav>
+
+    <div>
+      <div id="storageNotice" class="callout" hidden></div>
+      <div id="flash" class="callout ok" hidden></div>
+
+      <!-- IMPORT -->
+      <section class="card panel" data-panel="import">
+        <h2>Import spreadsheet</h2>
+        <p class="section-sub">Upload a .csv or .xlsx file (first sheet), or paste CSV. Nothing is saved until you have checked the preview and pressed Save.</p>
+        <div class="grid">
+          <div class="field">
+            <label for="impKind">What are you importing?</label>
+            <select id="impKind" class="inp">
+              <option value="historical_standings">Historical standings (published table)</option>
+              <option value="fixtures">Fixtures / results (feeds the live table)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="impSeason">Season</label>
+            <select id="impSeason" class="inp"></select>
+          </div>
+          <div class="field" id="newSeasonBox" hidden>
+            <label for="impNewName">New season name</label>
+            <input id="impNewName" placeholder="e.g. 2026–27">
+          </div>
+          <div class="field" id="newSeasonStatusBox" hidden>
+            <label for="impNewStatus">Status</label>
+            <select id="impNewStatus" class="inp"><option value="completed">Completed</option><option value="active">In progress</option><option value="upcoming">Upcoming</option></select>
+          </div>
+        </div>
+        <p class="help" id="impHelp"></p>
+
+        <div style="height:18px"></div>
+        <label class="dropzone" id="dropzone">
+          <input id="impFile" type="file" accept=".csv,.xlsx,text/csv">
+          <span data-icon="upload"></span>
+          <b id="dropTitle">Choose a spreadsheet or drop it here</b>
+          <small id="dropSub">.csv or .xlsx</small>
+        </label>
+        <details class="paste">
+          <summary>Or paste CSV text</summary>
+          <textarea id="impText" spellcheck="false" aria-label="CSV text"></textarea>
+        </details>
+
+        <div class="grid" style="margin-top:14px">
+          <div class="field" style="grid-column:span 2"><label for="impNote">Source note (optional)</label><input id="impNote" placeholder="e.g. Final table from league secretary, 9 Sept 2026"></div>
+          <label class="check"><input type="checkbox" id="impCreate"> Create teams not yet in the database</label>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="impPreview">Check file</button>
+          <button class="btn" id="impCommit" disabled>Save import</button>
+        </div>
+        <div style="height:18px"></div>
+        <div id="impErrors" class="callout err" hidden></div>
+        <div id="impWarnings" class="callout" hidden></div>
+        <div id="impTable" class="preview"></div>
+      </section>
+
+      <!-- TEAMS -->
+      <section class="card panel" data-panel="teams" hidden>
+        <h2>Clubs &amp; teams</h2>
+        <p class="section-sub">Each team belongs to a club (its pub or venue). A club can have several teams, for example an A and a B team, in the same or different divisions. Divisions are set per season by the import.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th class="l">Team</th><th class="l">Club</th><th class="l">Division (latest season)</th><th class="l">Active</th><th></th></tr></thead>
+          <tbody id="teamRows"></tbody>
+        </table></div>
+        <h3>Add a team</h3>
+        <form id="teamForm" class="grid" style="margin-top:10px">
+          <div class="field"><label for="teamName">Team name</label><input id="teamName" required placeholder="e.g. Black Horse B"></div>
+          <div class="field"><label for="teamClub">Club (optional)</label><input id="teamClub" placeholder="Worked out from the name" list="clubList"><datalist id="clubList"></datalist></div>
+          <div><button class="btn primary">Add team</button></div>
+        </form>
+      </section>
+
+      <!-- POINTS -->
+      <section class="card panel" data-panel="points" hidden>
+        <h2>League points system</h2>
+        <p class="section-sub">Used only for live tables worked out from fixtures. Published historical standings are never recalculated. Until this is marked as confirmed, live tables show no points.</p>
+        <form id="pointsForm">
+          <div class="grid tight">
+            <div class="field"><label for="ptWin">Points for a win</label><input id="ptWin" type="number" step="any"></div>
+            <div class="field"><label for="ptDraw">Points for a draw</label><input id="ptDraw" type="number" step="any"></div>
+            <div class="field"><label for="ptLoss">Points for a loss</label><input id="ptLoss" type="number" step="any"></div>
+            <div class="field"><label for="ptLeg">Points per leg won</label><input id="ptLeg" type="number" step="any"></div>
+          </div>
+          <div class="field" style="margin-top:14px"><label for="ptNotes">Notes (where the rule was confirmed, tie-break rules)</label><input id="ptNotes"></div>
+          <label class="check" style="margin-top:10px"><input type="checkbox" id="ptConfirmed"> These are the league's confirmed rules</label>
+          <div class="actions"><button class="btn primary">Save points system</button></div>
+        </form>
+      </section>
+
+      <!-- SEASONS -->
+      <section class="card panel" data-panel="seasons" hidden>
+        <h2>Seasons</h2>
+        <p class="section-sub">A season can hold a published historical table, fixtures for a live table, or both. They are always shown separately.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th class="l">Season</th><th class="l">Status</th><th>Historical rows</th><th>Fixtures</th></tr></thead>
+          <tbody id="seasonRows"></tbody>
+        </table></div>
+        <h3>Add a season</h3>
+        <form id="seasonForm" class="grid" style="margin-top:10px">
+          <div class="field"><label for="seasonName">Season name</label><input id="seasonName" required placeholder="e.g. 2026–27"></div>
+          <div class="field"><label for="seasonStatus">Status</label><select id="seasonStatus" class="inp"><option value="upcoming">Upcoming</option><option value="active">In progress</option><option value="completed">Completed</option></select></div>
+          <div><button class="btn primary">Add season</button></div>
+        </form>
+      </section>
+
+      <!-- LEAGUE -->
+      <section class="card panel" data-panel="league" hidden>
+        <h2>League &amp; branding</h2>
+        <p class="section-sub">Name and colours shown across the site for this league.</p>
+        <form id="brandForm">
+          <div class="grid">
+            <div class="field"><label for="brName">League name</label><input id="brName" required></div>
+            <div class="field"><label for="brRegion">Location</label><input id="brRegion"></div>
+          </div>
+          <div class="grid tight" style="margin-top:14px;grid-template-columns:repeat(2,max-content)">
+            <div class="field"><label for="brPrimary">Main colour</label><input id="brPrimary" type="color"></div>
+            <div class="field"><label for="brAccent">Accent colour</label><input id="brAccent" type="color"></div>
+          </div>
+          <div class="actions"><button class="btn primary">Save branding</button></div>
+        </form>
+        <h3>Add another league</h3>
+        <p class="section-sub" style="margin-bottom:10px">Each league has its own teams, seasons, points system and branding. Its site is at <code>/?league=slug</code>.</p>
+        <form id="leagueForm" class="grid">
+          <div class="field"><label for="lgName">League name</label><input id="lgName" required></div>
+          <div class="field"><label for="lgSlug">Short web name (slug)</label><input id="lgSlug" required pattern="[a-z0-9\-]{2,40}" placeholder="e.g. dewsbury"></div>
+          <div class="field"><label for="lgRegion">Location</label><input id="lgRegion"></div>
+          <div><button class="btn">Add league</button></div>
+        </form>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="card panel" data-panel="history" hidden>
+        <h2>Import history</h2>
+        <p class="section-sub">Every import is logged with its file name, row count and any warnings.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th class="l">When</th><th class="l">Type</th><th class="l">Season</th><th class="l">File</th><th>Rows</th><th class="l">Notes</th></tr></thead>
+          <tbody id="historyRows"></tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="common.js"></script>
+<script src="xlsx-lite.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
